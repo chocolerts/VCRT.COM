@@ -3,185 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMG F1 | Mission Control</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <title>AMG F1 | Top Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #00A19B; /* Petronas Green */
-            --bg: #050505;
-            --card-bg: #111111;
-            --sidebar: #000000;
-            --text: #ffffff;
+            --petronas: #00A19B;
+            --dark-bg: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
+            margin: 0;
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: #000;
+            color: white;
+        }
+
+        /* The Upside Dashboard */
+        .top-dash {
+            width: 100%;
+            background: var(--dark-bg);
+            border-bottom: 2px solid var(--petronas);
+            padding: 0 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Side Navigation */
-        nav {
-            width: 260px;
-            background: var(--sidebar);
-            border-right: 1px solid #222;
-            display: flex;
-            flex-direction: column;
-            padding: 40px 20px;
-        }
-
-        .logo { 
-            font-weight: 900; 
-            font-size: 1.2rem; 
-            margin-bottom: 60px; 
-            letter-spacing: 2px;
-        }
-        .logo span { color: var(--accent); }
-
-        .menu-link {
-            text-decoration: none;
-            color: #888;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .menu-link.active, .menu-link:hover {
-            background: #1a1a1a;
-            color: var(--accent);
-        }
-
-        /* Main Content Area */
-        main {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            justify-content: space-between;
+            height: 80px;
         }
 
-        .status-pill {
-            background: rgba(0, 161, 155, 0.1);
-            color: var(--accent);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            border: 1px solid var(--accent);
+        .brand {
+            font-weight: 900;
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+        }
+        .brand span { color: var(--petronas); font-weight: 300; }
+
+        /* Middle Section: System Status */
+        .system-status {
+            display: flex;
+            gap: 40px;
         }
 
-        /* Dashboard Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+        .status-item {
+            text-align: center;
         }
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid #222;
-            padding: 30px;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--accent);
-        }
-
-        .card h3 {
-            font-size: 0.75rem;
+        .status-label {
+            display: block;
+            font-size: 0.6rem;
             color: #666;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
         }
 
-        .data-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 5px;
+        .status-value {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #eee;
         }
 
-        .sub-text { color: #555; font-size: 0.9rem; }
+        /* Interaction Section */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-        .btn-action {
-            margin-top: 20px;
-            background: var(--accent);
+        #sessionNotes {
+            background: var(--glass);
+            border: 1px solid #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            width: 200px;
+        }
+
+        .btn-update {
+            background: var(--petronas);
             border: none;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            width: 100%;
+            font-size: 0.8rem;
+        }
+
+        /* Content Area */
+        .main-content {
+            padding: 60px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-banner {
+            height: 400px;
+            background: linear-gradient(to bottom, transparent, #000), 
+                        url('https://images.unsplash.com/photo-1547447134-cd3f5c716030?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-end;
+            padding: 40px;
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">MERCEDES-AMG <span>F1</span></div>
-        <a href="#" class="menu-link active">DASHBOARD</a>
-        <a href="#" class="menu-link">TELEMETRY</a>
-        <a href="#" class="menu-link">CAR CONFIG</a>
-        <a href="#" class="menu-link">RACE LOGS</a>
-    </nav>
+    <header class="top-dash">
+        <div class="brand">MERCEDES-AMG <span>F1 TEAM</span></div>
 
-    <main>
-        <div class="header">
-            <h1>DRIVER OVERVIEW</h1>
-            <div class="status-pill">● SYSTEMS NOMINAL</div>
-        </div>
-
-        <div class="grid">
-            <div class="card">
-                <h3>Current Velocity</h3>
-                <div class="data-value" id="speed">312</div>
-                <div class="sub-text">KM/H - DRS ENABLED</div>
+        <div class="system-status">
+            <div class="status-item">
+                <span class="status-label">Network</span>
+                <span class="status-value" id="ping">-- ms</span>
             </div>
-
-            <div class="card">
-                <h3>Tyre Temperature</h3>
-                <div class="data-value" id="temp">94°C</div>
-                <div class="sub-text">COMPOUND: SOFT (C5)</div>
+            <div class="status-item">
+                <span class="status-label">Region</span>
+                <span class="status-value">Global HQ</span>
             </div>
-
-            <div class="card">
-                <h3>Engine Mode</h3>
-                <div class="data-value" id="mode">STRAT 2</div>
-                <button class="btn-action" onclick="changeMode()">TOGGLE OVERTAKE</button>
+            <div class="status-item">
+                <span class="status-label">Server Status</span>
+                <span class="status-value" style="color: #00ff88;">● Active</span>
             </div>
         </div>
+
+        <div class="user-actions">
+            <input type="text" id="sessionNotes" placeholder="Quick log entry...">
+            <button class="btn-update" onclick="saveLog()">Save Log</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="hero-banner">
+            <div>
+                <h2 style="font-size: 3rem; margin-bottom: 10px;">The Future of Speed</h2>
+                <p style="color: #ccc;">Explore the latest innovations in high-performance engineering.</p>
+            </div>
+        </div>
+
+        <section style="margin-top: 50px;">
+            <h3>Project Overview</h3>
+            <p style="color: #888; line-height: 1.8;">
+                This dashboard is designed to remain "upside" (at the top) while you browse through your project data. 
+                The car telemetry has been removed to keep the interface clean and professional.
+            </p>
+        </section>
     </main>
 
     <script>
-        // Make the numbers "Live"
+        // Simulate Network Ping for the Dashboard
         setInterval(() => {
-            const speed = Math.floor(Math.random() * 15) + 305;
-            document.getElementById('speed').innerText = speed;
-        }, 800);
+            const ping = Math.floor(Math.random() * 5) + 12;
+            document.getElementById('ping').innerText = ping + ' ms';
+        }, 3000);
 
-        function changeMode() {
-            const mode = document.getElementById('mode');
-            mode.innerText = mode.innerText === "STRAT 2" ? "MODE: OVERTAKE" : "STRAT 2";
-            mode.style.color = mode.innerText.includes("OVERTAKE") ? "#00A19B" : "white";
+        // Simple function to show it works
+        function saveLog() {
+            const note = document.getElementById('sessionNotes').value;
+            if(note) {
+                alert("Log Saved: " + note);
+                document.getElementById('sessionNotes').value = "";
+            } else {
+                alert("Please enter a log entry first.");
+            }
         }
     </script>
+
 </body>
 </html>
