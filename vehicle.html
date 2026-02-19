@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCRT | Vehicle Specs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff; 
+            --dark-bg: #050505;
+            --nav-height: 110px;
+            --neon-outline: 0 0 10px var(--neon-blue);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: white;
+            padding-top: var(--nav-height);
+        }
+
+        /* Consistent Dashboard */
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--dark-bg);
+            border-bottom: 2px solid var(--neon-blue);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.6rem;
+            text-shadow: var(--neon-outline);
+        }
+
+        .dash-menu {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dash-link {
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .dash-link:hover { opacity: 1; color: var(--neon-blue); }
+
+        /* Vehicle Content */
+        .container {
+            padding: 60px 10%;
+            text-align: center;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 50px;
+        }
+
+        .spec-card {
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 4px solid var(--neon-blue);
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="brand-name">VCRT</div>
+        <div class="dash-menu">
+            <div style="display:flex; gap:25px;">
+                <a href="index.html" class="dash-link">Home</a>
+                <a href="vehicle.html" class="dash-link" style="color:var(--neon-blue); opacity:1;">2026</a>
+                <a href="#" class="dash-link">Team</a>
+                <a href="#" class="dash-link">Partners</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="font-size: 3.5rem; font-weight: 900;">VEHICLE <span style="color:var(--neon-blue)">PROJECT</span></h1>
+        
+        <div class="spec-grid">
+            <div class="spec-card">
+                <h3 style="color:var(--neon-blue)">CHASSIS</h3>
+                <p>Carbon fiber composite monocoque with honeycomb core.</p>
+            </div>
+            <div class="spec-card">
+                <h3 style="color:var(--neon-blue)">ELECTRONICS</h3>
+                <p>Advanced telemetry with real-time VCRT cloud sync.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 80px;">
+            <img src="car-image.jpg" alt="Vehicle Prototype" style="width:100%; max-width:1000px; border-radius:20px; border: 1px solid #222;">
+        </div>
+    </main>
+
+</body>
+</html>
