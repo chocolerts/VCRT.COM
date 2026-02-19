@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMG F1 | Centered Blue Dashboard</title>
+    <title>VCRT | Official Website</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00f3ff; 
             --dark-bg: #050505;
-            --nav-height: 100px; /* Slightly taller for centering */
+            --nav-height: 100px;
             --glow: 0 0 15px rgba(0, 243, 255, 0.6);
         }
 
@@ -21,7 +21,7 @@
             padding-top: var(--nav-height);
         }
 
-        /* THE UPSIDE DASHBOARD - CENTERED */
+        /* THE UPSIDE DASHBOARD */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -30,33 +30,49 @@
             height: var(--nav-height);
             background: var(--dark-bg);
             border-bottom: 2px solid var(--neon-blue);
-            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.15);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
             
-            /* Center alignment logic */
             display: flex;
-            flex-direction: column; /* Stacked for perfect centering */
+            flex-direction: column; 
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             z-index: 1000;
         }
 
-        .logo {
-            font-weight: 900;
-            letter-spacing: 4px;
-            font-size: 1rem;
-            text-transform: uppercase;
+        /* Logo & Brand Container */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .logo span { color: var(--neon-blue); text-shadow: var(--glow); }
 
-        /* Dashboard Menu Links */
+        .brand-logo {
+            width: 35px; /* Adjust size as needed */
+            height: 35px;
+            object-fit: contain;
+            /* Placeholder styling if image is missing */
+            background: var(--neon-blue);
+            border-radius: 4px; 
+            box-shadow: var(--glow);
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 6px;
+            font-size: 1.4rem;
+            color: #fff;
+        }
+        .brand-name span { color: var(--neon-blue); }
+
+        /* Centered Menu Links */
         .dash-menu {
             display: flex;
             align-items: center;
-            gap: 40px;
+            gap: 35px;
         }
 
-        .dash-link {
+        .dash-link, .btn-sign-in {
             text-decoration: none;
             color: #ffffff;
             font-weight: 700;
@@ -64,84 +80,59 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: 0.3s;
-            opacity: 0.6;
+            opacity: 0.7;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
         }
 
-        .dash-link:hover {
+        .dash-link:hover, .btn-sign-in:hover {
             opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--glow);
         }
 
-        /* Centered Sign In Button */
-        .btn-sign-in {
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
-            padding: 6px 20px;
-            border-radius: 20px; /* Rounded pill style */
-            font-weight: 800;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.4s;
-            margin-left: 20px; /* Space from links */
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
-        }
-
-        .btn-sign-in:hover {
-            background: var(--neon-blue);
-            color: #000;
-            box-shadow: var(--glow);
-            transform: scale(1.05);
-        }
-
-        /* MAIN CONTENT AREA */
-        .content-section {
-            padding: 100px 5%;
+        /* CONTENT */
+        .hero {
+            padding: 120px 5%;
             text-align: center;
         }
 
-        .hero-text {
-            font-size: 5rem;
-            font-weight: 900;
-            letter-spacing: -2px;
+        .hero h1 {
+            font-size: 6rem;
             margin: 0;
-            background: linear-gradient(to bottom, #fff 50%, var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
     <header class="dashboard-header">
-        <div class="logo">MERCEDES-AMG <span>F1</span></div>
+        <div class="brand-container">
+            <img src="logo.png" alt="VCRT Logo" class="brand-logo" onerror="this.style.display='none';">
+            <div class="brand-name">VC<span>RT</span></div>
+        </div>
 
         <nav class="dash-menu">
             <a href="#" class="dash-link">2026</a>
             <a href="#" class="dash-link">Team</a>
             <a href="#" class="dash-link">Partners</a>
             <a href="#" class="dash-link">Achievements</a>
-            
             <button class="btn-sign-in" onclick="handleLogin()">Sign In</button>
         </nav>
     </header>
 
-    <main class="content-section">
-        <h1 class="hero-text">NEON<br>STRIKE</h1>
-        <p style="color: #444; letter-spacing: 5px; font-weight: bold; margin-top: 20px;">SYSTEM STATUS: ONLINE</p>
+    <main class="hero">
+        <h1>VCRT</h1>
+        <p style="color: var(--neon-blue); letter-spacing: 10px;">VIRTUAL CONTROL RACE TECHNOLOGY</p>
     </main>
 
     <script>
         function handleLogin() {
-            const id = prompt("ENTER PILOT CREDENTIALS:");
+            const id = prompt("ENTER ACCESS KEY:");
             if(id) {
-                alert("ACCESS GRANTED. Welcome, " + id);
-                document.querySelector('.btn-sign-in').innerText = id.toUpperCase();
-                document.querySelector('.btn-sign-in').style.background = "var(--neon-blue)";
-                document.querySelector('.btn-sign-in').style.color = "#000";
+                alert("SYSTEM CONNECTED. Welcome, " + id);
             }
         }
     </script>
