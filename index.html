@@ -3,99 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Mission Control</title>
+    <title>AMG F1 | Mission Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* CSS: The "Look" */
         :root {
-            --petronas: #00A19B;
-            --carbon: #121212;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-        body {
-            background-color: var(--carbon);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0; padding: 20px;
-        }
-        .header { border-bottom: 2px solid var(--petronas); padding-bottom: 10px; margin-bottom: 30px; }
-        
-        /* The Grid Layout */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            --accent: #00A19B; /* Petronas Green */
+            --bg: #050505;
+            --card-bg: #111111;
+            --sidebar: #000000;
+            --text: #ffffff;
         }
 
-        /* Dashboard "Boxes" */
-        .card {
-            background: var(--glass);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .card h3 { color: var(--petronas); margin-top: 0; font-size: 0.8rem; letter-spacing: 2px; }
-        .big-number { font-size: 3rem; font-weight: bold; margin: 10px 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        button {
-            background: var(--petronas);
-            border: none; color: white; padding: 10px;
-            width: 100%; border-radius: 5px; cursor: pointer;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Side Navigation */
+        nav {
+            width: 260px;
+            background: var(--sidebar);
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        .logo { 
+            font-weight: 900; 
+            font-size: 1.2rem; 
+            margin-bottom: 60px; 
+            letter-spacing: 2px;
+        }
+        .logo span { color: var(--accent); }
+
+        .menu-link {
+            text-decoration: none;
+            color: #888;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .menu-link.active, .menu-link:hover {
+            background: #1a1a1a;
+            color: var(--accent);
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .status-pill {
+            background: rgba(0, 161, 155, 0.1);
+            color: var(--accent);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid var(--accent);
+        }
+
+        /* Dashboard Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent);
+        }
+
+        .card h3 {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .data-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .sub-text { color: #555; font-size: 0.9rem; }
+
+        .btn-action {
+            margin-top: 20px;
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>COMMAND CENTER <span style="font-weight: 200;">v1.0</span></h1>
-    </div>
+    <nav>
+        <div class="logo">MERCEDES-AMG <span>F1</span></div>
+        <a href="#" class="menu-link active">DASHBOARD</a>
+        <a href="#" class="menu-link">TELEMETRY</a>
+        <a href="#" class="menu-link">CAR CONFIG</a>
+        <a href="#" class="menu-link">RACE LOGS</a>
+    </nav>
 
-    <div class="dashboard-grid">
-        <div class="card">
-            <h3>LIVE SPEED</h3>
-            <div class="big-number" id="speedText">0</div>
-            <p>KM/H</p>
+    <main>
+        <div class="header">
+            <h1>DRIVER OVERVIEW</h1>
+            <div class="status-pill">● SYSTEMS NOMINAL</div>
         </div>
 
-        <div class="card">
-            <h3>DRIVER STATUS</h3>
-            <div class="big-number" id="statusBox" style="font-size: 1.5rem; color: #50fa7b;">READY</div>
-            <button onclick="toggleStatus()">Change Status</button>
-        </div>
+        <div class="grid">
+            <div class="card">
+                <h3>Current Velocity</h3>
+                <div class="data-value" id="speed">312</div>
+                <div class="sub-text">KM/H - DRS ENABLED</div>
+            </div>
 
-        <div class="card">
-            <h3>NOTES</h3>
-            <textarea id="noteArea" style="width:100%; background:none; color:white; border:1px solid #444; border-radius:5px;" placeholder="Type here..."></textarea>
+            <div class="card">
+                <h3>Tyre Temperature</h3>
+                <div class="data-value" id="temp">94°C</div>
+                <div class="sub-text">COMPOUND: SOFT (C5)</div>
+            </div>
+
+            <div class="card">
+                <h3>Engine Mode</h3>
+                <div class="data-value" id="mode">STRAT 2</div>
+                <button class="btn-action" onclick="changeMode()">TOGGLE OVERTAKE</button>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script>
-        // JS: The "Brain"
-        
-        // 1. Simulate Live Speed
+        // Make the numbers "Live"
         setInterval(() => {
-            const speed = Math.floor(Math.random() * 20) + 310; // Random F1 speed
-            document.getElementById('speedText').innerText = speed;
-        }, 1000);
+            const speed = Math.floor(Math.random() * 15) + 305;
+            document.getElementById('speed').innerText = speed;
+        }, 800);
 
-        // 2. Toggle Status
-        function toggleStatus() {
-            const box = document.getElementById('statusBox');
-            if(box.innerText === "READY") {
-                box.innerText = "IN PITS";
-                box.style.color = "#ff5555";
-            } else {
-                box.innerText = "READY";
-                box.style.color = "#50fa7b";
-            }
+        function changeMode() {
+            const mode = document.getElementById('mode');
+            mode.innerText = mode.innerText === "STRAT 2" ? "MODE: OVERTAKE" : "STRAT 2";
+            mode.style.color = mode.innerText.includes("OVERTAKE") ? "#00A19B" : "white";
         }
-
-        // 3. Save Notes automatically
-        const area = document.getElementById('noteArea');
-        area.value = localStorage.getItem('userNote') || "";
-        area.addEventListener('input', () => {
-            localStorage.setItem('userNote', area.value);
-        });
     </script>
 </body>
 </html>
