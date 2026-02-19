@@ -8,9 +8,8 @@
     <style>
         :root {
             --neon-blue: #00f3ff; 
-            --neon-red: #ff0055;
             --dark-bg: #050505;
-            --nav-height: 110px; /* Slightly taller for the double-row dash */
+            --nav-height: 110px;
             --neon-outline: 0 0 10px var(--neon-blue);
         }
 
@@ -22,7 +21,7 @@
             padding-top: var(--nav-height);
         }
 
-        /* UNIFIED TOP DASHBOARD */
+        /* DASHBOARD HEADER */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -38,7 +37,7 @@
             z-index: 1000;
         }
 
-        /* Top Left Branding */
+        /* Branding (Top Left) */
         .brand-container {
             display: flex;
             align-items: center;
@@ -82,6 +81,7 @@
             background: none;
             border: none;
             cursor: pointer;
+            position: relative;
         }
 
         .dash-link:hover {
@@ -90,32 +90,41 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* Finance Stats in Dashboard */
-        .finance-stats {
-            display: flex;
-            gap: 20px;
-            border-left: 1px solid #222;
-            padding-left: 20px;
-            margin-left: 20px;
+        /* HISTORY DROPDOWN */
+        .history-container {
+            position: relative;
+            display: inline-block;
         }
 
-        .stat-box {
-            text-align: right;
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #111;
+            min-width: 200px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--neon-outline);
+            z-index: 1;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
         }
 
-        .stat-label {
-            font-size: 0.55rem;
-            color: #555;
+        .history-container:hover .dropdown-content {
             display: block;
-            letter-spacing: 1px;
         }
 
-        .stat-value {
-            font-size: 0.9rem;
-            font-weight: 900;
+        .history-item {
+            font-size: 0.7rem;
+            padding: 5px 0;
+            border-bottom: 1px solid #222;
+            color: #ccc;
+            text-align: left;
         }
 
-        /* MAIN CONTENT area stays clean */
+        /* MAIN CONTENT */
         .main-content {
             padding: 100px 10%;
             text-align: center;
@@ -125,7 +134,7 @@
             font-size: 5rem;
             font-weight: 900;
             margin: 0;
-            opacity: 0.2; /* Faded background text look */
+            opacity: 0.1;
         }
     </style>
 </head>
@@ -146,45 +155,44 @@
             <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
                 <button class="dash-link" onclick="addMoney('income')">Add Income</button>
                 <button class="dash-link" onclick="addMoney('expense')">Add Expense</button>
-                <a href="#" class="dash-link">History</a>
-                <a href="#" class="dash-link">Sign In</a>
-            </div>
-        </div>
+                
+                <div class="history-container">
+                    <button class="dash-link">History</button>
+                    <div class="dropdown-content" id="history-log">
+                        <div class="history-item">No recent activity</div>
+                    </div>
+                </div>
 
-        <div class="finance-stats">
-            <div class="stat-box">
-                <span class="stat-label">OPERATIONAL INCOME</span>
-                <span class="stat-value" id="disp-inc" style="color: var(--neon-blue);">$0</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-label">TOTAL EXPENSES</span>
-                <span class="stat-value" id="disp-exp" style="color: var(--neon-red);">$0</span>
+                <a href="#" class="dash-link">Sign In</a>
             </div>
         </div>
     </header>
 
     <main class="main-content">
         <h1 class="hero-title">VCRT CORE</h1>
-        <p style="color: #666; letter-spacing: 8px;">INTEGRATED MANAGEMENT SYSTEM</p>
+        <p style="color: #444; letter-spacing: 8px;">MINIMALIST COMMAND INTERFACE</p>
     </main>
 
     <script>
-        let income = 0;
-        let expense = 0;
+        const historyLog = [];
 
         function addMoney(type) {
             const val = prompt(`Enter ${type} amount:`);
             const num = parseFloat(val);
             
             if (!isNaN(num)) {
-                if (type === 'income') {
-                    income += num;
-                    document.getElementById('disp-inc').innerText = "$" + income.toLocaleString();
-                } else {
-                    expense += num;
-                    document.getElementById('disp-exp').innerText = "$" + expense.toLocaleString();
-                }
+                const entry = `${type.toUpperCase()}: $${num.toLocaleString()} (${new Date().toLocaleTimeString()})`;
+                historyLog.unshift(entry); // Add to start of list
+                updateHistoryUI();
+                alert(`${type.toUpperCase()} recorded.`);
             }
+        }
+
+        function updateHistoryUI() {
+            const container = document.getElementById('history-log');
+            container.innerHTML = historyLog.slice(0, 5).map(item => 
+                `<div class="history-item">${item}</div>`
+            ).join('') || '<div class="history-item">No recent activity</div>';
         }
     </script>
 
