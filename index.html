@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Neon Outline Edition</title>
+    <title>VCRT | Finance Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00f3ff; 
+            --neon-red: #ff0055; /* For Expenses */
             --dark-bg: #050505;
             --nav-height: 80px;
-            /* Precise neon glow effect */
-            --neon-outline: 
-                0 0 5px var(--neon-blue),
-                0 0 10px var(--neon-blue);
+            --neon-outline: 0 0 10px var(--neon-blue);
         }
 
         body {
@@ -24,7 +22,7 @@
             padding-top: var(--nav-height);
         }
 
-        /* THE UPSIDE DASHBOARD */
+        /* DASHBOARD HEADER */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -39,33 +37,21 @@
             z-index: 1000;
         }
 
-        /* Branding: Top Left */
         .brand-container {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-right: auto; /* Pushes everything else away from the left */
-        }
-
-        .brand-logo {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            border: 1px solid var(--neon-blue);
-            box-shadow: var(--neon-outline);
-            border-radius: 4px;
+            margin-right: auto;
         }
 
         .brand-name {
             font-weight: 900;
             letter-spacing: 4px;
             font-size: 1.5rem;
-            color: #ffffff; /* White text */
-            /* Blue Neon Outline effect */
+            color: #ffffff;
             text-shadow: var(--neon-outline);
         }
 
-        /* Navigation Links: Centered */
         .dash-menu {
             display: flex;
             gap: 30px;
@@ -81,8 +67,8 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: 0.3s;
             opacity: 0.6;
+            transition: 0.3s;
         }
 
         .dash-link:hover {
@@ -91,9 +77,85 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* Content Area */
+        /* FINANCE GRID */
         .main-content {
-            padding: 100px 5%;
+            padding: 60px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .finance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .finance-card {
+            background: #111;
+            border: 1px solid #222;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .finance-card:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-5px);
+        }
+
+        .card-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .amount {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+        }
+
+        .income-text { color: var(--neon-blue); text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
+        .expense-text { color: var(--neon-red); text-shadow: 0 0 10px rgba(255, 0, 85, 0.5); }
+
+        input {
+            background: #000;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--neon-blue); }
+
+        .btn-add {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        .total-balance {
+            margin-top: 50px;
+            padding: 40px;
+            border-top: 1px solid #222;
             text-align: center;
         }
     </style>
@@ -102,7 +164,6 @@
 
     <header class="dashboard-header">
         <div class="brand-container">
-            <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.background='var(--neon-blue)';">
             <div class="brand-name">VCRT</div>
         </div>
 
@@ -111,18 +172,62 @@
             <a href="#" class="dash-link">Team</a>
             <a href="#" class="dash-link">Partners</a>
             <a href="#" class="dash-link">Achievements</a>
-            <a href="#" class="dash-link" onclick="handleLogin()">Sign In</a>
+            <a href="#" class="dash-link" onclick="alert('Sign In clicked')">Sign In</a>
         </nav>
     </header>
 
     <main class="main-content">
-        <h1 style="font-size: 4rem; font-weight: 900;">SYSTEM <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">ACTIVE</span></h1>
+        <h1 style="text-align:center; font-size: 3rem;">FINANCIAL <span class="income-text">CORE</span></h1>
+
+        <div class="finance-grid">
+            <div class="finance-card">
+                <div class="card-label">Total Income</div>
+                <div class="amount income-text">$<span id="income-display">0</span></div>
+                <input type="number" id="income-input" placeholder="Enter amount">
+                <button class="btn-add" onclick="updateFinance('income')">Add Income</button>
+            </div>
+
+            <div class="finance-card">
+                <div class="card-label">Total Expenses</div>
+                <div class="amount expense-text">$<span id="expense-display">0</span></div>
+                <input type="number" id="expense-input" placeholder="Enter amount">
+                <button class="btn-add" style="border-color: var(--neon-red); color: var(--neon-red);" onclick="updateFinance('expense')">Add Expense</button>
+            </div>
+        </div>
+
+        <div class="total-balance">
+            <div class="card-label">Net Operational Balance</div>
+            <div class="amount" id="balance-display" style="font-size: 4rem;">$0</div>
+        </div>
     </main>
 
     <script>
-        function handleLogin() {
-            const id = prompt("ENTER ACCESS KEY:");
-            if(id) alert("Welcome to VCRT, " + id);
+        // Store values in variables
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        function updateFinance(type) {
+            const incomeInput = document.getElementById('income-input');
+            const expenseInput = document.getElementById('expense-input');
+            
+            if (type === 'income') {
+                totalIncome += parseFloat(incomeInput.value) || 0;
+                incomeInput.value = '';
+            } else {
+                totalExpense += parseFloat(expenseInput.value) || 0;
+                expenseInput.value = '';
+            }
+
+            // Update display
+            document.getElementById('income-display').innerText = totalIncome.toLocaleString();
+            document.getElementById('expense-display').innerText = totalExpense.toLocaleString();
+            
+            const balance = totalIncome - totalExpense;
+            const balanceDisplay = document.getElementById('balance-display');
+            balanceDisplay.innerText = "$" + balance.toLocaleString();
+
+            // Change color based on profit/loss
+            balanceDisplay.style.color = balance >= 0 ? "var(--neon-blue)" : "var(--neon-red)";
         }
     </script>
 
