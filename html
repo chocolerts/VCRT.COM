@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Mission Control</title>
+    <style>
+        /* CSS: The "Look" */
+        :root {
+            --petronas: #00A19B;
+            --carbon: #121212;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            background-color: var(--carbon);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 20px;
+        }
+        .header { border-bottom: 2px solid var(--petronas); padding-bottom: 10px; margin-bottom: 30px; }
+        
+        /* The Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Dashboard "Boxes" */
+        .card {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .card h3 { color: var(--petronas); margin-top: 0; font-size: 0.8rem; letter-spacing: 2px; }
+        .big-number { font-size: 3rem; font-weight: bold; margin: 10px 0; }
+        
+        button {
+            background: var(--petronas);
+            border: none; color: white; padding: 10px;
+            width: 100%; border-radius: 5px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>COMMAND CENTER <span style="font-weight: 200;">v1.0</span></h1>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h3>LIVE SPEED</h3>
+            <div class="big-number" id="speedText">0</div>
+            <p>KM/H</p>
+        </div>
+
+        <div class="card">
+            <h3>DRIVER STATUS</h3>
+            <div class="big-number" id="statusBox" style="font-size: 1.5rem; color: #50fa7b;">READY</div>
+            <button onclick="toggleStatus()">Change Status</button>
+        </div>
+
+        <div class="card">
+            <h3>NOTES</h3>
+            <textarea id="noteArea" style="width:100%; background:none; color:white; border:1px solid #444; border-radius:5px;" placeholder="Type here..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        // JS: The "Brain"
+        
+        // 1. Simulate Live Speed
+        setInterval(() => {
+            const speed = Math.floor(Math.random() * 20) + 310; // Random F1 speed
+            document.getElementById('speedText').innerText = speed;
+        }, 1000);
+
+        // 2. Toggle Status
+        function toggleStatus() {
+            const box = document.getElementById('statusBox');
+            if(box.innerText === "READY") {
+                box.innerText = "IN PITS";
+                box.style.color = "#ff5555";
+            } else {
+                box.innerText = "READY";
+                box.style.color = "#50fa7b";
+            }
+        }
+
+        // 3. Save Notes automatically
+        const area = document.getElementById('noteArea');
+        area.value = localStorage.getItem('userNote') || "";
+        area.addEventListener('input', () => {
+            localStorage.setItem('userNote', area.value);
+        });
+    </script>
+</body>
+</html>
