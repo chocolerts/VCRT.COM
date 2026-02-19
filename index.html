@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMG F1 | Blue Edition</title>
+    <title>AMG F1 | Centered Blue Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Changing to Blue Neon Colour */
             --neon-blue: #00f3ff; 
             --dark-bg: #050505;
-            --nav-height: 80px;
+            --nav-height: 100px; /* Slightly taller for centering */
             --glow: 0 0 15px rgba(0, 243, 255, 0.6);
         }
 
@@ -22,7 +21,7 @@
             padding-top: var(--nav-height);
         }
 
-        /* THE UPSIDE DASHBOARD */
+        /* THE UPSIDE DASHBOARD - CENTERED */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -31,81 +30,87 @@
             height: var(--nav-height);
             background: var(--dark-bg);
             border-bottom: 2px solid var(--neon-blue);
-            box-shadow: 0 2px 20px rgba(0, 243, 255, 0.2);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.15);
+            
+            /* Center alignment logic */
             display: flex;
+            flex-direction: column; /* Stacked for perfect centering */
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 5%;
+            gap: 10px;
             z-index: 1000;
         }
 
         .logo {
             font-weight: 900;
-            letter-spacing: 2px;
-            font-size: 1.2rem;
+            letter-spacing: 4px;
+            font-size: 1rem;
+            text-transform: uppercase;
         }
         .logo span { color: var(--neon-blue); text-shadow: var(--glow); }
 
         /* Dashboard Menu Links */
         .dash-menu {
             display: flex;
-            gap: 30px;
+            align-items: center;
+            gap: 40px;
         }
 
         .dash-link {
             text-decoration: none;
-            color: #888;
+            color: #ffffff;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             transition: 0.3s;
+            opacity: 0.6;
         }
 
         .dash-link:hover {
+            opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--glow);
         }
 
-        /* Right Side: Sign In Button */
-        .user-section {
-            display: flex;
-            align-items: center;
-        }
-
+        /* Centered Sign In Button */
         .btn-sign-in {
             background: transparent;
             border: 1px solid var(--neon-blue);
             color: var(--neon-blue);
-            padding: 10px 22px;
-            border-radius: 4px;
+            padding: 6px 20px;
+            border-radius: 20px; /* Rounded pill style */
             font-weight: 800;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: inset 0 0 5px rgba(0, 243, 255, 0.2);
+            transition: 0.4s;
+            margin-left: 20px; /* Space from links */
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
         }
 
         .btn-sign-in:hover {
             background: var(--neon-blue);
             color: #000;
             box-shadow: var(--glow);
+            transform: scale(1.05);
         }
 
-        /* CONTENT STYLING */
+        /* MAIN CONTENT AREA */
         .content-section {
-            padding: 80px 10%;
+            padding: 100px 5%;
             text-align: center;
         }
 
-        .blue-gradient-text {
-            background: linear-gradient(to right, #fff, var(--neon-blue));
+        .hero-text {
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin: 0;
+            background: linear-gradient(to bottom, #fff 50%, var(--neon-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 4rem;
-            font-weight: 900;
         }
     </style>
 </head>
@@ -119,28 +124,24 @@
             <a href="#" class="dash-link">Team</a>
             <a href="#" class="dash-link">Partners</a>
             <a href="#" class="dash-link">Achievements</a>
-        </nav>
-
-        <div class="user-section">
+            
             <button class="btn-sign-in" onclick="handleLogin()">Sign In</button>
-        </div>
+        </nav>
     </header>
 
     <main class="content-section">
-        <h1 class="blue-gradient-text">Racing in <br>The Blue Light.</h1>
-        <p style="color: #666; max-width: 600px; margin: 20px auto; line-height: 1.6;">
-            Experience the 2026 technical evolution with our mission-critical control interface. 
-            All systems online.
-        </p>
+        <h1 class="hero-text">NEON<br>STRIKE</h1>
+        <p style="color: #444; letter-spacing: 5px; font-weight: bold; margin-top: 20px;">SYSTEM STATUS: ONLINE</p>
     </main>
 
     <script>
         function handleLogin() {
-            // This is where you would link a login page later
-            const name = prompt("Please enter your Pilot ID:");
-            if (name) {
-                alert("Welcome back, " + name + ". System access granted.");
-                document.querySelector('.btn-sign-in').innerText = "Access: " + name;
+            const id = prompt("ENTER PILOT CREDENTIALS:");
+            if(id) {
+                alert("ACCESS GRANTED. Welcome, " + id);
+                document.querySelector('.btn-sign-in').innerText = id.toUpperCase();
+                document.querySelector('.btn-sign-in').style.background = "var(--neon-blue)";
+                document.querySelector('.btn-sign-in').style.color = "#000";
             }
         }
     </script>
