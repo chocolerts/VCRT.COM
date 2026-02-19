@@ -21,7 +21,7 @@
             padding-top: var(--nav-height);
         }
 
-        /* Consistent Dashboard */
+        /* UNIFIED DASHBOARD (MATCHES INDEX.HTML) */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -30,43 +30,64 @@
             height: var(--nav-height);
             background: var(--dark-bg);
             border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
             display: flex;
             align-items: center;
             padding: 0 40px;
             z-index: 1000;
         }
 
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: auto;
+        }
+
         .brand-name {
             font-weight: 900;
             letter-spacing: 4px;
             font-size: 1.6rem;
+            color: #ffffff;
             text-shadow: var(--neon-outline);
         }
 
         .dash-menu {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
+
+        .menu-row { display: flex; gap: 25px; }
 
         .dash-link {
             text-decoration: none;
-            color: white;
+            color: #ffffff;
             font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             opacity: 0.6;
             transition: 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
         }
 
-        .dash-link:hover { opacity: 1; color: var(--neon-blue); }
+        .dash-link:hover {
+            opacity: 1;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
+        }
 
-        /* Vehicle Content */
+        /* Active state for current page */
+        .active { opacity: 1; color: var(--neon-blue); text-shadow: var(--neon-outline); }
+
+        /* CONTENT */
         .container {
             padding: 60px 10%;
             text-align: center;
@@ -83,21 +104,34 @@
             background: #111;
             padding: 30px;
             border-radius: 10px;
-            border-left: 4px solid var(--neon-blue);
+            border: 1px solid #222;
             text-align: left;
+            transition: 0.3s;
         }
+        
+        .spec-card:hover { border-color: var(--neon-blue); }
     </style>
 </head>
 <body>
 
     <header class="dashboard-header">
-        <div class="brand-name">VCRT</div>
+        <div class="brand-container">
+            <div class="brand-name">VCRT</div>
+        </div>
+
         <div class="dash-menu">
-            <div style="display:flex; gap:25px;">
-                <a href="index.html" class="dash-link">Home</a>
-                <a href="vehicle.html" class="dash-link" style="color:var(--neon-blue); opacity:1;">2026</a>
+            <div class="menu-row">
+                <a href="index.html" class="dash-link">Home</a> <a href="vehicle.html" class="dash-link active">2026</a>
                 <a href="#" class="dash-link">Team</a>
                 <a href="#" class="dash-link">Partners</a>
+                <a href="#" class="dash-link">Achievements</a>
+            </div>
+            
+            <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
+                <button class="dash-link" onclick="alert('Income logged')">Add Income</button>
+                <button class="dash-link" onclick="alert('Expense logged')">Add Expense</button>
+                <a href="#" class="dash-link">History</a>
+                <a href="#" class="dash-link">Sign In</a>
             </div>
         </div>
     </header>
@@ -107,17 +141,19 @@
         
         <div class="spec-grid">
             <div class="spec-card">
-                <h3 style="color:var(--neon-blue)">CHASSIS</h3>
-                <p>Carbon fiber composite monocoque with honeycomb core.</p>
+                <h3 style="color:var(--neon-blue)">AERODYNAMICS</h3>
+                <p>Carbon fiber active aero wings for high-speed stability.</p>
             </div>
             <div class="spec-card">
-                <h3 style="color:var(--neon-blue)">ELECTRONICS</h3>
-                <p>Advanced telemetry with real-time VCRT cloud sync.</p>
+                <h3 style="color:var(--neon-blue)">CORE UNIT</h3>
+                <p>Advanced VCRT electric propulsion with liquid cooling.</p>
             </div>
         </div>
 
         <div style="margin-top: 80px;">
-            <img src="car-image.jpg" alt="Vehicle Prototype" style="width:100%; max-width:1000px; border-radius:20px; border: 1px solid #222;">
+            <div style="width:100%; height:400px; background:#111; border-radius:20px; border:1px dashed #333; display:flex; align-items:center; justify-content:center; color:#444;">
+                [ VEHICLE PHOTO GOES HERE ]
+            </div>
         </div>
     </main>
 
