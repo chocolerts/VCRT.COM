@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Official Website</title>
+    <title>VCRT | Neon Outline Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -88,3 +88,43 @@
         .dash-link:hover {
             opacity: 1;
             color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
+        }
+
+        /* Content Area */
+        .main-content {
+            padding: 100px 5%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="brand-container">
+            <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.background='var(--neon-blue)';">
+            <div class="brand-name">VCRT</div>
+        </div>
+
+        <nav class="dash-menu">
+            <a href="#" class="dash-link">2026</a>
+            <a href="#" class="dash-link">Team</a>
+            <a href="#" class="dash-link">Partners</a>
+            <a href="#" class="dash-link">Achievements</a>
+            <a href="#" class="dash-link" onclick="handleLogin()">Sign In</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <h1 style="font-size: 4rem; font-weight: 900;">SYSTEM <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">ACTIVE</span></h1>
+    </main>
+
+    <script>
+        function handleLogin() {
+            const id = prompt("ENTER ACCESS KEY:");
+            if(id) alert("Welcome to VCRT, " + id);
+        }
+    </script>
+
+</body>
+</html>
