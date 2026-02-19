@@ -9,8 +9,11 @@
         :root {
             --neon-blue: #00f3ff; 
             --dark-bg: #050505;
-            --nav-height: 100px;
-            --glow: 0 0 15px rgba(0, 243, 255, 0.6);
+            --nav-height: 80px;
+            /* Precise neon glow effect */
+            --neon-outline: 
+                0 0 5px var(--neon-blue),
+                0 0 10px var(--neon-blue);
         }
 
         body {
@@ -29,50 +32,49 @@
             width: 100%;
             height: var(--nav-height);
             background: var(--dark-bg);
-            border-bottom: 2px solid var(--neon-blue);
-            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
-            
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
             display: flex;
-            flex-direction: column; 
-            justify-content: center;
             align-items: center;
-            gap: 12px;
+            padding: 0 40px;
             z-index: 1000;
         }
 
-        /* Logo & Brand Container */
+        /* Branding: Top Left */
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            margin-right: auto; /* Pushes everything else away from the left */
         }
 
         .brand-logo {
-            width: 35px; /* Adjust size as needed */
-            height: 35px;
+            width: 32px;
+            height: 32px;
             object-fit: contain;
-            /* Placeholder styling if image is missing */
-            background: var(--neon-blue);
-            border-radius: 4px; 
-            box-shadow: var(--glow);
+            border: 1px solid var(--neon-blue);
+            box-shadow: var(--neon-outline);
+            border-radius: 4px;
         }
 
         .brand-name {
             font-weight: 900;
-            letter-spacing: 6px;
-            font-size: 1.4rem;
-            color: #fff;
+            letter-spacing: 4px;
+            font-size: 1.5rem;
+            color: #ffffff; /* White text */
+            /* Blue Neon Outline effect */
+            text-shadow: var(--neon-outline);
         }
-        .brand-name span { color: var(--neon-blue); }
 
-        /* Centered Menu Links */
+        /* Navigation Links: Centered */
         .dash-menu {
             display: flex;
-            align-items: center;
-            gap: 35px;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .dash-link, .btn-sign-in {
+        .dash-link {
             text-decoration: none;
             color: #ffffff;
             font-weight: 700;
@@ -80,62 +82,9 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             transition: 0.3s;
-            opacity: 0.7;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
+            opacity: 0.6;
         }
 
-        .dash-link:hover, .btn-sign-in:hover {
+        .dash-link:hover {
             opacity: 1;
             color: var(--neon-blue);
-            text-shadow: var(--glow);
-        }
-
-        /* CONTENT */
-        .hero {
-            padding: 120px 5%;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 6rem;
-            margin: 0;
-            text-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
-        }
-    </style>
-</head>
-<body>
-
-    <header class="dashboard-header">
-        <div class="brand-container">
-            <img src="logo.png" alt="VCRT Logo" class="brand-logo" onerror="this.style.display='none';">
-            <div class="brand-name">VC<span>RT</span></div>
-        </div>
-
-        <nav class="dash-menu">
-            <a href="#" class="dash-link">2026</a>
-            <a href="#" class="dash-link">Team</a>
-            <a href="#" class="dash-link">Partners</a>
-            <a href="#" class="dash-link">Achievements</a>
-            <button class="btn-sign-in" onclick="handleLogin()">Sign In</button>
-        </nav>
-    </header>
-
-    <main class="hero">
-        <h1>VCRT</h1>
-        <p style="color: var(--neon-blue); letter-spacing: 10px;">VIRTUAL CONTROL RACE TECHNOLOGY</p>
-    </main>
-
-    <script>
-        function handleLogin() {
-            const id = prompt("ENTER ACCESS KEY:");
-            if(id) {
-                alert("SYSTEM CONNECTED. Welcome, " + id);
-            }
-        }
-    </script>
-
-</body>
-</html>
