@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Unified Command</title>
+    <title>VCRT | Core Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -37,7 +37,6 @@
             z-index: 1000;
         }
 
-        /* Branding (Top Left) */
         .brand-container {
             display: flex;
             align-items: center;
@@ -53,7 +52,6 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* Centered Grouped Menu */
         .dash-menu {
             display: flex;
             flex-direction: column;
@@ -64,10 +62,7 @@
             transform: translateX(-50%);
         }
 
-        .menu-row {
-            display: flex;
-            gap: 25px;
-        }
+        .menu-row { display: flex; gap: 25px; }
 
         .dash-link {
             text-decoration: none;
@@ -81,7 +76,6 @@
             background: none;
             border: none;
             cursor: pointer;
-            position: relative;
         }
 
         .dash-link:hover {
@@ -90,51 +84,94 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* HISTORY DROPDOWN */
-        .history-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #111;
-            min-width: 200px;
-            border: 1px solid var(--neon-blue);
-            box-shadow: var(--neon-outline);
-            z-index: 1;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-
-        .history-container:hover .dropdown-content {
-            display: block;
-        }
-
-        .history-item {
-            font-size: 0.7rem;
-            padding: 5px 0;
-            border-bottom: 1px solid #222;
-            color: #ccc;
-            text-align: left;
-        }
-
-        /* MAIN CONTENT */
+        /* MAIN CONTENT - VCRT CORE SECTION */
         .main-content {
-            padding: 100px 10%;
+            padding: 60px 10%;
             text-align: center;
         }
 
-        .hero-title {
-            font-size: 5rem;
+        .core-header {
+            margin-bottom: 50px;
+        }
+
+        .core-header h1 {
+            font-size: 3.5rem;
             font-weight: 900;
             margin: 0;
-            opacity: 0.1;
+            letter-spacing: -1px;
+        }
+
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .class-card {
+            background: #111;
+            border: 1px solid #222;
+            padding: 40px 20px;
+            border-radius: 15px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: var(--neon-outline);
+            transform: translateY(-10px);
+        }
+
+        .class-card h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .class-card p {
+            color: #666;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .btn-select {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+
+        .btn-select:hover {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        /* Decor Line for the cards */
+        .class-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--neon-blue);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .class-card:hover::after {
+            opacity: 1;
         }
     </style>
 </head>
@@ -155,44 +192,43 @@
             <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
                 <button class="dash-link" onclick="addMoney('income')">Add Income</button>
                 <button class="dash-link" onclick="addMoney('expense')">Add Expense</button>
-                
-                <div class="history-container">
-                    <button class="dash-link">History</button>
-                    <div class="dropdown-content" id="history-log">
-                        <div class="history-item">No recent activity</div>
-                    </div>
-                </div>
-
+                <a href="#" class="dash-link">History</a>
                 <a href="#" class="dash-link">Sign In</a>
             </div>
         </div>
     </header>
 
     <main class="main-content">
-        <h1 class="hero-title">VCRT CORE</h1>
-        <p style="color: #444; letter-spacing: 8px;">MINIMALIST COMMAND INTERFACE</p>
+        <div class="core-header">
+            <h1>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">CORE</span></h1>
+            <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
+        </div>
+
+        <div class="class-grid">
+            <div class="class-card">
+                <p>Entry Level</p>
+                <h2>150CC</h2>
+                <button class="btn-select">Enter Class</button>
+            </div>
+
+            <div class="class-card">
+                <p>Professional</p>
+                <h2>600CC</h2>
+                <button class="btn-select">Enter Class</button>
+            </div>
+
+            <div class="class-card">
+                <p>Future Tech</p>
+                <h2>EV</h2>
+                <button class="btn-select">Enter Class</button>
+            </div>
+        </div>
     </main>
 
     <script>
-        const historyLog = [];
-
         function addMoney(type) {
             const val = prompt(`Enter ${type} amount:`);
-            const num = parseFloat(val);
-            
-            if (!isNaN(num)) {
-                const entry = `${type.toUpperCase()}: $${num.toLocaleString()} (${new Date().toLocaleTimeString()})`;
-                historyLog.unshift(entry); // Add to start of list
-                updateHistoryUI();
-                alert(`${type.toUpperCase()} recorded.`);
-            }
-        }
-
-        function updateHistoryUI() {
-            const container = document.getElementById('history-log');
-            container.innerHTML = historyLog.slice(0, 5).map(item => 
-                `<div class="history-item">${item}</div>`
-            ).join('') || '<div class="history-item">No recent activity</div>';
+            if (val) alert(`${type.toUpperCase()} Logged: $${val}`);
         }
     </script>
 
