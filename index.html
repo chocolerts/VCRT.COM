@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VCRT | Core Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --neon-blue: #00f3ff; 
@@ -101,6 +102,23 @@
             letter-spacing: -1px;
         }
 
+        /* CHART DASHBOARD CONTAINER */
+        .chart-container {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 0 auto 50px auto;
+            max-width: 900px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: 0.4s;
+        }
+        
+        .chart-container:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
         .class-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -183,23 +201,33 @@
         </div>
 
         <div class="dash-menu">
-    <div class="menu-row">
-        <a href="vehicle.html" class="dash-link">2026</a>
-        <a href="#" class="dash-link">Team</a>
-        <a href="#" class="dash-link">Partners</a>
-        <a href="#" class="dash-link">Achievements</a>
-    </div>
-    <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
-        <a href="#" class="dash-link">History</a>
-        <a href="signin.html" class="dash-link">Sign In</a>
-    </div>
-</div>
+            <div class="menu-row">
+                <a href="vehicle.html" class="dash-link">2026</a>
+                <a href="#metrics-dashboard" class="dash-link" style="color: var(--neon-blue);">Dashboard</a>
+                <a href="#" class="dash-link">Team</a>
+                <a href="#" class="dash-link">Partners</a>
+                <a href="#" class="dash-link">Achievements</a>
+            </div>
+            <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
+                <a href="#" class="dash-link">History</a>
+                <a href="signin.html" class="dash-link">Sign In</a>
+            </div>
+        </div>
     </header>
 
     <main class="main-content">
         <div class="core-header">
             <h1>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">CORE</span></h1>
             <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
+        </div>
+
+        <div id="metrics-dashboard" class="chart-container">
+            <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
+                <span style="color: var(--neon-blue)">//</span> Vehicle Class Performance Metrics
+            </h3>
+            <div style="position: relative; height:300px; width:100%">
+                <canvas id="vcrtAnalyticsChart"></canvas>
+            </div>
         </div>
 
         <div class="class-grid">
@@ -224,27 +252,25 @@
     </main>
 
     <div id="gallery-section" style="margin-top: 200px; padding-bottom: 100px;">
-        <h2 style="color: #222; letter-spacing: 15px; font-size: 0.7rem; margin-bottom: 50px;">
+        <h2 style="color: #222; letter-spacing: 15px; font-size: 0.7rem; margin-bottom: 50px; text-align: center;">
             VCRT // VISUAL_ASSETS
         </h2>
         
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
-            
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
             <div class="gallery-item">
                 <img src="WhatsApp Image 2026-02-09 at 4.25.38 PM.jpeg" alt="VCRT View 1" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0, 243, 255, 0.3); transition: 0.4s;">
-                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px;">ENGINEERING FOR 150CC</p>
+                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px; text-align: center;">ENGINEERING FOR 150CC</p>
             </div>
 
             <div class="gallery-item">
                 <img src="WhatsApp Image 2026-02-09 at 4.25.40 PM.jpeg" alt="VCRT View 2" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0, 243, 255, 0.3); transition: 0.4s;">
-                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px;">150CC ENGINE</p>
+                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px; text-align: center;">150CC ENGINE</p>
             </div>
 
             <div class="gallery-item">
                 <img src="WhatsApp Image 2026-02-09 at 2.54.54 PM.jpeg" alt="VCRT View 3" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0, 243, 255, 0.3); transition: 0.4s;">
-                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px;">150CC INTRODUCTION</p>
+                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px; text-align: center;">150CC INTRODUCTION</p>
             </div>
-
         </div>
     </div>
 
@@ -262,6 +288,51 @@
             const val = prompt(`Enter ${type} amount:`);
             if (val) alert(`${type.toUpperCase()} Logged: $${val}`);
         }
+
+        // INITIALIZE CHART.JS CHART
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
+                    datasets: [{
+                        label: 'Lap Completion Rate (%)',
+                        data: [85, 92, 78], // Dummy placeholder telemetry data
+                        backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                        borderColor: '#00f3ff',
+                        borderWidth: 2,
+                        borderRadius: 5,
+                        hoverBackgroundColor: 'rgba(0, 243, 255, 0.5)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#666',
+                                font: { family: 'Inter', size: 10 }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#222' },
+                            ticks: { color: '#666', font: { family: 'Inter' } },
+                            beginAtZero: true,
+                            max: 100
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        });
     </script>
 
 </body>
