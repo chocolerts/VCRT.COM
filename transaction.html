@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCRT | Transaction Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --dark-bg: #050505;
+            --neon-outline: 0 0 10px var(--neon-blue);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            padding: 40px 20px;
+        }
+
+        .ledger-container {
+            background: #0a0a0a;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #222;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            transition: 0.4s;
+        }
+
+        .ledger-container:hover {
+            border-color: var(--neon-blue);
+            box-shadow: var(--neon-outline);
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 6px;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 5px;
+            text-shadow: var(--neon-outline);
+        }
+
+        h2 {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            color: #666;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+            margin-left: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--neon-blue);
+            background: #151515;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 25px;
+            color: #444;
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--neon-blue);
+        }
+
+        .recent-logs {
+            margin-top: 30px;
+            border-top: 1px solid #222;
+            padding-top: 20px;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #111;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ledger-container">
+        <div class="brand-name">VCRT</div>
+        <h2>LOG TRANSACTION // CORE_FINANCE</h2>
+        
+        <form id="transactionForm">
+            <div class="input-group">
+                <label>Vehicle Class Target</label>
+                <select id="vehicleClass" required>
+                    <option value="150CC">150CC (FSAE)</option>
+                    <option value="600CC">600CC (FSM)</option>
+                    <option value="EV">EV (FUTURE TECH)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Allocation Type</label>
+                <select id="txType" required>
+                    <option value="income">System Funding (+)</option>
+                    <option value="expense">R&D / Material Cost (-)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Credits / Amount ($)</label>
+                <input type="number" id="txAmount" placeholder="e.g., 500" min="1" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Execute Ledger Entry</button>
+        </form>
+
+        <div class="recent-logs">
+            <p style="font-size: 0.65rem; color: #555; letter-spacing: 2px; text-transform: uppercase;">Recent Core Updates</p>
+            <div id="logsContainer"></div>
+        </div>
+
+        <a href="index.html" class="back-link">← RETURN TO DASHBOARD SYSTEM</a>
+    </div>
+
+    <script>
+        // Set up LocalStorage transaction storage
+        const getTransactions = () => JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+        
+        // Render simple transaction list
+        function renderLogs() {
+            const txs = getTransactions().slice(-3).reverse(); // show last 3
+            const container = document.getElementById('logsContainer');
+            container.innerHTML = txs.map(t => `
+                <div class="log-item">
+                    <span style="color: #888;">${t.vClass}</span>
+                    <span style="color: ${t.type === 'income' ? '#00ffaa' : '#ff3b30'};">
+                        ${t.type === 'income' ? '+' : '-'}$${t.amount}
+                    </span>
+                </div>
+            `).join('') || '<p style="font-size: 0.7rem; color: #444;">No logs recorded yet.</p>';
+        }
+
+        document.getElementById('transactionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const vClass = document.getElementById('vehicleClass').value;
+            const type = document.getElementById('txType').value;
+            const amount = parseFloat(document.getElementById('txAmount').value);
+
+            const newTx = { vClass, type, amount, timestamp: Date.now() };
+            const currentTxs = getTransactions();
+            currentTxs.push(newTx);
+
+            localStorage.setItem('vcrt_transactions', JSON.stringify(currentTxs));
+            
+            alert(`LEDGER UPDATE: $${amount} allocated to ${vClass}`);
+            document.getElementById('transactionForm').reset();
+            renderLogs();
+        });
+
+        // Init logs on load
+        renderLogs();
+    </script>
+
+</body>
+</html>
