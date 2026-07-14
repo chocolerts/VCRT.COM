@@ -125,12 +125,12 @@
         <form id="loginForm">
             <div class="input-group">
                 <label>System Identifier</label>
-                <input type="text" placeholder="Username" required>
+                <input type="text" id="username" placeholder="Username" required>
             </div>
             
             <div class="input-group">
                 <label>Access Protocol</label>
-                <input type="password" placeholder="Password" required>
+                <input type="password" id="password" placeholder="Password" required>
             </div>
 
             <button type="submit" class="btn-login">Initialize Session</button>
@@ -142,9 +142,22 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Authentication Request Sent to VCRT Core.');
-            // In a real app, you'd redirect to the dashboard here:
-            // window.location.href = "index.html"; 
+            
+            // 1. Capture user entries
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+
+            // 2. CONFIGURE YOUR CUSTOM CREDENTIALS HERE
+            const VALID_USER = "admin";
+            const VALID_PASS = "vcrt2026";
+
+            // 3. Authenticate logic
+            if (usernameInput === VALID_USER && passwordInput === VALID_PASS) {
+                alert('ACCESS GRANTED: Core Session Initialized.');
+                window.location.href = "index.html"; 
+            } else {
+                alert('ACCESS DENIED: Invalid Credentials. Security protocol active.');
+            }
         });
     </script>
 
