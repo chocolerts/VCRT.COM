@@ -202,13 +202,12 @@
 
         <div class="dash-menu">
             <div class="menu-row">
-    <a href="vehicle.html" class="dash-link">2026</a>
-    <a href="#metrics-dashboard" class="dash-link" style="color: var(--neon-blue);">Dashboard</a>
-    <a href="transaction.html" class="dash-link">Log Transaction</a> <!-- Added Link -->
-    <a href="#" class="dash-link">Team</a>
-    <a href="#" class="dash-link">Partners</a>
-    <a href="#" class="dash-link">Achievements</a>
-</div>
+                <a href="vehicle.html" class="dash-link">2026</a>
+                <a href="#metrics-dashboard" class="dash-link" style="color: var(--neon-blue);">Dashboard</a>
+                <a href="#" class="dash-link">Team</a>
+                <a href="#" class="dash-link">Partners</a>
+                <a href="#" class="dash-link">Achievements</a>
+            </div>
             <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
                 <a href="#" class="dash-link">History</a>
                 <a href="signin.html" class="dash-link">Sign In</a>
@@ -329,72 +328,11 @@
                         x: {
                             grid: { display: false },
                             ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
-                                
-        document.addEventListener("DOMContentLoaded", function () {
-    const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
-    
-    // 1. Retrieve transaction ledger from LocalStorage
-    const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-    
-    // 2. Set default baseline budgets for the classes
-    let finances = {
-        '150CC': 1200,  // Base funding starting points
-        '600CC': 3000,
-        'EV': 5000
-    };
-
-    // 3. Process existing transactions to calculate net budget
-    transactions.forEach(tx => {
-        const key = tx.vClass; // '150CC', '600CC', or 'EV'
-        if (finances.hasOwnProperty(key)) {
-            if (tx.type === 'income') {
-                finances[key] += tx.amount;
-            } else if (tx.type === 'expense') {
-                finances[key] -= tx.amount;
-            }
-        }
-    });
-
-    // 4. Initialize Chart.js with dynamic data
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
-            datasets: [{
-                label: 'Available Class Budget ($)',
-                data: [finances['150CC'], finances['600CC'], finances['EV']], 
-                backgroundColor: 'rgba(0, 243, 255, 0.15)',
-                borderColor: '#00f3ff',
-                borderWidth: 2,
-                borderRadius: 5,
-                hoverBackgroundColor: 'rgba(0, 243, 255, 0.4)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#aaa',
-                        font: { family: 'Inter', size: 10 }
+                        }
                     }
                 }
-            },
-            scales: {
-                y: {
-                    grid: { color: '#1a1a1a' },
-                    ticks: { color: '#666', font: { family: 'Inter' } },
-                    beginAtZero: true
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
-                }
-            }
-        }
-    });
-});
+            });
+        });
     </script>
 
 </body>
