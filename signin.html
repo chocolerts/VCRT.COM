@@ -9,6 +9,7 @@
         :root {
             --neon-blue: #00f3ff;
             --dark-bg: #050505;
+            --nav-height: 110px;
             --neon-outline: 0 0 10px var(--neon-blue);
         }
 
@@ -17,11 +18,85 @@
             font-family: 'Inter', sans-serif;
             background-color: #000;
             color: white;
+            padding-top: var(--nav-height);
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER / DASHBOARD MENU */
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--dark-bg);
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: auto;
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.6rem;
+            color: #ffffff;
+            text-shadow: var(--neon-outline);
+            text-decoration: none;
+        }
+
+        .dash-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .menu-row { display: flex; gap: 25px; }
+
+        .dash-link {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dash-link:hover, .active {
+            opacity: 1;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
+        }
+
+        /* CONTAINER CONTENT */
+        .main-container {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            padding: 40px 20px;
         }
 
         .login-container {
@@ -40,7 +115,7 @@
             box-shadow: var(--neon-outline);
         }
 
-        .brand-name {
+        .brand-title {
             font-weight: 900;
             letter-spacing: 8px;
             font-size: 2rem;
@@ -118,31 +193,52 @@
 </head>
 <body>
 
-    <div class="login-container">
-        <div class="brand-name">VCRT</div>
-        <p style="color: #444; font-size: 0.7rem; margin-bottom: 30px; letter-spacing: 2px;">ACCESS RESTRICTED // CORE_AUTH</p>
-        
-        <form id="loginForm">
-            <div class="input-group">
-                <label>System Identifier</label>
-                <input type="text" id="usernameInput" placeholder="Username" required>
+    <header class="dashboard-header">
+        <div class="brand-container">
+            <a href="index.html" class="brand-name">VCRT</a>
+        </div>
+
+        <div class="dash-menu">
+            <div class="menu-row">
+                <a href="vehicle.html" class="dash-link">2026</a>
+                <a href="index.html" class="dash-link">Dashboard</a>
+                <a href="#" class="dash-link">Team</a>
+                <a href="#" class="dash-link">Partners</a>
+                <a href="#" class="dash-link">Achievements</a>
             </div>
+            <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
+                <a href="#" class="dash-link">History</a>
+                <a href="transaction.html" class="dash-link">Transactions</a>
+                <a href="signin.html" class="dash-link active">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="login-container">
+            <div class="brand-title">VCRT</div>
+            <p style="color: #444; font-size: 0.7rem; margin-bottom: 30px; letter-spacing: 2px;">ACCESS RESTRICTED // CORE_AUTH</p>
             
-            <div class="input-group">
-                <label>Access Protocol</label>
-                <input type="password" id="passwordInput" placeholder="Password" required>
-            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>System Identifier</label>
+                    <input type="text" id="usernameInput" placeholder="Username" required>
+                </div>
+                
+                <div class="input-group">
+                    <label>Access Protocol</label>
+                    <input type="password" id="passwordInput" placeholder="Password" required>
+                </div>
 
-            <button type="submit" class="btn-login">Initialize Session</button>
-        </form>
+                <button type="submit" class="btn-login">Initialize Session</button>
+            </form>
 
-        <a href="index.html" class="back-link">← RETURN TO MAIN INTERFACE</a>
+            <a href="index.html" class="back-link">← RETURN TO MAIN INTERFACE</a>
+        </div>
     </div>
 
     <script>
-        // ============================================================
-        // TETAPKAN USERNAME & PASSWORD PILIHAN ANDA DI SINI
-        // ============================================================
+        // TETAPKAN USERNAME & PASSWORD DI SINI:
         const VALID_USERNAME = "admin";
         const VALID_PASSWORD = "password123";
 
@@ -152,13 +248,9 @@
             const usernameEntered = document.getElementById('usernameInput').value;
             const passwordEntered = document.getElementById('passwordInput').value;
 
-            // Semak adakah input sepadan dengan Username & Password yang anda tetapkan
             if (usernameEntered === VALID_USERNAME && passwordEntered === VALID_PASSWORD) {
-                // Simpan status Log Masuk dalam LocalStorage
                 localStorage.setItem('isLoggedIn', 'true');
                 alert('Authentication Successful! Accessing Core Transaction Ledger.');
-                
-                // Pindah ke laman transaksi
                 window.location.href = "transaction.html"; 
             } else {
                 alert('ACCESS DENIED: Username atau Password salah!');
