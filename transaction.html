@@ -141,9 +141,29 @@
             padding: 8px 0;
             border-bottom: 1px solid #111;
         }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: #ff3b30;
+            cursor: pointer;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            width: 100%;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
+
+    <script>
+        // SEMAKAN KESELAMATAN: Pastikan pengguna telah log masuk
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert('ACCESS DENIED. Sila Sign In terlebih dahulu!');
+            window.location.href = 'signin.html';
+        }
+    </script>
 
     <div class="ledger-container">
         <div class="brand-name">VCRT</div>
@@ -181,15 +201,14 @@
         </div>
 
         <a href="index.html" class="back-link">← RETURN TO DASHBOARD SYSTEM</a>
+        <button class="btn-logout" onclick="logout()">[ SIGN OUT ]</button>
     </div>
 
     <script>
-        // Set up LocalStorage transaction storage
         const getTransactions = () => JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
         
-        // Render simple transaction list
         function renderLogs() {
-            const txs = getTransactions().slice(-3).reverse(); // show last 3
+            const txs = getTransactions().slice(-3).reverse(); 
             const container = document.getElementById('logsContainer');
             container.innerHTML = txs.map(t => `
                 <div class="log-item">
@@ -219,7 +238,11 @@
             renderLogs();
         });
 
-        // Init logs on load
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'signin.html';
+        }
+
         renderLogs();
     </script>
 
