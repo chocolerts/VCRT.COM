@@ -248,70 +248,78 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Ambil transaksi daripada LocalStorage
-            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-            
-            // Pengiraan jumlah baki dana mengikut Vehicle Class Target
-            const totals = {
-                '150CC': 0,
-                '600CC': 0,
-                'EV': 0
-            };
+<script>
+    function addMoney(type) {
+        const val = prompt(`Enter ${type} amount:`);
+        if (val) alert(`${type.toUpperCase()} Logged: $${val}`);
+    }
 
-            transactions.forEach(tx => {
-                if (totals.hasOwnProperty(tx.vClass)) {
-                    if (tx.type === 'income') {
-                        totals[tx.vClass] += tx.amount;
-                    } else if (tx.type === 'expense') {
-                        totals[tx.vClass] -= tx.amount;
-                    }
-                }
-            });
+    // INITIALIZE CHART.JS CHART
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Ambil data transaksi dari LocalStorage
+        const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+        
+        // 2. Sediakan bekas untuk mengira jumlah baki dana setiap kategori
+        const totals = {
+            '150CC': 0,
+            '600CC': 0,
+            'EV': 0
+        };
 
-            const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
-                    datasets: [{
-                        label: 'Total Net Funds Available ($)',
-                        data: [totals['150CC'], totals['600CC'], totals['EV']],
-                        backgroundColor: 'rgba(0, 243, 255, 0.2)',
-                        borderColor: '#00f3ff',
-                        borderWidth: 2,
-                        borderRadius: 5,
-                        hoverBackgroundColor: 'rgba(0, 243, 255, 0.5)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#666',
-                                font: { family: 'Inter', size: 10 }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            grid: { color: '#222' },
-                            ticks: { color: '#666', font: { family: 'Inter' } },
-                            beginAtZero: true
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
-                        }
-                    }
+        // 3. Kira jumlah transaksi (+ System Funding, - R&D / Material Cost)[cite: 1]
+        transactions.forEach(tx => {
+            if (totals.hasOwnProperty(tx.vClass)) {
+                if (tx.type === 'income') {
+                    totals[tx.vClass] += tx.amount;
+                } else if (tx.type === 'expense') {
+                    totals[tx.vClass] -= tx.amount;
                 }
-            });
+            }
         });
-    </script>
+
+        // 4. Masukkan data yang dikira ke dalam Chart.js
+        const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
+                datasets: [{
+                    label: 'Total Net Funding ($)', // Label ditukar kepada nilai kewangan
+                    data: [totals['150CC'], totals['600CC'], totals['EV']], // <--- Menggunakan data dinamik!
+                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
+                    borderColor: '#00f3ff',
+                    borderWidth: 2,
+                    borderRadius: 5,
+                    hoverBackgroundColor: 'rgba(0, 243, 255, 0.5)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#666',
+                            font: { family: 'Inter', size: 10 }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#222' },
+                        ticks: { color: '#666', font: { family: 'Inter' } },
+                        beginAtZero: true
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
+                    }
+                }
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
