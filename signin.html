@@ -125,12 +125,12 @@
         <form id="loginForm">
             <div class="input-group">
                 <label>System Identifier</label>
-                <input type="text" placeholder="Username" required>
+                <input type="text" id="usernameInput" placeholder="Username" required>
             </div>
             
             <div class="input-group">
                 <label>Access Protocol</label>
-                <input type="password" placeholder="Password" required>
+                <input type="password" id="passwordInput" placeholder="Password" required>
             </div>
 
             <button type="submit" class="btn-login">Initialize Session</button>
@@ -140,13 +140,29 @@
     </div>
 
     <script>
+        // ============================================================
+        // TETAPKAN USERNAME & PASSWORD PILIHAN ANDA DI SINI
+        // ============================================================
+        const VALID_USERNAME = "admin";
+        const VALID_PASSWORD = "password123";
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Simpan status Log Masuk
-            localStorage.setItem('isLoggedIn', 'true');
-            alert('Authentication Successful! Accessing Core Transaction Ledger.');
-            // Bawa pengguna ke fail transaksi selepas log masuk
-            window.location.href = "transaction.html"; 
+
+            const usernameEntered = document.getElementById('usernameInput').value;
+            const passwordEntered = document.getElementById('passwordInput').value;
+
+            // Semak adakah input sepadan dengan Username & Password yang anda tetapkan
+            if (usernameEntered === VALID_USERNAME && passwordEntered === VALID_PASSWORD) {
+                // Simpan status Log Masuk dalam LocalStorage
+                localStorage.setItem('isLoggedIn', 'true');
+                alert('Authentication Successful! Accessing Core Transaction Ledger.');
+                
+                // Pindah ke laman transaksi
+                window.location.href = "transaction.html"; 
+            } else {
+                alert('ACCESS DENIED: Username atau Password salah!');
+            }
         });
     </script>
 
