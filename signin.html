@@ -142,9 +142,11 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Authentication Request Sent to VCRT Core.');
-            // In a real app, you'd redirect to the dashboard here:
-            // window.location.href = "index.html"; 
+            // Simpan status Log Masuk
+            localStorage.setItem('isLoggedIn', 'true');
+            alert('Authentication Successful! Accessing Core Transaction Ledger.');
+            // Bawa pengguna ke fail transaksi selepas log masuk
+            window.location.href = "transaction.html"; 
         });
     </script>
 
