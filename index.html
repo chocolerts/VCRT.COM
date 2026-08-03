@@ -22,7 +22,6 @@
             padding-top: var(--nav-height);
         }
 
-        /* DASHBOARD HEADER */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -85,7 +84,6 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* MAIN CONTENT - VCRT CORE SECTION */
         .main-content {
             padding: 60px 10%;
             text-align: center;
@@ -102,7 +100,6 @@
             letter-spacing: -1px;
         }
 
-        /* CHART DASHBOARD CONTAINER */
         .chart-container {
             background: #111;
             border: 1px solid #222;
@@ -175,7 +172,6 @@
             color: #000;
         }
 
-        /* Decor Line for the cards */
         .class-card::after {
             content: '';
             position: absolute;
@@ -210,6 +206,7 @@
             </div>
             <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
                 <a href="#" class="dash-link">History</a>
+                <a href="transaction.html" class="dash-link" style="color: var(--neon-blue);">Transactions</a>
                 <a href="signin.html" class="dash-link">Sign In</a>
             </div>
         </div>
@@ -223,7 +220,7 @@
 
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
-                <span style="color: var(--neon-blue)">//</span> Vehicle Class Performance Metrics
+                <span style="color: var(--neon-blue)">//</span> Live Transaction Funds ($)
             </h3>
             <div style="position: relative; height:300px; width:100%">
                 <canvas id="vcrtAnalyticsChart"></canvas>
@@ -251,46 +248,28 @@
         </div>
     </main>
 
-    <div id="gallery-section" style="margin-top: 200px; padding-bottom: 100px;">
-        <h2 style="color: #222; letter-spacing: 15px; font-size: 0.7rem; margin-bottom: 50px; text-align: center;">
-            VCRT // VISUAL_ASSETS
-        </h2>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
-            <div class="gallery-item">
-                <img src="WhatsApp Image 2026-02-09 at 4.25.38 PM.jpeg" alt="VCRT View 1" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0, 243, 255, 0.3); transition: 0.4s;">
-                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px; text-align: center;">ENGINEERING FOR 150CC</p>
-            </div>
-
-            <div class="gallery-item">
-                <img src="WhatsApp Image 2026-02-09 at 4.25.40 PM.jpeg" alt="VCRT View 2" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0, 243, 255, 0.3); transition: 0.4s;">
-                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px; text-align: center;">150CC ENGINE</p>
-            </div>
-
-            <div class="gallery-item">
-                <img src="WhatsApp Image 2026-02-09 at 2.54.54 PM.jpeg" alt="VCRT View 3" style="width: 100%; height: 400px; object-fit: cover; border-radius: 10px; border: 1px solid rgba(0, 243, 255, 0.3); transition: 0.4s;">
-                <p style="font-size: 0.6rem; color: #444; margin-top: 10px; letter-spacing: 2px; text-align: center;">150CC INTRODUCTION</p>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        .gallery-item img:hover {
-            border-color: var(--neon-blue) !important;
-            box-shadow: var(--neon-outline);
-            transform: scale(1.02);
-            filter: brightness(1.2);
-        }
-    </style>
-
     <script>
-        function addMoney(type) {
-            const val = prompt(`Enter ${type} amount:`);
-            if (val) alert(`${type.toUpperCase()} Logged: $${val}`);
-        }
-
-        // INITIALIZE CHART.JS CHART
         document.addEventListener("DOMContentLoaded", function () {
+            // Ambil transaksi daripada LocalStorage
+            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+            
+            // Pengiraan jumlah baki dana mengikut Vehicle Class Target
+            const totals = {
+                '150CC': 0,
+                '600CC': 0,
+                'EV': 0
+            };
+
+            transactions.forEach(tx => {
+                if (totals.hasOwnProperty(tx.vClass)) {
+                    if (tx.type === 'income') {
+                        totals[tx.vClass] += tx.amount;
+                    } else if (tx.type === 'expense') {
+                        totals[tx.vClass] -= tx.amount;
+                    }
+                }
+            });
+
             const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
             
             new Chart(ctx, {
@@ -298,8 +277,8 @@
                 data: {
                     labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
                     datasets: [{
-                        label: 'Lap Completion Rate (%)',
-                        data: [85, 92, 78], // Dummy placeholder telemetry data
+                        label: 'Total Net Funds Available ($)',
+                        data: [totals['150CC'], totals['600CC'], totals['EV']],
                         backgroundColor: 'rgba(0, 243, 255, 0.2)',
                         borderColor: '#00f3ff',
                         borderWidth: 2,
@@ -322,8 +301,7 @@
                         y: {
                             grid: { color: '#222' },
                             ticks: { color: '#666', font: { family: 'Inter' } },
-                            beginAtZero: true,
-                            max: 100
+                            beginAtZero: true
                         },
                         x: {
                             grid: { display: false },
