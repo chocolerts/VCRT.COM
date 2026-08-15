@@ -22,7 +22,7 @@
             padding-top: var(--nav-height);
         }
 
-        /* UPDATED NAVIGATION CSS */
+        /* NAVIGATION CSS */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -91,7 +91,7 @@
         }
 
         .core-header {
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
         .core-header h1 {
@@ -101,6 +101,44 @@
             letter-spacing: -1px;
         }
 
+        /* FINANCIAL SUMMARY GRID */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto 50px auto;
+        }
+
+        .summary-card {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .summary-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+        }
+
+        .summary-card h3 {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #888;
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+        }
+
+        .summary-card .amount {
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        /* CHART & CLASS GRID */
         .chart-container {
             background: #111;
             border: 1px solid #222;
@@ -210,6 +248,22 @@
             <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
         </div>
 
+        <!-- NEW 3 FINANCIAL BOXES -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Income</h3>
+                <p class="amount" id="totalIncome" style="color: #00ffaa;">$0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Total Expenses</h3>
+                <p class="amount" id="totalExpenses" style="color: #ff3b30;">$0</p>
+            </div>
+            <div class="summary-card">
+                <h3>Net Balance</h3>
+                <p class="amount" id="totalBalance" style="color: var(--neon-blue);">$0</p>
+            </div>
+        </div>
+
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
                 <span style="color: var(--neon-blue)">//</span> Live Transaction Funds ($)
@@ -244,6 +298,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
         
+        // FINANCIAL CALCULATIONS
+        let incomeSum = 0;
+        let expenseSum = 0;
+
         const totals = {
             '150CC': 0,
             '600CC': 0,
@@ -251,6 +309,12 @@
         };
 
         transactions.forEach(tx => {
+            if (tx.type === 'income') {
+                incomeSum += tx.amount;
+            } else if (tx.type === 'expense') {
+                expenseSum += tx.amount;
+            }
+
             if (totals.hasOwnProperty(tx.vClass)) {
                 if (tx.type === 'income') {
                     totals[tx.vClass] += tx.amount;
@@ -260,6 +324,19 @@
             }
         });
 
+        const netBalance = incomeSum - expenseSum;
+
+        // DISPLAY SUMMARY DATA
+        document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
+        document.getElementById('totalExpenses').innerText = `$${expenseSum.toLocaleString()}`;
+        
+        const balanceEl = document.getElementById('totalBalance');
+        balanceEl.innerText = `$${netBalance.toLocaleString()}`;
+        if (netBalance < 0) {
+            balanceEl.style.color = '#ff3b30'; // Red if negative balance
+        }
+
+        // INITIALIZE CHART.JS CHART
         const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
         
         new Chart(ctx, {
