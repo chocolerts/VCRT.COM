@@ -10,7 +10,7 @@
         :root {
             --neon-blue: #00f3ff; 
             --dark-bg: #050505;
-            --nav-height: 110px;
+            --nav-height: 80px;
             --neon-outline: 0 0 10px var(--neon-blue);
         }
 
@@ -22,6 +22,7 @@
             padding-top: var(--nav-height);
         }
 
+        /* UPDATED NAVIGATION CSS */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -35,6 +36,7 @@
             align-items: center;
             padding: 0 40px;
             z-index: 1000;
+            box-sizing: border-box;
         }
 
         .brand-container {
@@ -50,25 +52,23 @@
             font-size: 1.6rem;
             color: #ffffff;
             text-shadow: var(--neon-outline);
+            text-decoration: none;
         }
 
         .dash-menu {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 30px;
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        .menu-row { display: flex; gap: 25px; }
-
         .dash-link {
             text-decoration: none;
             color: #ffffff;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             opacity: 0.6;
@@ -78,12 +78,13 @@
             cursor: pointer;
         }
 
-        .dash-link:hover {
+        .dash-link:hover, .active {
             opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--neon-outline);
         }
 
+        /* MAIN CONTENT */
         .main-content {
             padding: 60px 10%;
             text-align: center;
@@ -193,23 +194,14 @@
 
     <header class="dashboard-header">
         <div class="brand-container">
-            <div class="brand-name">VCRT</div>
+            <a href="index.html" class="brand-name">VCRT</a>
         </div>
 
-        <div class="dash-menu">
-            <div class="menu-row">
-                <a href="vehicle.html" class="dash-link">2026</a>
-                <a href="#metrics-dashboard" class="dash-link" style="color: var(--neon-blue);">Dashboard</a>
-                <a href="#" class="dash-link">Team</a>
-                <a href="#" class="dash-link">Partners</a>
-                <a href="#" class="dash-link">Achievements</a>
-            </div>
-            <div class="menu-row" style="border-top: 1px solid #222; padding-top: 8px;">
-                <a href="#" class="dash-link">History</a>
-                <a href="transaction.html" class="dash-link" style="color: var(--neon-blue);">Transactions</a>
-                <a href="signin.html" class="dash-link">Sign In</a>
-            </div>
-        </div>
+        <nav class="dash-menu">
+            <a href="index.html" class="dash-link active">Dashboard</a>
+            <a href="transaction.html" class="dash-link">Transactions</a>
+            <a href="signin.html" class="dash-link">Sign In</a>
+        </nav>
     </header>
 
     <main class="main-content">
@@ -249,24 +241,15 @@
     </main>
 
 <script>
-    function addMoney(type) {
-        const val = prompt(`Enter ${type} amount:`);
-        if (val) alert(`${type.toUpperCase()} Logged: $${val}`);
-    }
-
-    // INITIALIZE CHART.JS CHART
     document.addEventListener("DOMContentLoaded", function () {
-        // 1. Ambil data transaksi dari LocalStorage
         const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
         
-        // 2. Sediakan bekas untuk mengira jumlah baki dana setiap kategori
         const totals = {
             '150CC': 0,
             '600CC': 0,
             'EV': 0
         };
 
-        // 3. Kira jumlah transaksi (+ System Funding, - R&D / Material Cost)[cite: 1]
         transactions.forEach(tx => {
             if (totals.hasOwnProperty(tx.vClass)) {
                 if (tx.type === 'income') {
@@ -277,7 +260,6 @@
             }
         });
 
-        // 4. Masukkan data yang dikira ke dalam Chart.js
         const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
         
         new Chart(ctx, {
@@ -285,8 +267,8 @@
             data: {
                 labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
                 datasets: [{
-                    label: 'Total Net Funding ($)', // Label ditukar kepada nilai kewangan
-                    data: [totals['150CC'], totals['600CC'], totals['EV']], // <--- Menggunakan data dinamik!
+                    label: 'Total Net Funding ($)',
+                    data: [totals['150CC'], totals['600CC'], totals['EV']],
                     backgroundColor: 'rgba(0, 243, 255, 0.2)',
                     borderColor: '#00f3ff',
                     borderWidth: 2,
