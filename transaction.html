@@ -25,7 +25,7 @@
             flex-direction: column;
         }
 
-        /* UPDATED NAVIGATION CSS */
+        /* NAVIGATION CSS */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -199,20 +199,6 @@
             color: var(--neon-blue);
         }
 
-        .recent-logs {
-            margin-top: 30px;
-            border-top: 1px solid #222;
-            padding-top: 20px;
-        }
-
-        .log-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            padding: 8px 0;
-            border-bottom: 1px solid #111;
-        }
-
         .btn-logout {
             background: none;
             border: none;
@@ -262,6 +248,19 @@
                     </select>
                 </div>
 
+                <!-- 6 VARIANT CATEGORIES -->
+                <div class="input-group">
+                    <label>System Component Variant</label>
+                    <select id="variantType" required>
+                        <option value="Brake System">Brake System</option>
+                        <option value="Engine & Drivetrain">Engine & Drivetrain</option>
+                        <option value="Suspension & Shocks">Suspension & Shocks</option>
+                        <option value="Frame & Body">Frame & Body</option>
+                        <option value="Instruments & Wiring">Instruments & Wiring</option>
+                        <option value="Wheels & Tires">Wheels & Tires</option>
+                    </select>
+                </div>
+
                 <div class="input-group">
                     <label>Allocation Type</label>
                     <select id="txType" required>
@@ -278,11 +277,6 @@
                 <button type="submit" class="btn-submit">Execute Ledger Entry</button>
             </form>
 
-            <div class="recent-logs">
-                <p style="font-size: 0.65rem; color: #555; letter-spacing: 2px; text-transform: uppercase;">Recent Core Updates</p>
-                <div id="logsContainer"></div>
-            </div>
-
             <a href="index.html" class="back-link">← RETURN TO DASHBOARD SYSTEM</a>
             <button class="btn-logout" onclick="logout()">[ SIGN OUT ]</button>
         </div>
@@ -290,44 +284,29 @@
 
     <script>
         const getTransactions = () => JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-        
-        function renderLogs() {
-            const txs = getTransactions().slice(-3).reverse(); 
-            const container = document.getElementById('logsContainer');
-            container.innerHTML = txs.map(t => `
-                <div class="log-item">
-                    <span style="color: #888;">${t.vClass}</span>
-                    <span style="color: ${t.type === 'income' ? '#00ffaa' : '#ff3b30'};">
-                        ${t.type === 'income' ? '+' : '-'}$${t.amount}
-                    </span>
-                </div>
-            `).join('') || '<p style="font-size: 0.7rem; color: #444;">No logs recorded yet.</p>';
-        }
 
         document.getElementById('transactionForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const vClass = document.getElementById('vehicleClass').value;
+            const variant = document.getElementById('variantType').value;
             const type = document.getElementById('txType').value;
             const amount = parseFloat(document.getElementById('txAmount').value);
 
-            const newTx = { vClass, type, amount, timestamp: Date.now() };
+            const newTx = { vClass, variant, type, amount, timestamp: Date.now() };
             const currentTxs = getTransactions();
             currentTxs.push(newTx);
 
             localStorage.setItem('vcrt_transactions', JSON.stringify(currentTxs));
             
-            alert(`LEDGER UPDATE: $${amount} allocated to ${vClass}`);
+            alert(`LEDGER UPDATE: $${amount} allocated to ${vClass} [${variant}]`);
             document.getElementById('transactionForm').reset();
-            renderLogs();
         });
 
         function logout() {
             localStorage.removeItem('isLoggedIn');
             window.location.href = 'signin.html';
         }
-
-        renderLogs();
     </script>
 
 </body>
