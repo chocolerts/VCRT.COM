@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCRT | 150CC Class Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff; 
+            --dark-bg: #050505;
+            --nav-height: 80px;
+            --neon-outline: 0 0 10px var(--neon-blue);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: white;
+            padding-top: var(--nav-height);
+        }
+
+        /* NAVIGATION CSS */
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--dark-bg);
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: auto;
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.6rem;
+            color: #ffffff;
+            text-shadow: var(--neon-outline);
+            text-decoration: none;
+        }
+
+        .dash-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dash-link {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dash-link:hover, .active {
+            opacity: 1;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
+        }
+
+        /* CONTENT LAYOUT */
+        .container {
+            padding: 60px 10%;
+            text-align: center;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .spec-card {
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #222;
+            text-align: left;
+            transition: 0.3s;
+        }
+        
+        .spec-card:hover { border-color: var(--neon-blue); }
+
+        /* EXPENSE LEDGER SECTION */
+        .ledger-section {
+            margin-top: 60px;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            text-align: left;
+        }
+
+        .ledger-section h2 {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #222;
+            font-size: 0.85rem;
+        }
+
+        th {
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.75rem;
+        }
+
+        .no-data {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .amount-expense {
+            color: #ff3b30;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="brand-container">
+            <a href="index.html" class="brand-name">VCRT</a>
+        </div>
+
+        <nav class="dash-menu">
+            <a href="index.html" class="dash-link">Dashboard</a>
+            <a href="transaction.html" class="dash-link">Transactions</a>
+            <a href="signin.html" class="dash-link">Sign In</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1 style="font-size: 3.5rem; font-weight: 900; margin: 0;">
+            CLASS <span style="color:var(--neon-blue)">150CC</span>
+        </h1>
+        <p style="color: #666; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase;">
+            Formula Student Motorsport Spec & Expenses
+        </p>
+
+        <div class="spec-grid">
+            <div class="spec-card">
+                <h3 style="color:var(--neon-blue)">ENGINE SPEC</h3>
+                <p>150cc High-performance single-cylinder engine tuned for rapid acceleration.</p>
+            </div>
+            <div class="spec-card">
+                <h3 style="color:var(--neon-blue)">CHASSIS & AERO</h3>
+                <p>Lightweight tubular spaceframe chassis featuring carbon fiber aerodynamic components.</p>
+            </div>
+        </div>
+
+        <!-- 150CC EXPENSES LEDGER -->
+        <div class="ledger-section">
+            <h2>// 150CC Expense History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Component Variant</th>
+                        <th>Type</th>
+                        <th>Amount ($)</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <!-- Dynamic rows inserted via JS -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+            const tableBody = document.getElementById('historyTableBody');
+
+            // Filter explicitly for 150CC expenses
+            const classExpenses = transactions.filter(tx => tx.vClass === '150CC' && tx.type === 'expense');
+
+            if (classExpenses.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="no-data">No expense transactions recorded for 150CC.</td></tr>`;
+                return;
+            }
+
+            tableBody.innerHTML = classExpenses.map(tx => {
+                const date = tx.timestamp ? new Date(tx.timestamp).toLocaleDateString() : 'N/A';
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${tx.variant}</td>
+                        <td style="text-transform: uppercase; opacity: 0.8;">${tx.type}</td>
+                        <td class="amount-expense">-$${tx.amount.toLocaleString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        });
+    </script>
+
+</body>
+</html>
