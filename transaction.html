@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Transaction Ledger</title>
+    <title>VCRT | Transaction Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,13 +19,9 @@
             background-color: #000;
             color: white;
             padding-top: var(--nav-height);
-            min-height: 100vh;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* NAVIGATION CSS */
+        /* NAVIGATION BAR */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -76,150 +72,156 @@
             letter-spacing: 2px;
             opacity: 0.6;
             transition: 0.3s;
-            background: none;
-            border: none;
-            cursor: pointer;
         }
 
-        .dash-link:hover, .active {
+        .dash-link:hover, .dash-link.active {
             opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--neon-outline);
         }
 
-        /* MAIN CONTENT */
+        /* FORM CONTAINER */
         .main-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .ledger-container {
+            max-width: 650px;
+            margin: 40px auto;
             background: #0a0a0a;
-            padding: 40px;
-            border-radius: 20px;
             border: 1px solid #222;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
-            transition: 0.4s;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
-        .ledger-container:hover {
-            border-color: var(--neon-blue);
-            box-shadow: var(--neon-outline);
-        }
-
-        .brand-title {
-            font-weight: 900;
-            letter-spacing: 6px;
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 5px;
-            text-shadow: var(--neon-outline);
-        }
-
-        h2 {
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            color: #666;
-            text-transform: uppercase;
+        .form-title {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .input-group {
+        .form-title h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
 
         label {
             display: block;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             color: #888;
             margin-bottom: 8px;
-            margin-left: 5px;
+            text-transform: uppercase;
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
-            padding: 15px;
+            padding: 12px 15px;
             background: #111;
-            border: 1px solid #222;
-            border-radius: 8px;
-            color: white;
-            box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
             font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            transition: 0.3s;
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
+            outline: none;
             border-color: var(--neon-blue);
-            background: #151515;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         .btn-submit {
             width: 100%;
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
             padding: 15px;
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
             font-weight: 900;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 10px;
             transition: 0.3s;
         }
 
         .btn-submit:hover {
-            background: var(--neon-blue);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+            box-shadow: var(--neon-outline);
+            transform: translateY(-2px);
         }
 
-        .back-link {
-            display: block;
-            margin-top: 25px;
-            color: #444;
-            text-decoration: none;
-            font-size: 0.7rem;
+        /* RECENT LOG TABLE */
+        .logs-container {
+            max-width: 900px;
+            margin: 40px auto 60px auto;
+        }
+
+        .logs-title {
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0a0a0a;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #1a1a1a;
+        }
+
+        th {
+            background: #111;
+            color: #666;
+            text-transform: uppercase;
             letter-spacing: 1px;
-            text-align: center;
+            font-size: 0.75rem;
+        }
+
+        .income-text { color: #00ffaa; font-weight: bold; }
+        .expense-text { color: #ff3b30; font-weight: bold; }
+
+        .btn-delete {
+            background: transparent;
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
             transition: 0.3s;
         }
 
-        .back-link:hover {
-            color: var(--neon-blue);
-        }
-
-        .btn-logout {
-            background: none;
-            border: none;
-            color: #ff3b30;
-            cursor: pointer;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            margin-top: 15px;
-            width: 100%;
-            text-align: center;
+        .btn-delete:hover {
+            background: #ff3b30;
+            color: #fff;
         }
     </style>
 </head>
 <body>
-
-    <script>
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
-            alert('ACCESS DENIED. Sila Sign In terlebih dahulu!');
-            window.location.href = 'signin.html';
-        }
-    </script>
 
     <header class="dashboard-header">
         <div class="brand-container">
@@ -233,84 +235,155 @@
         </nav>
     </header>
 
-    <div class="main-container">
-        <div class="ledger-container">
-            <div class="brand-title">VCRT</div>
-            <h2>LOG TRANSACTION // CORE_FINANCE</h2>
-            
-            <form id="transactionForm">
-                <div class="input-group">
-                    <label>Vehicle Class Target</label>
-                    <select id="vehicleClass" required>
-                        <option value="150CC">150CC (FSAE)</option>
-                        <option value="600CC">600CC (FSM)</option>
-                        <option value="EV">EV (FUTURE TECH)</option>
+    <main class="main-container">
+        <div class="form-title">
+            <h2>LOG <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span></h2>
+        </div>
+
+        <form id="transactionForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="transType">Transaction Type</label>
+                    <select id="transType" required>
+                        <option value="expense">Expense (-)</option>
+                        <option value="income">Income (+)</option>
                     </select>
                 </div>
 
-                <!-- 9 VARIANT CATEGORIES -->
-                <div class="input-group">
-                    <label>System Component Variant</label>
-                    <select id="variantType" required>
+                <div class="form-group">
+                    <label for="vClass">Vehicle Class</label>
+                    <select id="vClass" required>
+                        <option value="150CC">150CC Class</option>
+                        <option value="600CC">600CC Class</option>
+                        <option value="EV">EV Class</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="variant">Component Variant</label>
+                    <select id="variant" required>
                         <option value="Brake System">Brake System</option>
                         <option value="Engine & Drivetrain">Engine & Drivetrain</option>
                         <option value="Suspension & Shocks">Suspension & Shocks</option>
                         <option value="Frame & Body">Frame & Body</option>
                         <option value="Instruments & Wiring">Instruments & Wiring</option>
                         <option value="Wheels & Tires">Wheels & Tires</option>
-                        <option value="Fit & Finish">Fit & Finish</option>
                         <option value="Steering System">Steering System</option>
-                        <option value="Miscellaneous">Miscellaneous</option>
+                        <option value="Miscellaneous, Fit & Finish">Miscellaneous, Fit & Finish</option>
                     </select>
                 </div>
 
-                <div class="input-group">
-                    <label>Allocation Type</label>
-                    <select id="txType" required>
-                        <option value="income">System Funding (+)</option>
-                        <option value="expense">R&D / Material Cost (-)</option>
-                    </select>
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
                 </div>
-                
-                <div class="input-group">
-                    <label>Credits / Amount ($)</label>
-                    <input type="number" id="txAmount" placeholder="e.g., 500" min="1" required>
-                </div>
+            </div>
 
-                <button type="submit" class="btn-submit">Execute Ledger Entry</button>
-            </form>
+            <div class="form-group">
+                <label for="description">Description / Item Details</label>
+                <textarea id="description" rows="3" placeholder="Enter transaction notes or part descriptions..." required></textarea>
+            </div>
 
-            <a href="index.html" class="back-link">← RETURN TO DASHBOARD SYSTEM</a>
-            <button class="btn-logout" onclick="logout()">[ SIGN OUT ]</button>
-        </div>
+            <button type="submit" class="btn-submit">Submit Transaction</button>
+        </form>
+    </main>
+
+    <div class="logs-container">
+        <div class="logs-title">// Recent Transactions</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Class</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="transactionLogBody">
+                <!-- Dynamic Log Content -->
+            </tbody>
+        </table>
     </div>
 
-    <script>
-        const getTransactions = () => JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("transactionForm");
+        const logBody = document.getElementById("transactionLogBody");
 
-        document.getElementById('transactionForm').addEventListener('submit', function(e) {
+        // LOAD AND DISPLAY TRANSACTIONS
+        function loadTransactions() {
+            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+            logBody.innerHTML = "";
+
+            if (transactions.length === 0) {
+                logBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#555;">No transactions logged yet.</td></tr>`;
+                return;
+            }
+
+            transactions.forEach((tx, index) => {
+                const row = document.createElement("tr");
+
+                // Merge legacy entries into unified category for UI rendering
+                let displayVariant = tx.variant;
+                if (displayVariant === "Fit & Finish" || displayVariant === "Miscellaneous") {
+                    displayVariant = "Miscellaneous, Fit & Finish";
+                }
+
+                const amountFormatted = tx.type === 'income' 
+                    ? `<span class="income-text">+$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
+                    : `<span class="expense-text">-$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
+
+                row.innerHTML = `
+                    <td style="color:#888;">${tx.date}</td>
+                    <td><strong>${tx.vClass}</strong></td>
+                    <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
+                    <td>${displayVariant}</td>
+                    <td>${tx.description}</td>
+                    <td>${amountFormatted}</td>
+                    <td><button class="btn-delete" onclick="deleteTransaction(${index})">Remove</button></td>
+                `;
+
+                logBody.appendChild(row);
+            });
+        }
+
+        // SAVE NEW TRANSACTION
+        form.addEventListener("submit", function (e) {
             e.preventDefault();
-            
-            const vClass = document.getElementById('vehicleClass').value;
-            const variant = document.getElementById('variantType').value;
-            const type = document.getElementById('txType').value;
-            const amount = parseFloat(document.getElementById('txAmount').value);
 
-            const newTx = { vClass, variant, type, amount, timestamp: Date.now() };
-            const currentTxs = getTransactions();
-            currentTxs.push(newTx);
+            const newTx = {
+                type: document.getElementById("transType").value,
+                vClass: document.getElementById("vClass").value,
+                variant: document.getElementById("variant").value,
+                amount: parseFloat(document.getElementById("amount").value),
+                description: document.getElementById("description").value,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            };
 
-            localStorage.setItem('vcrt_transactions', JSON.stringify(currentTxs));
-            
-            alert(`LEDGER UPDATE: $${amount} allocated to ${vClass} [${variant}]`);
-            document.getElementById('transactionForm').reset();
+            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+            transactions.unshift(newTx);
+            localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
+
+            form.reset();
+            loadTransactions();
         });
 
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            window.location.href = 'signin.html';
-        }
-    </script>
+        // DELETE TRANSACTION
+        window.deleteTransaction = function (index) {
+            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
+            transactions.splice(index, 1);
+            localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
+            loadTransactions();
+        };
+
+        loadTransactions();
+    });
+</script>
 
 </body>
 </html>
