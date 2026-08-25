@@ -131,7 +131,6 @@
             transition: 0.3s;
         }
 
-        /* STYLE FOR DATE INPUT ICON */
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
             cursor: pointer;
@@ -237,7 +236,7 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Dashboard</a>
             <a href="transaction.html" class="dash-link active">Transactions</a>
-            <a href="signin.html" class="dash-link">Sign In</a>
+            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </nav>
     </header>
 
@@ -327,14 +326,28 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // AUTHENTICATION STATE TOGGLE
+        const authLink = document.getElementById("authLink");
+        const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
+
+        if (isLoggedIn && authLink) {
+            authLink.innerText = "Sign Out";
+            authLink.href = "#";
+            authLink.style.color = "#ff3b30";
+            authLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("vcrt_is_logged_in");
+                localStorage.removeItem("vcrt_user");
+                window.location.reload();
+            });
+        }
+
         const form = document.getElementById("transactionForm");
         const logBody = document.getElementById("transactionLogBody");
         const dateInput = document.getElementById("txDate");
 
-        // SET DEFAULT DATE FIELD TO TODAY
         dateInput.valueAsDate = new Date();
 
-        // LOAD AND DISPLAY TRANSACTIONS
         function loadTransactions() {
             const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
             logBody.innerHTML = "";
@@ -370,11 +383,9 @@
             });
         }
 
-        // SAVE NEW TRANSACTION WITH USER DATE
         form.addEventListener("submit", function (e) {
             e.preventDefault();
 
-            // Format selected YYYY-MM-DD string to standard readable format
             const inputDateVal = dateInput.value;
             let formattedDate = inputDateVal;
             if (inputDateVal) {
@@ -397,11 +408,10 @@
             localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
 
             form.reset();
-            dateInput.valueAsDate = new Date(); // Reset date back to today
+            dateInput.valueAsDate = new Date();
             loadTransactions();
         });
 
-        // DELETE TRANSACTION
         window.deleteTransaction = function (index) {
             const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
             transactions.splice(index, 1);
