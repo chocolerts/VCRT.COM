@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Core Authentication</title>
+    <title>VCRT | Sign In</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,13 +19,9 @@
             background-color: #000;
             color: white;
             padding-top: var(--nav-height);
-            min-height: 100vh;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* UPDATED NAVIGATION CSS */
+        /* NAVIGATION BAR */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -76,116 +72,104 @@
             letter-spacing: 2px;
             opacity: 0.6;
             transition: 0.3s;
-            background: none;
-            border: none;
-            cursor: pointer;
         }
 
-        .dash-link:hover, .active {
+        .dash-link:hover, .dash-link.active {
             opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--neon-outline);
         }
 
-        /* MAIN CONTENT */
+        /* SIGN IN CONTAINER */
         .main-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .login-container {
+            max-width: 420px;
+            margin: 80px auto;
             background: #0a0a0a;
-            padding: 50px;
-            border-radius: 20px;
             border: 1px solid #222;
-            width: 100%;
-            max-width: 400px;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
             text-align: center;
-            transition: 0.4s;
         }
 
-        .login-container:hover {
-            border-color: var(--neon-blue);
-            box-shadow: var(--neon-outline);
-        }
-
-        .brand-title {
-            font-weight: 900;
-            letter-spacing: 8px;
+        .form-title h2 {
             font-size: 2rem;
-            margin-bottom: 30px;
-            text-shadow: var(--neon-outline);
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin: 0 0 10px 0;
         }
 
-        .input-group {
+        .form-subtext {
+            color: #666;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
 
         label {
             display: block;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #666;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #888;
             margin-bottom: 8px;
-            margin-left: 5px;
+            text-transform: uppercase;
         }
 
         input {
             width: 100%;
-            padding: 15px;
+            padding: 12px 15px;
             background: #111;
-            border: 1px solid #222;
-            border-radius: 8px;
-            color: white;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
             box-sizing: border-box;
-            outline: none;
             transition: 0.3s;
         }
 
         input:focus {
+            outline: none;
             border-color: var(--neon-blue);
-            background: #151515;
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
         }
 
-        .btn-login {
+        .btn-submit {
             width: 100%;
-            padding: 15px;
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
+            padding: 14px;
             font-weight: 900;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             margin-top: 10px;
             transition: 0.3s;
         }
 
-        .btn-login:hover {
-            background: var(--neon-blue);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+        .btn-submit:hover {
+            box-shadow: var(--neon-outline);
+            transform: translateY(-2px);
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 25px;
-            color: #444;
-            text-decoration: none;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            transition: 0.3s;
+        .status-message {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: none;
         }
 
-        .back-link:hover {
-            color: var(--neon-blue);
-        }
+        .status-success { color: #00ffaa; }
+        .status-error { color: #ff3b30; }
     </style>
 </head>
 <body>
@@ -198,52 +182,97 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Dashboard</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="signin.html" class="dash-link active">Sign In</a>
+            <a href="signin.html" class="dash-link active" id="authLink">Sign In</a>
         </nav>
     </header>
 
-    <div class="main-container">
-        <div class="login-container">
-            <div class="brand-title">VCRT</div>
-            <p style="color: #444; font-size: 0.7rem; margin-bottom: 30px; letter-spacing: 2px;">ACCESS RESTRICTED // CORE_AUTH</p>
-            
-            <form id="loginForm">
-                <div class="input-group">
-                    <label>System Identifier</label>
-                    <input type="text" id="usernameInput" placeholder="Username" required>
-                </div>
-                
-                <div class="input-group">
-                    <label>Access Protocol</label>
-                    <input type="password" id="passwordInput" placeholder="Password" required>
-                </div>
-
-                <button type="submit" class="btn-login">Initialize Session</button>
-            </form>
-
-            <a href="index.html" class="back-link">← RETURN TO MAIN INTERFACE</a>
+    <main class="main-container" id="authContainer">
+        <div class="form-title">
+            <h2>MEMBER <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">LOGIN</span></h2>
+            <div class="form-subtext">// Access Team Telemetry & Finances</div>
         </div>
-    </div>
 
-    <script>
-        const VALID_USERNAME = "admin";
-        const VALID_PASSWORD = "password123";
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username / ID</label>
+                <input type="text" id="username" placeholder="Enter your ID" required>
+            </div>
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Sign In</button>
+        </form>
+
+        <div id="statusMessage" class="status-message"></div>
+    </main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const authLink = document.getElementById("authLink");
+        const loginForm = document.getElementById("loginForm");
+        const statusMsg = document.getElementById("statusMessage");
+        const authContainer = document.getElementById("authContainer");
+
+        // CHECK IF ALREADY LOGGED IN
+        const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
+        const currentUser = localStorage.getItem("vcrt_user") || "Team Member";
+
+        if (isLoggedIn) {
+            // Update Navigation state
+            authLink.innerText = "Sign Out";
+            authLink.style.color = "#ff3b30";
+            
+            // Show Logged-in view instead of login form
+            authContainer.innerHTML = `
+                <div class="form-title">
+                    <h2>ACTIVE <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">SESSION</span></h2>
+                    <div class="form-subtext">// Logged in as ${currentUser}</div>
+                </div>
+                <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 25px;">You have full administrative access to log transactions and monitor vehicle metrics.</p>
+                <button class="btn-submit" id="btnSignOut" style="background: #ff3b30; color: #fff;">Sign Out</button>
+            `;
+
+            document.getElementById("btnSignOut").addEventListener("click", performSignOut);
+        }
+
+        // HANDLE LOGIN SUBMISSION
+        loginForm?.addEventListener("submit", function (e) {
             e.preventDefault();
+            const username = document.getElementById("username").value.trim();
 
-            const usernameEntered = document.getElementById('usernameInput').value;
-            const passwordEntered = document.getElementById('passwordInput').value;
+            if (username !== "") {
+                localStorage.setItem("vcrt_is_logged_in", "true");
+                localStorage.setItem("vcrt_user", username);
 
-            if (usernameEntered === VALID_USERNAME && passwordEntered === VALID_PASSWORD) {
-                localStorage.setItem('isLoggedIn', 'true');
-                alert('Authentication Successful! Accessing Core Transaction Ledger.');
-                window.location.href = "transaction.html"; 
-            } else {
-                alert('ACCESS DENIED: Username atau Password salah!');
+                statusMsg.innerText = "AUTHENTICATED. REDIRECTING...";
+                statusMsg.className = "status-message status-success";
+                statusMsg.style.display = "block";
+
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 1000);
             }
         });
-    </script>
+
+        // SIGN OUT FUNCTION
+        function performSignOut() {
+            localStorage.removeItem("vcrt_is_logged_in");
+            localStorage.removeItem("vcrt_user");
+            window.location.reload();
+        }
+
+        // HEADER SIGN OUT EVENT HANDLER
+        authLink.addEventListener("click", function (e) {
+            if (localStorage.getItem("vcrt_is_logged_in") === "true") {
+                e.preventDefault();
+                performSignOut();
+            }
+        });
+    });
+</script>
 
 </body>
 </html>
