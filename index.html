@@ -181,7 +181,7 @@
         .class-card h2 {
             font-size: 3rem;
             font-weight: 900;
-            margin: 10px 0;
+            margin: 5px 0;
             color: #fff;
         }
 
@@ -190,6 +190,14 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .class-expense-badge {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #ff3b30;
+            letter-spacing: 1px;
             margin-bottom: 25px;
         }
 
@@ -264,63 +272,76 @@
             </div>
         </div>
 
+        <!-- LINE CHART CONTAINER -->
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
-                <span style="color: var(--neon-blue)">//</span> Live Transaction Funds ($)
+                <span style="color: var(--neon-blue)">//</span> Expense Trend by Component Variant ($)
             </h3>
-            <div style="position: relative; height:300px; width:100%">
+            <div style="position: relative; height:350px; width:100%">
                 <canvas id="vcrtAnalyticsChart"></canvas>
             </div>
         </div>
 
-        <!-- UPDATED CLASS GRID WITH REDIRECT LINKS -->
+        <!-- UPDATED CLASS GRID WITH TOTAL EXPENSES -->
         <div class="class-grid">
-    <div class="class-card">
-        <p>FSM</p>
-        <h2>150CC</h2>
-        <button class="btn-select" onclick="window.location.href='150cc.html'">Enter Class</button>
-    </div>
+            <div class="class-card">
+                <p>FSM</p>
+                <h2>150CC</h2>
+                <div class="class-expense-badge" id="expense-150CC">Total Expenses: $0</div>
+                <button class="btn-select" onclick="window.location.href='150cc.html'">Enter Class</button>
+            </div>
 
-    <div class="class-card">
-        <p>FSAE</p>
-        <h2>600CC</h2>
-        <button class="btn-select" onclick="window.location.href='600cc.html'">Enter Class</button>
-    </div>
+            <div class="class-card">
+                <p>FSAE</p>
+                <h2>600CC</h2>
+                <div class="class-expense-badge" id="expense-600CC">Total Expenses: $0</div>
+                <button class="btn-select" onclick="window.location.href='600cc.html'">Enter Class</button>
+            </div>
 
-    <div class="class-card">
-        <p>Future Tech</p>
-        <h2>EV</h2>
-        <button class="btn-select" onclick="window.location.href='ev.html'">Enter Class</button>
-    </div>
-</div>
+            <div class="class-card">
+                <p>Future Tech</p>
+                <h2>EV</h2>
+                <div class="class-expense-badge" id="expense-EV">Total Expenses: $0</div>
+                <button class="btn-select" onclick="window.location.href='ev.html'">Enter Class</button>
+            </div>
+        </div>
     </main>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
         
-        // FINANCIAL CALCULATIONS
         let incomeSum = 0;
         let expenseSum = 0;
 
-        const totals = {
-            '150CC': 0,
-            '600CC': 0,
-            'EV': 0
-        };
+        // Class Expense Tracker
+        const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
 
+        // 9 Variant Expense Structure per Class
+        const variants = [
+            "Brake System", "Engine & Drivetrain", "Suspension & Shocks", 
+            "Frame & Body", "Instruments & Wiring", "Wheels & Tires", 
+            "Fit & Finish", "Steering System", "Miscellaneous"
+        ];
+
+        const variantData = {};
+        variants.forEach(variant => {
+            variantData[variant] = { '150CC': 0, '600CC': 0, 'EV': 0 };
+        });
+
+        // CALCULATE TRANSACTION DATA
         transactions.forEach(tx => {
             if (tx.type === 'income') {
                 incomeSum += tx.amount;
             } else if (tx.type === 'expense') {
                 expenseSum += tx.amount;
-            }
+                
+                if (classExpenses.hasOwnProperty(tx.vClass)) {
+                    classExpenses[tx.vClass] += tx.amount;
+                }
 
-            if (totals.hasOwnProperty(tx.vClass)) {
-                if (tx.type === 'income') {
-                    totals[tx.vClass] += tx.amount;
-                } else if (tx.type === 'expense') {
-                    totals[tx.vClass] -= tx.amount;
+                if (variantData[tx.variant] && variantData[tx.variant].hasOwnProperty(tx.vClass)) {
+                    variantData[tx.variant][tx.vClass] += tx.amount;
                 }
             }
         });
@@ -334,45 +355,74 @@
         const balanceEl = document.getElementById('totalBalance');
         balanceEl.innerText = `$${netBalance.toLocaleString()}`;
         if (netBalance < 0) {
-            balanceEl.style.color = '#ff3b30'; // Red if negative balance
+            balanceEl.style.color = '#ff3b30';
         }
 
-        // INITIALIZE CHART.JS CHART
+        // UPDATE CLASS EXPENSE BADGES
+        document.getElementById('expense-150CC').innerText = `Total Expenses: $${classExpenses['150CC'].toLocaleString()}`;
+        document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
+        document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
+
+        // COLOR PALETTE FOR 9 VARIANTS
+        const colors = [
+            '#00f3ff', '#ff3b30', '#00ffaa', '#ff9500', 
+            '#af52de', '#ffcc00', '#5856d6', '#ff2d55', '#8e8e93'
+        ];
+
+        // BUILD CHART DATASETS FOR MULTI-LINE CHART
+        const chartDatasets = variants.map((variant, index) => {
+            return {
+                label: variant,
+                data: [
+                    variantData[variant]['150CC'],
+                    variantData[variant]['600CC'],
+                    variantData[variant]['EV']
+                ],
+                borderColor: colors[index % colors.length],
+                backgroundColor: colors[index % colors.length],
+                borderWidth: 2,
+                tension: 0.3,
+                fill: false,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            };
+        });
+
+        // INITIALIZE CHART.JS MULTI-LINE CHART
         const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
         
         new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: ['150CC (FSAE)', '600CC (FSM)', 'EV (FUTURE TECH)'],
-                datasets: [{
-                    label: 'Total Net Funding ($)',
-                    data: [totals['150CC'], totals['600CC'], totals['EV']],
-                    backgroundColor: 'rgba(0, 243, 255, 0.2)',
-                    borderColor: '#00f3ff',
-                    borderWidth: 2,
-                    borderRadius: 5,
-                    hoverBackgroundColor: 'rgba(0, 243, 255, 0.5)'
-                }]
+                labels: ['150CC', '600CC', 'EV'],
+                datasets: chartDatasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
+                        position: 'bottom',
                         labels: {
-                            color: '#666',
-                            font: { family: 'Inter', size: 10 }
+                            color: '#ccc',
+                            font: { family: 'Inter', size: 11 },
+                            boxWidth: 12,
+                            padding: 15
                         }
                     }
                 },
                 scales: {
                     y: {
                         grid: { color: '#222' },
-                        ticks: { color: '#666', font: { family: 'Inter' } },
+                        ticks: { 
+                            color: '#888', 
+                            font: { family: 'Inter' },
+                            callback: function(value) { return '$' + value; }
+                        },
                         beginAtZero: true
                     },
                     x: {
-                        grid: { display: false },
+                        grid: { color: '#151515' },
                         ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
                     }
                 }
