@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VCRT | Transaction Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FIREBASE CLOUD SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -375,13 +380,27 @@
     </div>
 
 <script>
+    // YOUR INTEGRATED FIREBASE CONFIGURATION
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
+        authDomain: "vcrt-dashboard.firebaseapp.com",
+        projectId: "vcrt-dashboard",
+        storageBucket: "vcrt-dashboard.firebasestorage.app",
+        messagingSenderId: "1017093341978",
+        appId: "1:1017093341978:web:ef666bd6309f21c869e2a3",
+        measurementId: "G-VV6873XWF3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
         const lockBanner = document.getElementById("lockBanner");
         const formFieldset = document.getElementById("formFieldset");
 
-        // EVALUATE LOGIN STATE & LOCK DOWN FORM IF LOGGED OUT
+        // LOGIN CHECK & FORM LOCKDOWN
         if (isLoggedIn) {
             if (authLink) {
                 authLink.innerText = "Sign Out";
@@ -395,7 +414,6 @@
                 });
             }
         } else {
-            // Disable entire input fieldset & show warning banner
             lockBanner.style.display = "block";
             formFieldset.disabled = true;
         }
@@ -406,44 +424,49 @@
 
         dateInput.valueAsDate = new Date();
 
-        function loadTransactions() {
-            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-            logBody.innerHTML = "";
+        // LISTEN TO FIRESTORE CLOUD DATA
+        function listenToCloudTransactions() {
+            db.collection("transactions").orderBy("createdAt", "desc")
+              .onSnapshot((snapshot) => {
+                logBody.innerHTML = "";
 
-            if (transactions.length === 0) {
-                logBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#555;">No transactions logged yet.</td></tr>`;
-                return;
-            }
-
-            transactions.forEach((tx, index) => {
-                const row = document.createElement("tr");
-
-                let displayVariant = tx.variant;
-                if (displayVariant === "Fit & Finish" || displayVariant === "Miscellaneous") {
-                    displayVariant = "Miscellaneous, Fit & Finish";
+                if (snapshot.empty) {
+                    logBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#555;">No transactions logged yet.</td></tr>`;
+                    return;
                 }
 
-                const amountFormatted = tx.type === 'income' 
-                    ? `<span class="income-text">+$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
-                    : `<span class="expense-text">-$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
+                snapshot.forEach((doc) => {
+                    const tx = doc.data();
+                    const docId = doc.id;
+                    const row = document.createElement("tr");
 
-                // Disable delete button if logged out
-                const deleteBtnState = isLoggedIn ? "" : "disabled";
+                    let displayVariant = tx.variant;
+                    if (displayVariant === "Fit & Finish" || displayVariant === "Miscellaneous") {
+                        displayVariant = "Miscellaneous, Fit & Finish";
+                    }
 
-                row.innerHTML = `
-                    <td style="color:#888;">${tx.date}</td>
-                    <td><strong>${tx.vClass}</strong></td>
-                    <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
-                    <td>${displayVariant}</td>
-                    <td>${tx.description}</td>
-                    <td>${amountFormatted}</td>
-                    <td><button class="btn-delete" ${deleteBtnState} onclick="deleteTransaction(${index})">Remove</button></td>
-                `;
+                    const amountFormatted = tx.type === 'income' 
+                        ? `<span class="income-text">+$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
+                        : `<span class="expense-text">-$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
 
-                logBody.appendChild(row);
+                    const deleteBtnState = isLoggedIn ? "" : "disabled";
+
+                    row.innerHTML = `
+                        <td style="color:#888;">${tx.date}</td>
+                        <td><strong>${tx.vClass}</strong></td>
+                        <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
+                        <td>${displayVariant}</td>
+                        <td>${tx.description}</td>
+                        <td>${amountFormatted}</td>
+                        <td><button class="btn-delete" ${deleteBtnState} onclick="deleteCloudTransaction('${docId}')">Remove</button></td>
+                    `;
+
+                    logBody.appendChild(row);
+                });
             });
         }
 
+        // SAVE TRANSACTION TO FIRESTORE CLOUD
         form.addEventListener("submit", function (e) {
             e.preventDefault();
             if (!isLoggedIn) return;
@@ -462,27 +485,23 @@
                 variant: document.getElementById("variant").value,
                 amount: parseFloat(document.getElementById("amount").value),
                 description: document.getElementById("description").value,
-                date: formattedDate
+                date: formattedDate,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-            transactions.unshift(newTx);
-            localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
-
-            form.reset();
-            dateInput.valueAsDate = new Date();
-            loadTransactions();
+            db.collection("transactions").add(newTx).then(() => {
+                form.reset();
+                dateInput.valueAsDate = new Date();
+            }).catch((err) => alert("Cloud Error: " + err.message));
         });
 
-        window.deleteTransaction = function (index) {
+        // DELETE TRANSACTION FROM FIRESTORE CLOUD
+        window.deleteCloudTransaction = function (docId) {
             if (!isLoggedIn) return;
-            const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-            transactions.splice(index, 1);
-            localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
-            loadTransactions();
+            db.collection("transactions").doc(docId).delete();
         };
 
-        loadTransactions();
+        listenToCloudTransactions();
     });
 </script>
 
