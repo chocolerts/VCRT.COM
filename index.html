@@ -145,7 +145,7 @@
             border-radius: 15px;
             padding: 30px;
             margin: 0 auto 50px auto;
-            max-width: 900px;
+            max-width: 1000px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             transition: 0.4s;
         }
@@ -272,17 +272,17 @@
             </div>
         </div>
 
-        <!-- LINE CHART CONTAINER -->
+        <!-- INVERTED LINE CHART CONTAINER -->
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
-                <span style="color: var(--neon-blue)">//</span> Expense Trend by Component Variant ($)
+                <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant ($)
             </h3>
-            <div style="position: relative; height:350px; width:100%">
+            <div style="position: relative; height:380px; width:100%">
                 <canvas id="vcrtAnalyticsChart"></canvas>
             </div>
         </div>
 
-        <!-- UPDATED CLASS GRID WITH TOTAL EXPENSES -->
+        <!-- CLASS GRID WITH LIVE TOTAL EXPENSES -->
         <div class="class-grid">
             <div class="class-card">
                 <p>FSM</p>
@@ -314,22 +314,22 @@
         let incomeSum = 0;
         let expenseSum = 0;
 
-        // Class Expense Tracker
         const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
 
-        // 9 Variant Expense Structure per Class
         const variants = [
             "Brake System", "Engine & Drivetrain", "Suspension & Shocks", 
             "Frame & Body", "Instruments & Wiring", "Wheels & Tires", 
             "Fit & Finish", "Steering System", "Miscellaneous"
         ];
 
-        const variantData = {};
-        variants.forEach(variant => {
-            variantData[variant] = { '150CC': 0, '600CC': 0, 'EV': 0 };
-        });
+        // Structure to store totals per vehicle class across all 9 variants
+        const classVariantTotals = {
+            '150CC': new Array(9).fill(0),
+            '600CC': new Array(9).fill(0),
+            'EV': new Array(9).fill(0)
+        };
 
-        // CALCULATE TRANSACTION DATA
+        // PROCESS TRANSACTIONS
         transactions.forEach(tx => {
             if (tx.type === 'income') {
                 incomeSum += tx.amount;
@@ -340,15 +340,16 @@
                     classExpenses[tx.vClass] += tx.amount;
                 }
 
-                if (variantData[tx.variant] && variantData[tx.variant].hasOwnProperty(tx.vClass)) {
-                    variantData[tx.variant][tx.vClass] += tx.amount;
+                const variantIndex = variants.indexOf(tx.variant);
+                if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
+                    classVariantTotals[tx.vClass][variantIndex] += tx.amount;
                 }
             }
         });
 
         const netBalance = incomeSum - expenseSum;
 
-        // DISPLAY SUMMARY DATA
+        // RENDER SUMMARY METRICS
         document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
         document.getElementById('totalExpenses').innerText = `$${expenseSum.toLocaleString()}`;
         
@@ -358,56 +359,65 @@
             balanceEl.style.color = '#ff3b30';
         }
 
-        // UPDATE CLASS EXPENSE BADGES
+        // RENDER CLASS EXPENSE BADGES
         document.getElementById('expense-150CC').innerText = `Total Expenses: $${classExpenses['150CC'].toLocaleString()}`;
         document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
         document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
 
-        // COLOR PALETTE FOR 9 VARIANTS
-        const colors = [
-            '#00f3ff', '#ff3b30', '#00ffaa', '#ff9500', 
-            '#af52de', '#ffcc00', '#5856d6', '#ff2d55', '#8e8e93'
-        ];
-
-        // BUILD CHART DATASETS FOR MULTI-LINE CHART
-        const chartDatasets = variants.map((variant, index) => {
-            return {
-                label: variant,
-                data: [
-                    variantData[variant]['150CC'],
-                    variantData[variant]['600CC'],
-                    variantData[variant]['EV']
-                ],
-                borderColor: colors[index % colors.length],
-                backgroundColor: colors[index % colors.length],
-                borderWidth: 2,
-                tension: 0.3,
-                fill: false,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            };
-        });
-
-        // INITIALIZE CHART.JS MULTI-LINE CHART
+        // INITIALIZE INVERTED LINE CHART (X-Axis: Component Variants | Lines: Vehicle Classes)
         const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
         
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['150CC', '600CC', 'EV'],
-                datasets: chartDatasets
+                labels: variants,
+                datasets: [
+                    {
+                        label: '150CC Class',
+                        data: classVariantTotals['150CC'],
+                        borderColor: '#00f3ff',
+                        backgroundColor: '#00f3ff',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: '600CC Class',
+                        data: classVariantTotals['600CC'],
+                        borderColor: '#ff9500',
+                        backgroundColor: '#ff9500',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'EV Class',
+                        data: classVariantTotals['EV'],
+                        borderColor: '#00ffaa',
+                        backgroundColor: '#00ffaa',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        position: 'top',
                         labels: {
                             color: '#ccc',
-                            font: { family: 'Inter', size: 11 },
-                            boxWidth: 12,
-                            padding: 15
+                            font: { family: 'Inter', size: 11, weight: 'bold' },
+                            boxWidth: 14,
+                            padding: 20
                         }
                     }
                 },
@@ -423,7 +433,7 @@
                     },
                     x: {
                         grid: { color: '#151515' },
-                        ticks: { color: '#fff', font: { family: 'Inter', weight: 'bold' } }
+                        ticks: { color: '#fff', font: { family: 'Inter', size: 10 } }
                     }
                 }
             }
