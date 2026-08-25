@@ -131,6 +131,12 @@
             transition: 0.3s;
         }
 
+        /* STYLE FOR DATE INPUT ICON */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--neon-blue);
@@ -241,7 +247,13 @@
         </div>
 
         <form id="transactionForm">
+            <!-- ROW 1: DATE & TYPE -->
             <div class="form-row">
+                <div class="form-group">
+                    <label for="txDate">Transaction Date</label>
+                    <input type="date" id="txDate" required>
+                </div>
+
                 <div class="form-group">
                     <label for="transType">Transaction Type</label>
                     <select id="transType" required>
@@ -249,7 +261,10 @@
                         <option value="income">Income (+)</option>
                     </select>
                 </div>
+            </div>
 
+            <!-- ROW 2: CLASS & VARIANT -->
+            <div class="form-row">
                 <div class="form-group">
                     <label for="vClass">Vehicle Class</label>
                     <select id="vClass" required>
@@ -258,9 +273,7 @@
                         <option value="EV">EV Class</option>
                     </select>
                 </div>
-            </div>
 
-            <div class="form-row">
                 <div class="form-group">
                     <label for="variant">Component Variant</label>
                     <select id="variant" required>
@@ -274,13 +287,15 @@
                         <option value="Miscellaneous, Fit & Finish">Miscellaneous, Fit & Finish</option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label for="amount">Amount ($)</label>
-                    <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
-                </div>
             </div>
 
+            <!-- ROW 3: AMOUNT -->
+            <div class="form-group">
+                <label for="amount">Amount ($)</label>
+                <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+
+            <!-- ROW 4: DESCRIPTION -->
             <div class="form-group">
                 <label for="description">Description / Item Details</label>
                 <textarea id="description" rows="3" placeholder="Enter transaction notes or part descriptions..." required></textarea>
@@ -314,6 +329,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("transactionForm");
         const logBody = document.getElementById("transactionLogBody");
+        const dateInput = document.getElementById("txDate");
+
+        // SET DEFAULT DATE FIELD TO TODAY
+        dateInput.valueAsDate = new Date();
 
         // LOAD AND DISPLAY TRANSACTIONS
         function loadTransactions() {
@@ -328,7 +347,6 @@
             transactions.forEach((tx, index) => {
                 const row = document.createElement("tr");
 
-                // Merge legacy entries into unified category for UI rendering
                 let displayVariant = tx.variant;
                 if (displayVariant === "Fit & Finish" || displayVariant === "Miscellaneous") {
                     displayVariant = "Miscellaneous, Fit & Finish";
@@ -352,9 +370,18 @@
             });
         }
 
-        // SAVE NEW TRANSACTION
+        // SAVE NEW TRANSACTION WITH USER DATE
         form.addEventListener("submit", function (e) {
             e.preventDefault();
+
+            // Format selected YYYY-MM-DD string to standard readable format
+            const inputDateVal = dateInput.value;
+            let formattedDate = inputDateVal;
+            if (inputDateVal) {
+                const parts = inputDateVal.split('-');
+                const d = new Date(parts[0], parts[1] - 1, parts[2]);
+                formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
 
             const newTx = {
                 type: document.getElementById("transType").value,
@@ -362,7 +389,7 @@
                 variant: document.getElementById("variant").value,
                 amount: parseFloat(document.getElementById("amount").value),
                 description: document.getElementById("description").value,
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                date: formattedDate
             };
 
             const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
@@ -370,6 +397,7 @@
             localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
 
             form.reset();
+            dateInput.valueAsDate = new Date(); // Reset date back to today
             loadTransactions();
         });
 
