@@ -246,7 +246,7 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link active">Dashboard</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="signin.html" class="dash-link">Sign In</a>
+            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </nav>
     </header>
 
@@ -309,6 +309,23 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // AUTHENTICATION STATE TOGGLE
+        const authLink = document.getElementById("authLink");
+        const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
+
+        if (isLoggedIn && authLink) {
+            authLink.innerText = "Sign Out";
+            authLink.href = "#";
+            authLink.style.color = "#ff3b30";
+            authLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("vcrt_is_logged_in");
+                localStorage.removeItem("vcrt_user");
+                window.location.reload();
+            });
+        }
+
+        // FINANCIAL AND CHART DATA MANAGEMENT
         const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
         
         let incomeSum = 0;
@@ -316,7 +333,6 @@
 
         const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
 
-        // UPDATED COMBINED VARIANT LIST (8 Total Categories)
         const variants = [
             "Brake System", 
             "Engine & Drivetrain", 
@@ -328,14 +344,12 @@
             "Miscellaneous, Fit & Finish"
         ];
 
-        // Track variant expenses for 8 categories
         const classVariantTotals = {
             '150CC': new Array(8).fill(0),
             '600CC': new Array(8).fill(0),
             'EV': new Array(8).fill(0)
         };
 
-        // PROCESS TRANSACTIONS
         transactions.forEach(tx => {
             if (tx.type === 'income') {
                 incomeSum += tx.amount;
@@ -346,7 +360,6 @@
                     classExpenses[tx.vClass] += tx.amount;
                 }
 
-                // Check for exact variant match or map old individual entries ("Fit & Finish" / "Miscellaneous") to the merged category
                 let targetVariant = tx.variant;
                 if (targetVariant === "Fit & Finish" || targetVariant === "Miscellaneous") {
                     targetVariant = "Miscellaneous, Fit & Finish";
@@ -361,7 +374,6 @@
 
         const netBalance = incomeSum - expenseSum;
 
-        // RENDER SUMMARY METRICS
         document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
         document.getElementById('totalExpenses').innerText = `$${expenseSum.toLocaleString()}`;
         
@@ -371,12 +383,11 @@
             balanceEl.style.color = '#ff3b30';
         }
 
-        // RENDER CLASS EXPENSE BADGES
         document.getElementById('expense-150CC').innerText = `Total Expenses: $${classExpenses['150CC'].toLocaleString()}`;
         document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
         document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
 
-        // INITIALIZE INVERTED LINE CHART
+        // INITIALIZE LINE CHART
         const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
         
         new Chart(ctx, {
