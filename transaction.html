@@ -80,6 +80,27 @@
             text-shadow: var(--neon-outline);
         }
 
+        /* ACCESS RESTRICTED BANNER */
+        .lock-banner {
+            display: none;
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .lock-banner a {
+            color: var(--neon-blue);
+            text-decoration: underline;
+        }
+
         /* FORM CONTAINER */
         .main-container {
             max-width: 650px;
@@ -142,6 +163,22 @@
             box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
         }
 
+        /* DISABLED FORM STYLING */
+        input:disabled, select:disabled, textarea:disabled {
+            background: #080808;
+            border-color: #1a1a1a;
+            color: #444;
+            cursor: not-allowed;
+        }
+
+        .btn-submit:disabled {
+            background: #222;
+            color: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -163,7 +200,7 @@
             transition: 0.3s;
         }
 
-        .btn-submit:hover {
+        .btn-submit:hover:not(:disabled) {
             box-shadow: var(--neon-outline);
             transform: translateY(-2px);
         }
@@ -220,9 +257,15 @@
             transition: 0.3s;
         }
 
-        .btn-delete:hover {
+        .btn-delete:hover:not(:disabled) {
             background: #ff3b30;
             color: #fff;
+        }
+
+        .btn-delete:disabled {
+            border-color: #333;
+            color: #444;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -241,67 +284,74 @@
     </header>
 
     <main class="main-container">
+        <!-- LOCKED BANNER -->
+        <div class="lock-banner" id="lockBanner">
+            🔒 Read-Only Mode. Please <a href="signin.html">Sign In</a> to log or edit transactions.
+        </div>
+
         <div class="form-title">
             <h2>LOG <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span></h2>
         </div>
 
-        <form id="transactionForm">
-            <!-- ROW 1: DATE & TYPE -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="txDate">Transaction Date</label>
-                    <input type="date" id="txDate" required>
+        <fieldset id="formFieldset" style="border: none; padding: 0; margin: 0;">
+            <form id="transactionForm">
+                <!-- ROW 1: DATE & TYPE -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="txDate">Transaction Date</label>
+                        <input type="date" id="txDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transType">Transaction Type</label>
+                        <select id="transType" required>
+                            <option value="expense">Expense (-)</option>
+                            <option value="income">Income (+)</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="transType">Transaction Type</label>
-                    <select id="transType" required>
-                        <option value="expense">Expense (-)</option>
-                        <option value="income">Income (+)</option>
-                    </select>
+                <!-- ROW 2: CLASS & VARIANT -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vClass">Vehicle Class</label>
+                        <select id="vClass" required>
+                            <option value="150CC">150CC Class</option>
+                            <option value="600CC">600CC Class</option>
+                            <option value="EV">EV Class</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="variant">Component Variant</label>
+                        <select id="variant" required>
+                            <option value="Brake System">Brake System</option>
+                            <option value="Engine & Drivetrain">Engine & Drivetrain</option>
+                            <option value="Suspension & Shocks">Suspension & Shocks</option>
+                            <option value="Frame & Body">Frame & Body</option>
+                            <option value="Instruments & Wiring">Instruments & Wiring</option>
+                            <option value="Wheels & Tires">Wheels & Tires</option>
+                            <option value="Steering System">Steering System</option>
+                            <option value="Miscellaneous, Fit & Finish">Miscellaneous, Fit & Finish</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <!-- ROW 2: CLASS & VARIANT -->
-            <div class="form-row">
+                <!-- ROW 3: AMOUNT -->
                 <div class="form-group">
-                    <label for="vClass">Vehicle Class</label>
-                    <select id="vClass" required>
-                        <option value="150CC">150CC Class</option>
-                        <option value="600CC">600CC Class</option>
-                        <option value="EV">EV Class</option>
-                    </select>
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
                 </div>
 
+                <!-- ROW 4: DESCRIPTION -->
                 <div class="form-group">
-                    <label for="variant">Component Variant</label>
-                    <select id="variant" required>
-                        <option value="Brake System">Brake System</option>
-                        <option value="Engine & Drivetrain">Engine & Drivetrain</option>
-                        <option value="Suspension & Shocks">Suspension & Shocks</option>
-                        <option value="Frame & Body">Frame & Body</option>
-                        <option value="Instruments & Wiring">Instruments & Wiring</option>
-                        <option value="Wheels & Tires">Wheels & Tires</option>
-                        <option value="Steering System">Steering System</option>
-                        <option value="Miscellaneous, Fit & Finish">Miscellaneous, Fit & Finish</option>
-                    </select>
+                    <label for="description">Description / Item Details</label>
+                    <textarea id="description" rows="3" placeholder="Enter transaction notes or part descriptions..." required></textarea>
                 </div>
-            </div>
 
-            <!-- ROW 3: AMOUNT -->
-            <div class="form-group">
-                <label for="amount">Amount ($)</label>
-                <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
-            </div>
-
-            <!-- ROW 4: DESCRIPTION -->
-            <div class="form-group">
-                <label for="description">Description / Item Details</label>
-                <textarea id="description" rows="3" placeholder="Enter transaction notes or part descriptions..." required></textarea>
-            </div>
-
-            <button type="submit" class="btn-submit">Submit Transaction</button>
-        </form>
+                <button type="submit" class="btn-submit" id="submitBtn">Submit Transaction</button>
+            </form>
+        </fieldset>
     </main>
 
     <div class="logs-container">
@@ -326,20 +376,28 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // AUTHENTICATION STATE TOGGLE
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
+        const lockBanner = document.getElementById("lockBanner");
+        const formFieldset = document.getElementById("formFieldset");
 
-        if (isLoggedIn && authLink) {
-            authLink.innerText = "Sign Out";
-            authLink.href = "#";
-            authLink.style.color = "#ff3b30";
-            authLink.addEventListener("click", function (e) {
-                e.preventDefault();
-                localStorage.removeItem("vcrt_is_logged_in");
-                localStorage.removeItem("vcrt_user");
-                window.location.reload();
-            });
+        // EVALUATE LOGIN STATE & LOCK DOWN FORM IF LOGGED OUT
+        if (isLoggedIn) {
+            if (authLink) {
+                authLink.innerText = "Sign Out";
+                authLink.href = "#";
+                authLink.style.color = "#ff3b30";
+                authLink.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem("vcrt_is_logged_in");
+                    localStorage.removeItem("vcrt_user");
+                    window.location.reload();
+                });
+            }
+        } else {
+            // Disable entire input fieldset & show warning banner
+            lockBanner.style.display = "block";
+            formFieldset.disabled = true;
         }
 
         const form = document.getElementById("transactionForm");
@@ -369,6 +427,9 @@
                     ? `<span class="income-text">+$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
                     : `<span class="expense-text">-$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
 
+                // Disable delete button if logged out
+                const deleteBtnState = isLoggedIn ? "" : "disabled";
+
                 row.innerHTML = `
                     <td style="color:#888;">${tx.date}</td>
                     <td><strong>${tx.vClass}</strong></td>
@@ -376,7 +437,7 @@
                     <td>${displayVariant}</td>
                     <td>${tx.description}</td>
                     <td>${amountFormatted}</td>
-                    <td><button class="btn-delete" onclick="deleteTransaction(${index})">Remove</button></td>
+                    <td><button class="btn-delete" ${deleteBtnState} onclick="deleteTransaction(${index})">Remove</button></td>
                 `;
 
                 logBody.appendChild(row);
@@ -385,6 +446,7 @@
 
         form.addEventListener("submit", function (e) {
             e.preventDefault();
+            if (!isLoggedIn) return;
 
             const inputDateVal = dateInput.value;
             let formattedDate = inputDateVal;
@@ -413,6 +475,7 @@
         });
 
         window.deleteTransaction = function (index) {
+            if (!isLoggedIn) return;
             const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
             transactions.splice(index, 1);
             localStorage.setItem('vcrt_transactions', JSON.stringify(transactions));
