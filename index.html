@@ -272,7 +272,7 @@
             </div>
         </div>
 
-        <!-- INVERTED LINE CHART CONTAINER -->
+        <!-- LINE CHART CONTAINER -->
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
                 <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant ($)
@@ -316,17 +316,23 @@
 
         const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
 
+        // UPDATED COMBINED VARIANT LIST (8 Total Categories)
         const variants = [
-            "Brake System", "Engine & Drivetrain", "Suspension & Shocks", 
-            "Frame & Body", "Instruments & Wiring", "Wheels & Tires", 
-            "Fit & Finish", "Steering System", "Miscellaneous"
+            "Brake System", 
+            "Engine & Drivetrain", 
+            "Suspension & Shocks", 
+            "Frame & Body", 
+            "Instruments & Wiring", 
+            "Wheels & Tires", 
+            "Steering System", 
+            "Miscellaneous, Fit & Finish"
         ];
 
-        // Structure to store totals per vehicle class across all 9 variants
+        // Track variant expenses for 8 categories
         const classVariantTotals = {
-            '150CC': new Array(9).fill(0),
-            '600CC': new Array(9).fill(0),
-            'EV': new Array(9).fill(0)
+            '150CC': new Array(8).fill(0),
+            '600CC': new Array(8).fill(0),
+            'EV': new Array(8).fill(0)
         };
 
         // PROCESS TRANSACTIONS
@@ -340,7 +346,13 @@
                     classExpenses[tx.vClass] += tx.amount;
                 }
 
-                const variantIndex = variants.indexOf(tx.variant);
+                // Check for exact variant match or map old individual entries ("Fit & Finish" / "Miscellaneous") to the merged category
+                let targetVariant = tx.variant;
+                if (targetVariant === "Fit & Finish" || targetVariant === "Miscellaneous") {
+                    targetVariant = "Miscellaneous, Fit & Finish";
+                }
+
+                const variantIndex = variants.indexOf(targetVariant);
                 if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
                     classVariantTotals[tx.vClass][variantIndex] += tx.amount;
                 }
@@ -364,7 +376,7 @@
         document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
         document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
 
-        // INITIALIZE INVERTED LINE CHART (X-Axis: Component Variants | Lines: Vehicle Classes)
+        // INITIALIZE INVERTED LINE CHART
         const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
         
         new Chart(ctx, {
