@@ -21,7 +21,6 @@
             padding-top: var(--nav-height);
         }
 
-        /* NAVIGATION CSS */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -83,7 +82,6 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* CONTENT LAYOUT */
         .container {
             padding: 60px 10%;
             text-align: center;
@@ -107,35 +105,52 @@
         
         .spec-card:hover { border-color: var(--neon-blue); }
 
-        /* EXPENSE LEDGER SECTION */
-        .ledger-section {
+        .ledger-container {
             margin-top: 60px;
-            background: #0a0a0a;
-            border: 1px solid #222;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             text-align: left;
         }
 
-        .ledger-section h2 {
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
+        .variant-block {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .variant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .variant-header h3 {
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin: 0;
             color: var(--neon-blue);
             text-transform: uppercase;
+        }
+
+        .variant-total {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #ff3b30;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
         }
 
         th, td {
             padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid #151515;
             font-size: 0.85rem;
         }
 
@@ -150,7 +165,10 @@
             color: #666;
             font-style: italic;
             text-align: center;
-            padding: 20px;
+            padding: 30px;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 15px;
         }
 
         .amount-expense {
@@ -192,47 +210,64 @@
             </div>
         </div>
 
-        <!-- 150CC EXPENSES LEDGER -->
-        <div class="ledger-section">
-            <h2>// 150CC Expense History</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Component Variant</th>
-                        <th>Type</th>
-                        <th>Amount ($)</th>
-                    </tr>
-                </thead>
-                <tbody id="historyTableBody">
-                    <!-- Dynamic rows inserted via JS -->
-                </tbody>
-            </table>
+        <div class="ledger-container">
+            <h2 style="font-size: 1.2rem; letter-spacing: 3px; color: #fff; text-transform: uppercase; margin-bottom: 25px;">
+                // Categorized Expense Breakdown
+            </h2>
+            <div id="groupedLedgerContainer"></div>
         </div>
     </main>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-            const tableBody = document.getElementById('historyTableBody');
+            const container = document.getElementById('groupedLedgerContainer');
 
-            // Filter explicitly for 150CC expenses
             const classExpenses = transactions.filter(tx => tx.vClass === '150CC' && tx.type === 'expense');
 
             if (classExpenses.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="no-data">No expense transactions recorded for 150CC.</td></tr>`;
+                container.innerHTML = `<div class="no-data">No expense transactions recorded for 150CC.</div>`;
                 return;
             }
 
-            tableBody.innerHTML = classExpenses.map(tx => {
-                const date = tx.timestamp ? new Date(tx.timestamp).toLocaleDateString() : 'N/A';
+            const grouped = classExpenses.reduce((acc, tx) => {
+                acc[tx.variant] = acc[tx.variant] || [];
+                acc[tx.variant].push(tx);
+                return acc;
+            }, {});
+
+            container.innerHTML = Object.keys(grouped).map(variant => {
+                const items = grouped[variant];
+                const totalVariantExpense = items.reduce((sum, item) => sum + item.amount, 0);
+
+                const rowsHtml = items.map(tx => {
+                    const date = tx.timestamp ? new Date(tx.timestamp).toLocaleDateString() : 'N/A';
+                    return `
+                        <tr>
+                            <td>${date}</td>
+                            <td style="text-transform: uppercase; opacity: 0.8;">${tx.type}</td>
+                            <td class="amount-expense">-$${tx.amount.toLocaleString()}</td>
+                        </tr>
+                    `;
+                }).join('');
+
                 return `
-                    <tr>
-                        <td>${date}</td>
-                        <td>${tx.variant}</td>
-                        <td style="text-transform: uppercase; opacity: 0.8;">${tx.type}</td>
-                        <td class="amount-expense">-$${tx.amount.toLocaleString()}</td>
-                    </tr>
+                    <div class="variant-block">
+                        <div class="variant-header">
+                            <h3>${variant}</h3>
+                            <span class="variant-total">Subtotal: -$${totalVariantExpense.toLocaleString()}</span>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
                 `;
             }).join('');
         });
