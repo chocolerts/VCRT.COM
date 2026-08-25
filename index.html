@@ -6,6 +6,11 @@
     <title>VCRT | Core Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- FIREBASE CLOUD SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --neon-blue: #00f3ff; 
@@ -73,12 +78,9 @@
             letter-spacing: 2px;
             opacity: 0.6;
             transition: 0.3s;
-            background: none;
-            border: none;
-            cursor: pointer;
         }
 
-        .dash-link:hover, .active {
+        .dash-link:hover, .dash-link.active {
             opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--neon-outline);
@@ -308,6 +310,20 @@
     </main>
 
 <script>
+    // YOUR INTEGRATED FIREBASE CONFIGURATION
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
+        authDomain: "vcrt-dashboard.firebaseapp.com",
+        projectId: "vcrt-dashboard",
+        storageBucket: "vcrt-dashboard.firebasestorage.app",
+        messagingSenderId: "1017093341978",
+        appId: "1:1017093341978:web:ef666bd6309f21c869e2a3",
+        measurementId: "G-VV6873XWF3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     document.addEventListener("DOMContentLoaded", function () {
         // AUTHENTICATION STATE TOGGLE
         const authLink = document.getElementById("authLink");
@@ -325,141 +341,149 @@
             });
         }
 
-        // FINANCIAL AND CHART DATA MANAGEMENT
-        const transactions = JSON.parse(localStorage.getItem('vcrt_transactions')) || [];
-        
-        let incomeSum = 0;
-        let expenseSum = 0;
+        let chartInstance = null;
 
-        const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
+        // REAL-TIME FIRESTORE LISTENER
+        db.collection("transactions").onSnapshot((snapshot) => {
+            let incomeSum = 0;
+            let expenseSum = 0;
+            const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
 
-        const variants = [
-            "Brake System", 
-            "Engine & Drivetrain", 
-            "Suspension & Shocks", 
-            "Frame & Body", 
-            "Instruments & Wiring", 
-            "Wheels & Tires", 
-            "Steering System", 
-            "Miscellaneous, Fit & Finish"
-        ];
+            const variants = [
+                "Brake System", 
+                "Engine & Drivetrain", 
+                "Suspension & Shocks", 
+                "Frame & Body", 
+                "Instruments & Wiring", 
+                "Wheels & Tires", 
+                "Steering System", 
+                "Miscellaneous, Fit & Finish"
+            ];
 
-        const classVariantTotals = {
-            '150CC': new Array(8).fill(0),
-            '600CC': new Array(8).fill(0),
-            'EV': new Array(8).fill(0)
-        };
+            const classVariantTotals = {
+                '150CC': new Array(8).fill(0),
+                '600CC': new Array(8).fill(0),
+                'EV': new Array(8).fill(0)
+            };
 
-        transactions.forEach(tx => {
-            if (tx.type === 'income') {
-                incomeSum += tx.amount;
-            } else if (tx.type === 'expense') {
-                expenseSum += tx.amount;
-                
-                if (classExpenses.hasOwnProperty(tx.vClass)) {
-                    classExpenses[tx.vClass] += tx.amount;
-                }
-
-                let targetVariant = tx.variant;
-                if (targetVariant === "Fit & Finish" || targetVariant === "Miscellaneous") {
-                    targetVariant = "Miscellaneous, Fit & Finish";
-                }
-
-                const variantIndex = variants.indexOf(targetVariant);
-                if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
-                    classVariantTotals[tx.vClass][variantIndex] += tx.amount;
-                }
-            }
-        });
-
-        const netBalance = incomeSum - expenseSum;
-
-        document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
-        document.getElementById('totalExpenses').innerText = `$${expenseSum.toLocaleString()}`;
-        
-        const balanceEl = document.getElementById('totalBalance');
-        balanceEl.innerText = `$${netBalance.toLocaleString()}`;
-        if (netBalance < 0) {
-            balanceEl.style.color = '#ff3b30';
-        }
-
-        document.getElementById('expense-150CC').innerText = `Total Expenses: $${classExpenses['150CC'].toLocaleString()}`;
-        document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
-        document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
-
-        // INITIALIZE LINE CHART
-        const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: variants,
-                datasets: [
-                    {
-                        label: '150CC Class',
-                        data: classVariantTotals['150CC'],
-                        borderColor: '#00f3ff',
-                        backgroundColor: '#00f3ff',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: false,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    },
-                    {
-                        label: '600CC Class',
-                        data: classVariantTotals['600CC'],
-                        borderColor: '#ff9500',
-                        backgroundColor: '#ff9500',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: false,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    },
-                    {
-                        label: 'EV Class',
-                        data: classVariantTotals['EV'],
-                        borderColor: '#00ffaa',
-                        backgroundColor: '#00ffaa',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: false,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+            snapshot.forEach((doc) => {
+                const tx = doc.data();
+                if (tx.type === 'income') {
+                    incomeSum += tx.amount;
+                } else if (tx.type === 'expense') {
+                    expenseSum += tx.amount;
+                    
+                    if (classExpenses.hasOwnProperty(tx.vClass)) {
+                        classExpenses[tx.vClass] += tx.amount;
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#ccc',
-                            font: { family: 'Inter', size: 11, weight: 'bold' },
-                            boxWidth: 14,
-                            padding: 20
+
+                    let targetVariant = tx.variant;
+                    if (targetVariant === "Fit & Finish" || targetVariant === "Miscellaneous") {
+                        targetVariant = "Miscellaneous, Fit & Finish";
+                    }
+
+                    const variantIndex = variants.indexOf(targetVariant);
+                    if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
+                        classVariantTotals[tx.vClass][variantIndex] += tx.amount;
+                    }
+                }
+            });
+
+            const netBalance = incomeSum - expenseSum;
+
+            document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
+            document.getElementById('totalExpenses').innerText = `$${expenseSum.toLocaleString()}`;
+            
+            const balanceEl = document.getElementById('totalBalance');
+            balanceEl.innerText = `$${netBalance.toLocaleString()}`;
+            if (netBalance < 0) {
+                balanceEl.style.color = '#ff3b30';
+            } else {
+                balanceEl.style.color = 'var(--neon-blue)';
+            }
+
+            document.getElementById('expense-150CC').innerText = `Total Expenses: $${classExpenses['150CC'].toLocaleString()}`;
+            document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
+            document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
+
+            // RENDER / REFRESH CHART
+            const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: variants,
+                    datasets: [
+                        {
+                            label: '150CC Class',
+                            data: classVariantTotals['150CC'],
+                            borderColor: '#00f3ff',
+                            backgroundColor: '#00f3ff',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: '600CC Class',
+                            data: classVariantTotals['600CC'],
+                            borderColor: '#ff9500',
+                            backgroundColor: '#ff9500',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'EV Class',
+                            data: classVariantTotals['EV'],
+                            borderColor: '#00ffaa',
+                            backgroundColor: '#00ffaa',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#ccc',
+                                font: { family: 'Inter', size: 11, weight: 'bold' },
+                                boxWidth: 14,
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#222' },
+                            ticks: { 
+                                color: '#888', 
+                                font: { family: 'Inter' },
+                                callback: function(value) { return '$' + value; }
+                            },
+                            beginAtZero: true
+                        },
+                        x: {
+                            grid: { color: '#151515' },
+                            ticks: { color: '#fff', font: { family: 'Inter', size: 10 } }
                         }
                     }
-                },
-                scales: {
-                    y: {
-                        grid: { color: '#222' },
-                        ticks: { 
-                            color: '#888', 
-                            font: { family: 'Inter' },
-                            callback: function(value) { return '$' + value; }
-                        },
-                        beginAtZero: true
-                    },
-                    x: {
-                        grid: { color: '#151515' },
-                        ticks: { color: '#fff', font: { family: 'Inter', size: 10 } }
-                    }
                 }
-            }
+            });
         });
     });
 </script>
