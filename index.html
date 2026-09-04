@@ -262,22 +262,22 @@
         <div class="summary-grid">
             <div class="summary-card">
                 <h3>Total Income</h3>
-                <p class="amount" id="totalIncome" style="color: #00ffaa;">$0</p>
+                <p class="amount" id="totalIncome" style="color: #00ffaa;">RM0.00</p>
             </div>
             <div class="summary-card">
                 <h3>Total Expenses</h3>
-                <p class="amount" id="totalExpenses" style="color: #ff3b30;">$0</p>
+                <p class="amount" id="totalExpenses" style="color: #ff3b30;">RM0.00</p>
             </div>
             <div class="summary-card">
                 <h3>Net Balance</h3>
-                <p class="amount" id="totalBalance" style="color: var(--neon-blue);">$0</p>
+                <p class="amount" id="totalBalance" style="color: var(--neon-blue);">RM0.00</p>
             </div>
         </div>
 
         <!-- LINE CHART CONTAINER -->
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
-                <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant ($)
+                <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
             </h3>
             <div style="position: relative; height:380px; width:100%">
                 <canvas id="vcrtAnalyticsChart"></canvas>
@@ -289,28 +289,27 @@
             <div class="class-card">
                 <p>FSM</p>
                 <h2>150CC</h2>
-                <div class="class-expense-badge" id="expense-150CC">Total Expenses: $0</div>
+                <div class="class-expense-badge" id="expense-150CC">Total Expenses: RM0.00</div>
                 <button class="btn-select" onclick="window.location.href='150cc.html'">Enter Class</button>
             </div>
 
             <div class="class-card">
                 <p>FSAE</p>
                 <h2>600CC</h2>
-                <div class="class-expense-badge" id="expense-600CC">Total Expenses: $0</div>
+                <div class="class-expense-badge" id="expense-600CC">Total Expenses: RM0.00</div>
                 <button class="btn-select" onclick="window.location.href='600cc.html'">Enter Class</button>
             </div>
 
             <div class="class-card">
                 <p>Future Tech</p>
                 <h2>EV</h2>
-                <div class="class-expense-badge" id="expense-EV">Total Expenses: $0</div>
+                <div class="class-expense-badge" id="expense-EV">Total Expenses: RM0.00</div>
                 <button class="btn-select" onclick="window.location.href='ev.html'">Enter Class</button>
             </div>
         </div>
     </main>
 
 <script>
-    // YOUR INTEGRATED FIREBASE CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
         authDomain: "vcrt-dashboard.firebaseapp.com",
@@ -325,7 +324,6 @@
     const db = firebase.firestore();
 
     document.addEventListener("DOMContentLoaded", function () {
-        // AUTHENTICATION STATE TOGGLE
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
@@ -343,7 +341,6 @@
 
         let chartInstance = null;
 
-        // REAL-TIME FIRESTORE LISTENER
         db.collection("transactions").onSnapshot((snapshot) => {
             let incomeSum = 0;
             let expenseSum = 0;
@@ -391,22 +388,21 @@
 
             const netBalance = incomeSum - expenseSum;
 
-            document.getElementById('totalIncome').innerText = `$${incomeSum.toLocaleString()}`;
-            document.getElementById('totalExpenses').innerText = `$${expenseSum.toLocaleString()}`;
+            document.getElementById('totalIncome').innerText = `RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('totalExpenses').innerText = `RM${expenseSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             
             const balanceEl = document.getElementById('totalBalance');
-            balanceEl.innerText = `$${netBalance.toLocaleString()}`;
+            balanceEl.innerText = `RM${netBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             if (netBalance < 0) {
                 balanceEl.style.color = '#ff3b30';
             } else {
                 balanceEl.style.color = 'var(--neon-blue)';
             }
 
-            document.getElementById('expense-150CC').innerText = `Total Expenses: $${classExpenses['150CC'].toLocaleString()}`;
-            document.getElementById('expense-600CC').innerText = `Total Expenses: $${classExpenses['600CC'].toLocaleString()}`;
-            document.getElementById('expense-EV').innerText = `Total Expenses: $${classExpenses['EV'].toLocaleString()}`;
+            document.getElementById('expense-150CC').innerText = `Total Expenses: RM${classExpenses['150CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('expense-600CC').innerText = `Total Expenses: RM${classExpenses['600CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('expense-EV').innerText = `Total Expenses: RM${classExpenses['EV'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
-            // RENDER / REFRESH CHART
             const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
             
             if (chartInstance) {
@@ -473,7 +469,7 @@
                             ticks: { 
                                 color: '#888', 
                                 font: { family: 'Inter' },
-                                callback: function(value) { return '$' + value; }
+                                callback: function(value) { return 'RM' + value; }
                             },
                             beginAtZero: true
                         },
