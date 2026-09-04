@@ -26,7 +26,6 @@
             padding-top: var(--nav-height);
         }
 
-        /* NAVIGATION BAR */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -85,7 +84,6 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* PAGE CONTENT */
         .main-container {
             max-width: 1000px;
             margin: 40px auto;
@@ -112,7 +110,6 @@
             margin-top: 5px;
         }
 
-        /* COMPONENT GRID */
         .variant-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -147,7 +144,6 @@
             margin: 0;
         }
 
-        /* RECENT LOG TABLE */
         .logs-container {
             background: #0a0a0a;
             border-radius: 12px;
@@ -208,12 +204,9 @@
             <p>// Component Financial Breakdown</p>
         </div>
 
-        <!-- COMPONENT VARIANT BREAKDOWN CARDS -->
         <div class="variant-grid" id="variantCardsContainer">
-            <!-- Dynamic Variant Cards -->
         </div>
 
-        <!-- CLASS TRANSACTIONS TABLE -->
         <div class="logs-container">
             <div class="logs-title">// 150CC Class Recorded Transactions</div>
             <table>
@@ -227,14 +220,12 @@
                     </tr>
                 </thead>
                 <tbody id="classLogBody">
-                    <!-- Dynamic Log Content -->
                 </tbody>
             </table>
         </div>
     </main>
 
 <script>
-    // YOUR INTEGRATED FIREBASE CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
         authDomain: "vcrt-dashboard.firebaseapp.com",
@@ -278,7 +269,6 @@
             "Miscellaneous, Fit & Finish"
         ];
 
-        // LISTEN TO FIRESTORE CLOUD DATA FOR 150CC CLASS
         db.collection("transactions")
           .where("vClass", "==", "150CC")
           .onSnapshot((snapshot) => {
@@ -304,8 +294,8 @@
                     }
 
                     const amountFormatted = tx.type === 'income' 
-                        ? `<span class="income-text">+$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
-                        : `<span class="expense-text">-$${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
+                        ? `<span class="income-text">+RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
+                        : `<span class="expense-text">-RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
 
                     row.innerHTML = `
                         <td style="color:#888;">${tx.date}</td>
@@ -319,14 +309,13 @@
                 });
             }
 
-            // RENDER VARIANT BREAKDOWN CARDS
             variantCardsContainer.innerHTML = "";
             variants.forEach(variant => {
                 const card = document.createElement("div");
                 card.className = "variant-card";
                 card.innerHTML = `
                     <h3>${variant}</h3>
-                    <p class="total">$${variantTotals[variant].toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                    <p class="total">RM${variantTotals[variant].toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
                 `;
                 variantCardsContainer.appendChild(card);
             });
