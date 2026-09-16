@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCRT | About Us & Sponsors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --dark-bg: #050505;
+            --nav-height: 80px;
+            --neon-outline: 0 0 10px var(--neon-blue);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: white;
+            padding-top: var(--nav-height);
+        }
+
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--dark-bg);
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.6rem;
+            color: #ffffff;
+            text-shadow: var(--neon-outline);
+            text-decoration: none;
+        }
+
+        .dash-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dash-link {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .dash-link:hover, .dash-link.active {
+            opacity: 1;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
+        }
+
+        .auth-container-right {
+            display: flex;
+            align-items: center;
+            min-width: 80px;
+            justify-content: flex-end;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 40px auto 80px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header h1, .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+
+        .section-header p {
+            color: #888;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .about-card {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 15px;
+            padding: 40px;
+            line-height: 1.8;
+            color: #ccc;
+            font-size: 1rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            margin-bottom: 70px;
+            transition: 0.3s;
+        }
+
+        .about-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+        }
+
+        .sponsor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .sponsor-card {
+            background: #0a0a0a;
+            border: 2px dashed #222;
+            border-radius: 12px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        .sponsor-card:hover {
+            border-color: var(--neon-blue);
+            border-style: solid;
+            box-shadow: var(--neon-outline);
+            transform: translateY(-5px);
+        }
+
+        .sponsor-card img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .sponsor-placeholder-text {
+            color: #444;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <a href="index.html" class="brand-name">VCRT</a>
+
+        <nav class="dash-menu">
+            <a href="index.html" class="dash-link">Home</a>
+            <a href="transaction.html" class="dash-link">Transactions</a>
+            <a href="aboutus.html" class="dash-link active">About Us</a>
+        </nav>
+
+        <div class="auth-container-right">
+            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        
+        <section>
+            <div class="section-header">
+                <h1>ABOUT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">US</span></h1>
+                <p>// Mission & Overview</p>
+            </div>
+
+            <div class="about-card">
+                <p>
+                    Welcome to <strong>VCRT</strong>. Insert your company synopsis, story, vision, and operational overview here. 
+                    This section serves as your main showcase to highlight team achievements, engineering goals, and financial transparency across all vehicle development classes.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <h2>OUR <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">SPONSORS</span></h2>
+                <p>// Valued Partners & Collaborators</p>
+            </div>
+
+            <div class="sponsor-grid">
+                <div class="sponsor-card">
+                    <span class="sponsor-placeholder-text">+ Add Sponsor Logo</span>
+                </div>
+                <div class="sponsor-card">
+                    <span class="sponsor-placeholder-text">+ Add Sponsor Logo</span>
+                </div>
+                <div class="sponsor-card">
+                    <span class="sponsor-placeholder-text">+ Add Sponsor Logo</span>
+                </div>
+                <div class="sponsor-card">
+                    <span class="sponsor-placeholder-text">+ Add Sponsor Logo</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const authLink = document.getElementById("authLink");
+        const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
+
+        if (authLink) {
+            if (isLoggedIn) {
+                authLink.innerText = "Sign Out";
+                authLink.style.color = "#ff3b30";
+                authLink.style.opacity = "1";
+                authLink.href = "#";
+                authLink.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem("vcrt_is_logged_in");
+                    localStorage.removeItem("vcrt_user");
+                    window.location.reload();
+                });
+            } else {
+                authLink.innerText = "Sign In";
+                authLink.style.color = "var(--neon-blue)";
+                authLink.style.opacity = "1";
+                authLink.href = "signin.html";
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
