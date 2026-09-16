@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Dashboard Hub</title>
+    <title>VCRT | Core Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- Chart.js for Telemetry Visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <!-- FIREBASE CLOUD SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
-            --neon-blue: #00f3ff;
+            --neon-blue: #00f3ff; 
             --dark-bg: #050505;
             --nav-height: 80px;
             --neon-outline: 0 0 10px var(--neon-blue);
@@ -39,6 +42,11 @@
             padding: 0 40px;
             z-index: 1000;
             box-sizing: border-box;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
         }
 
         .brand-name {
@@ -83,107 +91,161 @@
             justify-content: flex-end;
         }
 
-        .main-container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
+        .main-content {
+            padding: 60px 10%;
+            text-align: center;
         }
 
-        .hero-title {
-            text-align: center;
+        .core-header {
             margin-bottom: 30px;
         }
 
-        .hero-title h1 {
-            font-size: 2.8rem;
+        .core-header h1 {
+            font-size: 3.5rem;
             font-weight: 900;
-            letter-spacing: 4px;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto 50px auto;
+        }
+
+        .summary-card {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .summary-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
+        }
+
+        .summary-card h3 {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #888;
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+        }
+
+        .summary-card .amount {
+            font-size: 2rem;
+            font-weight: 900;
             margin: 0;
         }
 
-        .hero-title p {
-            color: #888;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-
-        /* TELEMETRY GRAPH CONTAINER */
-        .chart-section {
-            background: #0a0a0a;
+        .chart-container {
+            background: #111;
             border: 1px solid #222;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 40px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 0 auto 50px auto;
+            max-width: 1000px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: 0.4s;
+        }
+        
+        .chart-container:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
         }
 
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .chart-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--neon-blue);
-        }
-
-        .chart-wrapper {
-            position: relative;
-            height: 320px;
-            width: 100%;
-        }
-
-        /* DIVISION NAVIGATION CARDS */
         .class-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 25px;
+            margin-top: 40px;
         }
 
         .class-card {
-            background: #0a0a0a;
+            background: #111;
             border: 1px solid #222;
-            border-radius: 12px;
-            padding: 30px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            padding: 35px 20px;
+            border-radius: 15px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
         }
 
         .class-card:hover {
             border-color: var(--neon-blue);
             box-shadow: var(--neon-outline);
-            transform: translateY(-5px);
+            transform: translateY(-10px);
         }
 
         .class-card h2 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 900;
-            margin: 0 0 10px 0;
-            color: var(--neon-blue);
+            margin: 5px 0;
+            color: #fff;
         }
 
         .class-card p {
-            color: #888;
+            color: #666;
             font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .class-expense-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #ff3b30;
             letter-spacing: 1px;
-            margin: 0;
+            margin-bottom: 25px;
+        }
+
+        .btn-select {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+
+        .btn-select:hover {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        .class-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--neon-blue);
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .class-card:hover::after {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
 
     <header class="dashboard-header">
-        <a href="index.html" class="brand-name">VCRT</a>
+        <div class="brand-container">
+            <a href="index.html" class="brand-name">VCRT</a>
+        </div>
 
         <nav class="dash-menu">
             <a href="index.html" class="dash-link active">Home</a>
@@ -196,51 +258,88 @@
         </div>
     </header>
 
-    <main class="main-container">
-        <div class="hero-title">
-            <h1>TELEMETRY <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">METRICS</span></h1>
-            <p>// Real-time performance analysis across active divisions</p>
+    <main class="main-content">
+        <div class="core-header">
+            <h1>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">CORE</span></h1>
+            <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
         </div>
 
-        <!-- GRAPH CONTAINER -->
-        <div class="chart-section">
-            <div class="chart-header">
-                <span class="chart-title">Division Expenditure & Budgeting ($)</span>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Income</h3>
+                <p class="amount" id="totalIncome" style="color: #00ffaa;">RM0.00</p>
             </div>
-            <div class="chart-wrapper">
-                <canvas id="telemetryChart"></canvas>
+            <div class="summary-card">
+                <h3>Total Expenses</h3>
+                <p class="amount" id="totalExpenses" style="color: #ff3b30;">RM0.00</p>
+            </div>
+            <div class="summary-card">
+                <h3>Net Balance</h3>
+                <p class="amount" id="totalBalance" style="color: var(--neon-blue);">RM0.00</p>
             </div>
         </div>
 
-        <!-- DIVISION CARDS -->
+        <div id="metrics-dashboard" class="chart-container">
+            <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
+                <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
+            </h3>
+            <div style="position: relative; height:380px; width:100%">
+                <canvas id="vcrtAnalyticsChart"></canvas>
+            </div>
+        </div>
+
         <div class="class-grid">
-            <a href="135cc.html" class="class-card">
-                <h2>135 CC</h2>
-                <p>Entry Spec Development</p>
-            </a>
-            <a href="150cc.html" class="class-card">
-                <h2>150 CC</h2>
-                <p>Mid-Tier Prototype</p>
-            </a>
-            <a href="600cc.html" class="class-card">
-                <h2>600 CC</h2>
-                <p>High Output Performance</p>
-            </a>
-            <a href="ev.html" class="class-card">
+            <div class="class-card">
+                <p>FSM Lightweight</p>
+                <h2>135CC</h2>
+                <div class="class-expense-badge" id="expense-135CC">Total Expenses: RM0.00</div>
+                <button class="btn-select" onclick="window.location.href='135cc.html'">Enter Class</button>
+            </div>
+
+            <div class="class-card">
+                <p>FSM</p>
+                <h2>150CC</h2>
+                <div class="class-expense-badge" id="expense-150CC">Total Expenses: RM0.00</div>
+                <button class="btn-select" onclick="window.location.href='150cc.html'">Enter Class</button>
+            </div>
+
+            <div class="class-card">
+                <p>FSAE</p>
+                <h2>600CC</h2>
+                <div class="class-expense-badge" id="expense-600CC">Total Expenses: RM0.00</div>
+                <button class="btn-select" onclick="window.location.href='600cc.html'">Enter Class</button>
+            </div>
+
+            <div class="class-card">
+                <p>Future Tech</p>
                 <h2>EV</h2>
-                <p>Electric Powertrain Spec</p>
-            </a>
+                <div class="class-expense-badge" id="expense-EV">Total Expenses: RM0.00</div>
+                <button class="btn-select" onclick="window.location.href='ev.html'">Enter Class</button>
+            </div>
         </div>
     </main>
 
 <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
+        authDomain: "vcrt-dashboard.firebaseapp.com",
+        projectId: "vcrt-dashboard",
+        storageBucket: "vcrt-dashboard.firebasestorage.app",
+        messagingSenderId: "1017093341978",
+        appId: "1:1017093341978:web:ef666bd6309f21c869e2a3",
+        measurementId: "G-VV6873XWF3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     document.addEventListener("DOMContentLoaded", function () {
-        // AUTHENTICATION LOGIC
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
         if (authLink) {
             if (isLoggedIn) {
+                authLink.style.display = "inline-block";
                 authLink.innerText = "Sign Out";
                 authLink.style.color = "#ff3b30";
                 authLink.style.opacity = "1";
@@ -252,6 +351,7 @@
                     window.location.reload();
                 });
             } else {
+                authLink.style.display = "inline-block";
                 authLink.innerText = "Sign In";
                 authLink.style.color = "var(--neon-blue)";
                 authLink.style.opacity = "1";
@@ -259,62 +359,160 @@
             }
         }
 
-        // TELEMETRY GRAPH INITIALIZATION
-        const ctx = document.getElementById('telemetryChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [
-                    {
-                        label: '135 CC Spending',
-                        data: [1200, 1900, 800, 1500, 2000, 2400],
-                        borderColor: '#00f3ff',
-                        backgroundColor: 'rgba(0, 243, 255, 0.1)',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: '600 CC Spending',
-                        data: [2500, 3100, 4000, 2800, 4200, 5100],
-                        borderColor: '#ff3366',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'EV Division Spending',
-                        data: [1800, 2200, 3500, 3100, 2900, 4500],
-                        borderColor: '#00ff66',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        tension: 0.4
+        let chartInstance = null;
+
+        db.collection("transactions").onSnapshot((snapshot) => {
+            let incomeSum = 0;
+            let expenseSum = 0;
+            const classExpenses = { '135CC': 0, '150CC': 0, '600CC': 0, 'EV': 0 };
+
+            const variants = [
+                "Brake System", 
+                "Engine & Drivetrain", 
+                "Suspension & Shocks", 
+                "Frame & Body", 
+                "Instruments & Wiring", 
+                "Wheels & Tires", 
+                "Steering System", 
+                "Miscellaneous, Fit & Finish"
+            ];
+
+            const classVariantTotals = {
+                '135CC': new Array(8).fill(0),
+                '150CC': new Array(8).fill(0),
+                '600CC': new Array(8).fill(0),
+                'EV': new Array(8).fill(0)
+            };
+
+            snapshot.forEach((doc) => {
+                const tx = doc.data();
+                if (tx.type === 'income') {
+                    incomeSum += tx.amount;
+                } else if (tx.type === 'expense') {
+                    expenseSum += tx.amount;
+                    
+                    if (classExpenses.hasOwnProperty(tx.vClass)) {
+                        classExpenses[tx.vClass] += tx.amount;
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#ccc',
-                            font: { family: 'Inter', size: 12 }
-                        }
+
+                    let targetVariant = tx.variant;
+                    if (targetVariant === "Fit & Finish" || targetVariant === "Miscellaneous") {
+                        targetVariant = "Miscellaneous, Fit & Finish";
                     }
-                },
-                scales: {
-                    x: {
-                        grid: { color: '#1a1a1a' },
-                        ticks: { color: '#888' }
-                    },
-                    y: {
-                        grid: { color: '#1a1a1a' },
-                        ticks: { color: '#888' }
+
+                    const variantIndex = variants.indexOf(targetVariant);
+                    if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
+                        classVariantTotals[tx.vClass][variantIndex] += tx.amount;
                     }
                 }
+            });
+
+            const netBalance = incomeSum - expenseSum;
+
+            document.getElementById('totalIncome').innerText = `RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('totalExpenses').innerText = `RM${expenseSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            
+            const balanceEl = document.getElementById('totalBalance');
+            balanceEl.innerText = `RM${netBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            if (netBalance < 0) {
+                balanceEl.style.color = '#ff3b30';
+            } else {
+                balanceEl.style.color = 'var(--neon-blue)';
             }
+
+            document.getElementById('expense-135CC').innerText = `Total Expenses: RM${classExpenses['135CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('expense-150CC').innerText = `Total Expenses: RM${classExpenses['150CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('expense-600CC').innerText = `Total Expenses: RM${classExpenses['600CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('expense-EV').innerText = `Total Expenses: RM${classExpenses['EV'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+
+            const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: variants,
+                    datasets: [
+                        {
+                            label: '135CC Class',
+                            data: classVariantTotals['135CC'],
+                            borderColor: '#bf5af2',
+                            backgroundColor: '#bf5af2',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: '150CC Class',
+                            data: classVariantTotals['150CC'],
+                            borderColor: '#00f3ff',
+                            backgroundColor: '#00f3ff',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: '600CC Class',
+                            data: classVariantTotals['600CC'],
+                            borderColor: '#ff9500',
+                            backgroundColor: '#ff9500',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'EV Class',
+                            data: classVariantTotals['EV'],
+                            borderColor: '#00ffaa',
+                            backgroundColor: '#00ffaa',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#ccc',
+                                font: { family: 'Inter', size: 11, weight: 'bold' },
+                                boxWidth: 14,
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: '#222' },
+                            ticks: { 
+                                color: '#888', 
+                                font: { family: 'Inter' },
+                                callback: function(value) { return 'RM' + value; }
+                            },
+                            beginAtZero: true
+                        },
+                        x: {
+                            grid: { color: '#151515' },
+                            ticks: { color: '#fff', font: { family: 'Inter', size: 10 } }
+                        }
+                    }
+                }
+            });
         });
     });
 </script>
