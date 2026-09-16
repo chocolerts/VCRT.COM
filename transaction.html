@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Transaction Portal</title>
+    <title>VCRT | Global Transactions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- FIREBASE CLOUD SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -41,11 +36,6 @@
             padding: 0 40px;
             z-index: 1000;
             box-sizing: border-box;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
         }
 
         .brand-name {
@@ -90,201 +80,88 @@
             justify-content: flex-end;
         }
 
-        .lock-banner {
-            display: none;
-            background: rgba(255, 59, 48, 0.1);
-            border: 1px solid #ff3b30;
-            color: #ff3b30;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-        }
-
-        .lock-banner a {
-            color: var(--neon-blue);
-            text-decoration: underline;
-        }
-
         .main-container {
-            max-width: 650px;
+            max-width: 1000px;
             margin: 40px auto;
-            background: #0a0a0a;
-            border: 1px solid #222;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            padding: 0 20px;
         }
 
-        .form-title {
+        .page-title {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        .form-title h2 {
-            font-size: 2rem;
+        .page-title h1 {
+            font-size: 2.8rem;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             margin: 0;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
+        .page-title p {
             color: #888;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
-        }
-
-        input:disabled, select:disabled, textarea:disabled {
-            background: #080808;
-            border-color: #1a1a1a;
-            color: #444;
-            cursor: not-allowed;
-        }
-
-        .btn-submit:disabled {
-            background: #222;
-            color: #555;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--neon-blue);
-            color: #000;
-            border: none;
-            padding: 15px;
-            font-weight: 900;
+            font-size: 0.85rem;
             letter-spacing: 2px;
             text-transform: uppercase;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
+            margin-top: 5px;
         }
 
-        .btn-submit:hover:not(:disabled) {
-            box-shadow: var(--neon-outline);
-            transform: translateY(-2px);
-        }
-
-        .logs-container {
-            max-width: 1000px;
-            margin: 40px auto 60px auto;
-        }
-
-        .logs-title {
-            font-size: 0.9rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 15px;
+        .tx-table-container {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: #0a0a0a;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #222;
-        }
-
-        th, td {
-            padding: 14px 18px;
             text-align: left;
-            font-size: 0.85rem;
-            border-bottom: 1px solid #1a1a1a;
         }
 
         th {
-            background: #111;
-            color: #666;
+            padding: 15px;
+            color: var(--neon-blue);
             text-transform: uppercase;
-            letter-spacing: 1px;
             font-size: 0.75rem;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #222;
         }
 
-        .income-text { color: #00ffaa; font-weight: bold; }
-        .expense-text { color: #ff3b30; font-weight: bold; }
-
-        .btn-delete {
-            background: transparent;
-            border: 1px solid #ff3b30;
-            color: #ff3b30;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            transition: 0.3s;
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #151515;
+            color: #ccc;
+            font-size: 0.9rem;
         }
 
-        .btn-delete:hover:not(:disabled) {
-            background: #ff3b30;
+        tr:hover td {
+            background: #111;
             color: #fff;
         }
 
-        .btn-delete:disabled {
-            border-color: #333;
-            color: #444;
-            cursor: not-allowed;
+        .tag-class {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: var(--neon-blue);
         }
     </style>
 </head>
 <body>
 
     <header class="dashboard-header">
-        <div class="brand-container">
-            <a href="index.html" class="brand-name">VCRT</a>
-        </div>
+        <a href="index.html" class="brand-name">VCRT</a>
 
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Home</a>
             <a href="transaction.html" class="dash-link active">Transactions</a>
+            <a href="aboutus.html" class="dash-link">About Us</a>
         </nav>
 
         <div class="auth-container-right">
@@ -293,122 +170,52 @@
     </header>
 
     <main class="main-container">
-        <div class="lock-banner" id="lockBanner">
-            🔒 Read-Only Mode. Please <a href="signin.html">Sign In</a> to log or edit transactions.
+        <div class="page-title">
+            <h1>MASTER <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">LEDGER</span></h1>
+            <p>// Real-time global financial stream</p>
         </div>
 
-        <div class="form-title">
-            <h2>LOG <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span></h2>
+        <div class="tx-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Class</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2026-03-10</td>
+                        <td><span class="tag-class">135 CC</span></td>
+                        <td>High-flow Injector Upgrade</td>
+                        <td style="color: #00ff66;">+$120.00</td>
+                    </tr>
+                    <tr>
+                        <td>2026-03-08</td>
+                        <td><span class="tag-class">600 CC</span></td>
+                        <td>Titanium Exhaust Headers</td>
+                        <td style="color: #ff3366;">-$850.00</td>
+                    </tr>
+                    <tr>
+                        <td>2026-03-05</td>
+                        <td><span class="tag-class">EV</span></td>
+                        <td>LiFePO4 Cell Balancing Module</td>
+                        <td style="color: #ff3366;">-$410.00</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
-        <fieldset id="formFieldset" style="border: none; padding: 0; margin: 0;">
-            <form id="transactionForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="txDate">Transaction Date</label>
-                        <input type="date" id="txDate" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="transType">Transaction Type</label>
-                        <select id="transType" required>
-                            <option value="expense">Expense (-)</option>
-                            <option value="income">Income (+)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="vClass">Vehicle Class</label>
-                        <select id="vClass" required>
-                            <option value="135CC">135CC Class</option>
-                            <option value="150CC">150CC Class</option>
-                            <option value="600CC">600CC Class</option>
-                            <option value="EV">EV Class</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="variant">Component Variant</label>
-                        <select id="variant" required>
-                            <option value="Brake System">Brake System</option>
-                            <option value="Engine & Drivetrain">Engine & Drivetrain</option>
-                            <option value="Suspension & Shocks">Suspension & Shocks</option>
-                            <option value="Frame & Body">Frame & Body</option>
-                            <option value="Instruments & Wiring">Instruments & Wiring</option>
-                            <option value="Wheels & Tires">Wheels & Tires</option>
-                            <option value="Steering System">Steering System</option>
-                            <option value="Miscellaneous, Fit & Finish">Miscellaneous, Fit & Finish</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="refNum">Reference Number</label>
-                        <input type="text" id="refNum" placeholder="e.g. REF-89021" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="amount">Amount (RM)</label>
-                        <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Description / Item Details</label>
-                    <textarea id="description" rows="3" placeholder="Enter transaction notes or part descriptions..." required></textarea>
-                </div>
-
-                <button type="submit" class="btn-submit" id="submitBtn">Submit Transaction</button>
-            </form>
-        </fieldset>
     </main>
 
-    <div class="logs-container">
-        <div class="logs-title">// Recent Transactions</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Ref #</th>
-                    <th>Class</th>
-                    <th>Type</th>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="transactionLogBody">
-            </tbody>
-        </table>
-    </div>
-
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
-        authDomain: "vcrt-dashboard.firebaseapp.com",
-        projectId: "vcrt-dashboard",
-        storageBucket: "vcrt-dashboard.firebasestorage.app",
-        messagingSenderId: "1017093341978",
-        appId: "1:1017093341978:web:ef666bd6309f21c869e2a3",
-        measurementId: "G-VV6873XWF3"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
-        const lockBanner = document.getElementById("lockBanner");
-        const formFieldset = document.getElementById("formFieldset");
 
         if (authLink) {
             if (isLoggedIn) {
-                authLink.style.display = "inline-block";
                 authLink.innerText = "Sign Out";
                 authLink.style.color = "#ff3b30";
                 authLink.style.opacity = "1";
@@ -420,100 +227,12 @@
                     window.location.reload();
                 });
             } else {
-                authLink.style.display = "inline-block";
                 authLink.innerText = "Sign In";
                 authLink.style.color = "var(--neon-blue)";
                 authLink.style.opacity = "1";
                 authLink.href = "signin.html";
-                lockBanner.style.display = "block";
-                formFieldset.disabled = true;
             }
         }
-
-        const form = document.getElementById("transactionForm");
-        const logBody = document.getElementById("transactionLogBody");
-        const dateInput = document.getElementById("txDate");
-
-        dateInput.valueAsDate = new Date();
-
-        function listenToCloudTransactions() {
-            db.collection("transactions").orderBy("createdAt", "desc")
-              .onSnapshot((snapshot) => {
-                logBody.innerHTML = "";
-
-                if (snapshot.empty) {
-                    logBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#555;">No transactions logged yet.</td></tr>`;
-                    return;
-                }
-
-                snapshot.forEach((doc) => {
-                    const tx = doc.data();
-                    const docId = doc.id;
-                    const row = document.createElement("tr");
-
-                    let displayVariant = tx.variant;
-                    if (displayVariant === "Fit & Finish" || displayVariant === "Miscellaneous") {
-                        displayVariant = "Miscellaneous, Fit & Finish";
-                    }
-
-                    const amountFormatted = tx.type === 'income' 
-                        ? `<span class="income-text">+RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
-                        : `<span class="expense-text">-RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
-
-                    const deleteBtnState = isLoggedIn ? "" : "disabled";
-                    const refDisplay = tx.refNum ? tx.refNum : "N/A";
-
-                    row.innerHTML = `
-                        <td style="color:#888;">${tx.date}</td>
-                        <td style="color:var(--neon-blue); font-weight:bold;">${refDisplay}</td>
-                        <td><strong>${tx.vClass}</strong></td>
-                        <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
-                        <td>${displayVariant}</td>
-                        <td>${tx.description}</td>
-                        <td>${amountFormatted}</td>
-                        <td><button class="btn-delete" ${deleteBtnState} onclick="deleteCloudTransaction('${docId}')">Remove</button></td>
-                    `;
-
-                    logBody.appendChild(row);
-                });
-            });
-        }
-
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            if (!isLoggedIn) return;
-
-            const inputDateVal = dateInput.value;
-            let formattedDate = inputDateVal;
-            if (inputDateVal) {
-                const parts = inputDateVal.split('-');
-                const d = new Date(parts[0], parts[1] - 1, parts[2]);
-                formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            }
-
-            const newTx = {
-                type: document.getElementById("transType").value,
-                vClass: document.getElementById("vClass").value,
-                variant: document.getElementById("variant").value,
-                refNum: document.getElementById("refNum").value,
-                amount: parseFloat(document.getElementById("amount").value),
-                description: document.getElementById("description").value,
-                date: formattedDate,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            db.collection("transactions").add(newTx).then(() => {
-                form.reset();
-                dateInput.valueAsDate = new Date();
-            }).catch((err) => alert("Cloud Error: " + err.message));
-        });
-
-        window.deleteCloudTransaction = function (docId) {
-            if (!isLoggedIn) return;
-            db.collection("transactions").doc(docId).delete();
-        };
-
-        listenToCloudTransactions();
     });
 </script>
 
