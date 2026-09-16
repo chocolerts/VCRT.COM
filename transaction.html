@@ -213,7 +213,7 @@
         }
 
         .logs-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 40px auto 60px auto;
         }
 
@@ -283,12 +283,15 @@
         </div>
 
         <nav class="dash-menu">
-            <a href="index.html" class="dash-link">Dashboard</a>
+            <a href="index.html" class="dash-link">Home</a>
             <a href="transaction.html" class="dash-link active">Transactions</a>
+            <a href="150cc.html" class="dash-link">150CC</a>
+            <a href="600cc.html" class="dash-link">600CC</a>
+            <a href="ev.html" class="dash-link">EV</a>
         </nav>
 
         <div class="auth-container-right">
-            <a href="#" class="dash-link" id="authLink" style="display: none; color: #ff3b30; opacity: 1;">Sign Out</a>
+            <a href="signin.html" class="dash-link" id="authLink" style="color: #ff3b30; opacity: 1;">Sign Out</a>
         </div>
     </header>
 
@@ -343,9 +346,16 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="amount">Amount (RM)</label>
-                    <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="refNum">Reference Number</label>
+                        <input type="text" id="refNum" placeholder="e.g. REF-89021" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount (RM)</label>
+                        <input type="number" id="amount" step="0.01" min="0.01" placeholder="0.00" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -364,6 +374,7 @@
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>Ref #</th>
                     <th>Class</th>
                     <th>Type</th>
                     <th>Category</th>
@@ -397,19 +408,25 @@
         const lockBanner = document.getElementById("lockBanner");
         const formFieldset = document.getElementById("formFieldset");
 
-        if (isLoggedIn) {
-            if (authLink) {
+        if (authLink) {
+            if (isLoggedIn) {
                 authLink.style.display = "inline-block";
+                authLink.innerText = "Sign Out";
+                authLink.href = "#";
                 authLink.addEventListener("click", function (e) {
                     e.preventDefault();
                     localStorage.removeItem("vcrt_is_logged_in");
                     localStorage.removeItem("vcrt_user");
-                    window.location.reload();
+                    window.location.href = "signin.html";
                 });
+            } else {
+                authLink.style.display = "inline-block";
+                authLink.innerText = "Sign In";
+                authLink.style.color = "var(--neon-blue)";
+                authLink.href = "signin.html";
+                lockBanner.style.display = "block";
+                formFieldset.disabled = true;
             }
-        } else {
-            lockBanner.style.display = "block";
-            formFieldset.disabled = true;
         }
 
         const form = document.getElementById("transactionForm");
@@ -424,7 +441,7 @@
                 logBody.innerHTML = "";
 
                 if (snapshot.empty) {
-                    logBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#555;">No transactions logged yet.</td></tr>`;
+                    logBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#555;">No transactions logged yet.</td></tr>`;
                     return;
                 }
 
@@ -443,9 +460,11 @@
                         : `<span class="expense-text">-RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
 
                     const deleteBtnState = isLoggedIn ? "" : "disabled";
+                    const refDisplay = tx.refNum ? tx.refNum : "N/A";
 
                     row.innerHTML = `
                         <td style="color:#888;">${tx.date}</td>
+                        <td style="color:var(--neon-blue); font-weight:bold;">${refDisplay}</td>
                         <td><strong>${tx.vClass}</strong></td>
                         <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
                         <td>${displayVariant}</td>
@@ -475,6 +494,7 @@
                 type: document.getElementById("transType").value,
                 vClass: document.getElementById("vClass").value,
                 variant: document.getElementById("variant").value,
+                refNum: document.getElementById("refNum").value,
                 amount: parseFloat(document.getElementById("amount").value),
                 description: document.getElementById("description").value,
                 date: formattedDate,
