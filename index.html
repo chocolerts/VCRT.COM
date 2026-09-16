@@ -1,520 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Core Management</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- FIREBASE CLOUD SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-    <style>
-        :root {
-            --neon-blue: #00f3ff; 
-            --dark-bg: #050505;
-            --nav-height: 80px;
-            --neon-outline: 0 0 10px var(--neon-blue);
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #000;
-            color: white;
-            padding-top: var(--nav-height);
-        }
-
-        .dashboard-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--nav-height);
-            background: var(--dark-bg);
-            border-bottom: 2px solid var(--neon-blue);
-            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            z-index: 1000;
-            box-sizing: border-box;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .brand-name {
-            font-weight: 900;
-            letter-spacing: 4px;
-            font-size: 1.6rem;
-            color: #ffffff;
-            text-shadow: var(--neon-outline);
-            text-decoration: none;
-        }
-
-        .dash-menu {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .dash-link {
-            text-decoration: none;
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.6;
-            transition: 0.3s;
-        }
-
-        .dash-link:hover, .dash-link.active {
-            opacity: 1;
-            color: var(--neon-blue);
-            text-shadow: var(--neon-outline);
-        }
-
-        .auth-container-right {
-            display: flex;
-            align-items: center;
-            min-width: 80px;
-            justify-content: flex-end;
-        }
-
-        .main-content {
-            padding: 60px 10%;
-            text-align: center;
-        }
-
-        .core-header {
-            margin-bottom: 30px;
-        }
-
-        .core-header h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: -1px;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            max-width: 900px;
-            margin: 0 auto 50px auto;
-        }
-
-        .summary-card {
-            background: #0a0a0a;
-            border: 1px solid #222;
-            padding: 25px 20px;
-            border-radius: 12px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        .summary-card:hover {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
-        }
-
-        .summary-card h3 {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            color: #888;
-            text-transform: uppercase;
-            margin: 0 0 10px 0;
-        }
-
-        .summary-card .amount {
-            font-size: 2rem;
-            font-weight: 900;
-            margin: 0;
-        }
-
-        .chart-container {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 15px;
-            padding: 30px;
-            margin: 0 auto 50px auto;
-            max-width: 1000px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            transition: 0.4s;
-        }
-        
-        .chart-container:hover {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
-        }
-
-        .class-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-
-        .class-card {
-            background: #111;
-            border: 1px solid #222;
-            padding: 35px 20px;
-            border-radius: 15px;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .class-card:hover {
-            border-color: var(--neon-blue);
-            box-shadow: var(--neon-outline);
-            transform: translateY(-10px);
-        }
-
-        .class-card h2 {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin: 5px 0;
-            color: #fff;
-        }
-
-        .class-card p {
-            color: #666;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .class-expense-badge {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #ff3b30;
-            letter-spacing: 1px;
-            margin-bottom: 25px;
-        }
-
-        .btn-select {
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
-            padding: 10px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            transition: 0.3s;
-        }
-
-        .btn-select:hover {
-            background: var(--neon-blue);
-            color: #000;
-        }
-
-        .class-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--neon-blue);
-            opacity: 0;
-            transition: 0.3s;
-        }
-
-        .class-card:hover::after {
-            opacity: 1;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCRT Dashboard - Overview</title>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --bg-color: #0b0e14;
+      --card-bg: #151922;
+      --accent-blue: #00f3ff;
+      --text-main: #f0f4f8;
+      --text-muted: #8a99ad;
+      --border-color: #232a3b;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .dash-menu {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .dash-menu a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .dash-menu a:hover, .dash-menu a.active {
+      color: var(--accent-blue);
+    }
+    .btn-signout {
+      background: transparent;
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .container {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      border-radius: 10px;
+    }
+    .card h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .card .value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--accent-blue);
+    }
+    .chart-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
+  <header class="header">
+    <h2>VCRT Overview</h2>
+    <nav class="dash-menu">
+      <a href="index.html" class="active">Home</a>
+      <a href="transactions.html">Transactions</a>
+      <a href="135cc.html">135CC</a>
+      <a href="150cc.html">150CC</a>
+      <a href="600cc.html">600CC</a>
+      <a href="ev.html">EV Class</a>
+    </nav>
+    <button id="signOutBtn" class="btn-signout">Sign Out</button>
+  </header>
 
-    <header class="dashboard-header">
-        <div class="brand-container">
-            <a href="index.html" class="brand-name">VCRT</a>
-        </div>
+  <main class="container">
+    <div class="cards-grid">
+      <div class="card">
+        <h3>Total Income</h3>
+        <div class="value" id="totalIncome">$0.00</div>
+      </div>
+      <div class="card">
+        <h3>Total Expenses</h3>
+        <div class="value" id="totalExpenses">$0.00</div>
+      </div>
+      <div class="card">
+        <h3>Net Balance</h3>
+        <div class="value" id="netBalance">$0.00</div>
+      </div>
+    </div>
 
-        <nav class="dash-menu">
-            <a href="index.html" class="dash-link active">Home</a>
-            <a href="transaction.html" class="dash-link">Transactions</a>
-        </nav>
+    <div class="chart-card">
+      <h3>Class Expense Distribution</h3>
+      <canvas id="overviewChart"></canvas>
+    </div>
+  </main>
 
-        <div class="auth-container-right">
-            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
-        </div>
-    </header>
-
-    <main class="main-content">
-        <div class="core-header">
-            <h1>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">CORE</span></h1>
-            <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
-        </div>
-
-        <div class="summary-grid">
-            <div class="summary-card">
-                <h3>Total Income</h3>
-                <p class="amount" id="totalIncome" style="color: #00ffaa;">RM0.00</p>
-            </div>
-            <div class="summary-card">
-                <h3>Total Expenses</h3>
-                <p class="amount" id="totalExpenses" style="color: #ff3b30;">RM0.00</p>
-            </div>
-            <div class="summary-card">
-                <h3>Net Balance</h3>
-                <p class="amount" id="totalBalance" style="color: var(--neon-blue);">RM0.00</p>
-            </div>
-        </div>
-
-        <div id="metrics-dashboard" class="chart-container">
-            <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
-                <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
-            </h3>
-            <div style="position: relative; height:380px; width:100%">
-                <canvas id="vcrtAnalyticsChart"></canvas>
-            </div>
-        </div>
-
-        <div class="class-grid">
-            <div class="class-card">
-                <p>FSM Lightweight</p>
-                <h2>135CC</h2>
-                <div class="class-expense-badge" id="expense-135CC">Total Expenses: RM0.00</div>
-                <button class="btn-select" onclick="window.location.href='135cc.html'">Enter Class</button>
-            </div>
-
-            <div class="class-card">
-                <p>FSM</p>
-                <h2>150CC</h2>
-                <div class="class-expense-badge" id="expense-150CC">Total Expenses: RM0.00</div>
-                <button class="btn-select" onclick="window.location.href='150cc.html'">Enter Class</button>
-            </div>
-
-            <div class="class-card">
-                <p>FSAE</p>
-                <h2>600CC</h2>
-                <div class="class-expense-badge" id="expense-600CC">Total Expenses: RM0.00</div>
-                <button class="btn-select" onclick="window.location.href='600cc.html'">Enter Class</button>
-            </div>
-
-            <div class="class-card">
-                <p>Future Tech</p>
-                <h2>EV</h2>
-                <div class="class-expense-badge" id="expense-EV">Total Expenses: RM0.00</div>
-                <button class="btn-select" onclick="window.location.href='ev.html'">Enter Class</button>
-            </div>
-        </div>
-    </main>
-
-<script>
+  <script>
     const firebaseConfig = {
-        apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
-        authDomain: "vcrt-dashboard.firebaseapp.com",
-        projectId: "vcrt-dashboard",
-        storageBucket: "vcrt-dashboard.firebasestorage.app",
-        messagingSenderId: "1017093341978",
-        appId: "1:1017093341978:web:ef666bd6309f21c869e2a3",
-        measurementId: "G-VV6873XWF3"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "vcrt-dashboard",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
     firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
     const db = firebase.firestore();
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const authLink = document.getElementById("authLink");
-        const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
-
-        if (authLink) {
-            if (isLoggedIn) {
-                authLink.style.display = "inline-block";
-                authLink.innerText = "Sign Out";
-                authLink.style.color = "#ff3b30";
-                authLink.style.opacity = "1";
-                authLink.href = "#";
-                authLink.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    localStorage.removeItem("vcrt_is_logged_in");
-                    localStorage.removeItem("vcrt_user");
-                    window.location.reload();
-                });
-            } else {
-                authLink.style.display = "inline-block";
-                authLink.innerText = "Sign In";
-                authLink.style.color = "var(--neon-blue)";
-                authLink.style.opacity = "1";
-                authLink.href = "signin.html";
-            }
-        }
-
-        let chartInstance = null;
-
-        db.collection("transactions").onSnapshot((snapshot) => {
-            let incomeSum = 0;
-            let expenseSum = 0;
-            const classExpenses = { '135CC': 0, '150CC': 0, '600CC': 0, 'EV': 0 };
-
-            const variants = [
-                "Brake System", 
-                "Engine & Drivetrain", 
-                "Suspension & Shocks", 
-                "Frame & Body", 
-                "Instruments & Wiring", 
-                "Wheels & Tires", 
-                "Steering System", 
-                "Miscellaneous, Fit & Finish"
-            ];
-
-            const classVariantTotals = {
-                '135CC': new Array(8).fill(0),
-                '150CC': new Array(8).fill(0),
-                '600CC': new Array(8).fill(0),
-                'EV': new Array(8).fill(0)
-            };
-
-            snapshot.forEach((doc) => {
-                const tx = doc.data();
-                if (tx.type === 'income') {
-                    incomeSum += tx.amount;
-                } else if (tx.type === 'expense') {
-                    expenseSum += tx.amount;
-                    
-                    if (classExpenses.hasOwnProperty(tx.vClass)) {
-                        classExpenses[tx.vClass] += tx.amount;
-                    }
-
-                    let targetVariant = tx.variant;
-                    if (targetVariant === "Fit & Finish" || targetVariant === "Miscellaneous") {
-                        targetVariant = "Miscellaneous, Fit & Finish";
-                    }
-
-                    const variantIndex = variants.indexOf(targetVariant);
-                    if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
-                        classVariantTotals[tx.vClass][variantIndex] += tx.amount;
-                    }
-                }
-            });
-
-            const netBalance = incomeSum - expenseSum;
-
-            document.getElementById('totalIncome').innerText = `RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('totalExpenses').innerText = `RM${expenseSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            
-            const balanceEl = document.getElementById('totalBalance');
-            balanceEl.innerText = `RM${netBalance.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            if (netBalance < 0) {
-                balanceEl.style.color = '#ff3b30';
-            } else {
-                balanceEl.style.color = 'var(--neon-blue)';
-            }
-
-            document.getElementById('expense-135CC').innerText = `Total Expenses: RM${classExpenses['135CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('expense-150CC').innerText = `Total Expenses: RM${classExpenses['150CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('expense-600CC').innerText = `Total Expenses: RM${classExpenses['600CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('expense-EV').innerText = `Total Expenses: RM${classExpenses['EV'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-
-            const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
-            
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: variants,
-                    datasets: [
-                        {
-                            label: '135CC Class',
-                            data: classVariantTotals['135CC'],
-                            borderColor: '#bf5af2',
-                            backgroundColor: '#bf5af2',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        },
-                        {
-                            label: '150CC Class',
-                            data: classVariantTotals['150CC'],
-                            borderColor: '#00f3ff',
-                            backgroundColor: '#00f3ff',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        },
-                        {
-                            label: '600CC Class',
-                            data: classVariantTotals['600CC'],
-                            borderColor: '#ff9500',
-                            backgroundColor: '#ff9500',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        },
-                        {
-                            label: 'EV Class',
-                            data: classVariantTotals['EV'],
-                            borderColor: '#00ffaa',
-                            backgroundColor: '#00ffaa',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#ccc',
-                                font: { family: 'Inter', size: 11, weight: 'bold' },
-                                boxWidth: 14,
-                                padding: 20
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            grid: { color: '#222' },
-                            ticks: { 
-                                color: '#888', 
-                                font: { family: 'Inter' },
-                                callback: function(value) { return 'RM' + value; }
-                            },
-                            beginAtZero: true
-                        },
-                        x: {
-                            grid: { color: '#151515' },
-                            ticks: { color: '#fff', font: { family: 'Inter', size: 10 } }
-                        }
-                    }
-                }
-            });
-        });
+    // Standardized Sign-Out Redirect
+    document.getElementById('signOutBtn').addEventListener('click', () => {
+      auth.signOut().then(() => {
+        window.location.href = 'signin.html';
+      }).catch((error) => {
+        console.error("Sign-out error:", error);
+      });
     });
-</script>
 
+    // Real-Time Overview Aggregation
+    let overviewChart;
+    db.collection('transactions').onSnapshot((snapshot) => {
+      let income = 0;
+      let expenses = 0;
+      const classTotals = { '135CC': 0, '150CC': 0, '600CC': 0, 'EV': 0 };
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const amount = parseFloat(data.amount) || 0;
+        if (data.type === 'income') {
+          income += amount;
+        } else if (data.type === 'expense') {
+          expenses += amount;
+          if (classTotals.hasOwnProperty(data.class)) {
+            classTotals[data.class] += amount;
+          }
+        }
+      });
+
+      document.getElementById('totalIncome').innerText = `$${income.toFixed(2)}`;
+      document.getElementById('totalExpenses').innerText = `$${expenses.toFixed(2)}`;
+      document.getElementById('netBalance').innerText = `$${(income - expenses).toFixed(2)}`;
+
+      renderChart(classTotals);
+    });
+
+    function renderChart(totals) {
+      const ctx = document.getElementById('overviewChart').getContext('2d');
+      if (overviewChart) {
+        overviewChart.destroy();
+      }
+      overviewChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['135CC', '150CC', '600CC', 'EV'],
+          datasets: [{
+            label: 'Expenses ($)',
+            data: [totals['135CC'], totals['150CC'], totals['600CC'], totals['EV']],
+            backgroundColor: ['#bf5af2', '#00f3ff', '#ff9500', '#00ffaa']
+          }]
+        },
+        options: { responsive: true }
+      });
+    }
+  </script>
 </body>
 </html>
