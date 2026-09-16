@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | 600CC Class Breakdown</title>
+    <title>VCRT | 150CC Class Breakdown</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <!-- FIREBASE CLOUD SDKs -->
@@ -132,8 +132,8 @@
         }
 
         .variant-card:hover {
-            border-color: #ff9500;
-            box-shadow: 0 0 10px rgba(255, 149, 0, 0.2);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
         }
 
         .variant-card h3 {
@@ -146,7 +146,7 @@
         .variant-card .total {
             font-size: 1.8rem;
             font-weight: 900;
-            color: #ff9500;
+            color: var(--neon-blue);
             margin: 0;
         }
 
@@ -200,8 +200,8 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Home</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="150cc.html" class="dash-link">150CC</a>
-            <a href="600cc.html" class="dash-link active">600CC</a>
+            <a href="150cc.html" class="dash-link active">150CC</a>
+            <a href="600cc.html" class="dash-link">600CC</a>
             <a href="ev.html" class="dash-link">EV</a>
         </nav>
 
@@ -212,7 +212,7 @@
 
     <main class="main-container">
         <div class="header-title">
-            <h1>600CC <span style="color: #ff9500; text-shadow: 0 0 10px #ff9500;">CLASS</span></h1>
+            <h1>150CC <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">CLASS</span></h1>
             <p>// Component Financial Breakdown</p>
         </div>
 
@@ -220,7 +220,7 @@
         </div>
 
         <div class="logs-container">
-            <div class="logs-title">// 600CC Class Recorded Transactions</div>
+            <div class="logs-title">// 150CC Class Recorded Transactions</div>
             <table>
                 <thead>
                     <tr>
@@ -290,7 +290,7 @@
         ];
 
         db.collection("transactions")
-          .where("vClass", "==", "600CC")
+          .where("vClass", "==", "150CC")
           .onSnapshot((snapshot) => {
             classLogBody.innerHTML = "";
             
@@ -298,7 +298,7 @@
             variants.forEach(v => variantTotals[v] = 0);
 
             if (snapshot.empty) {
-                classLogBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#555;">No transactions recorded for 600CC class yet.</td></tr>`;
+                classLogBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#555;">No transactions recorded for 150CC class yet.</td></tr>`;
             } else {
                 snapshot.forEach((doc) => {
                     const tx = doc.data();
@@ -321,7 +321,7 @@
 
                     row.innerHTML = `
                         <td style="color:#888;">${tx.date}</td>
-                        <td style="color:#ff9500; font-weight:bold;">${refDisplay}</td>
+                        <td style="color:var(--neon-blue); font-weight:bold;">${refDisplay}</td>
                         <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
                         <td>${displayVariant}</td>
                         <td>${tx.description}</td>
