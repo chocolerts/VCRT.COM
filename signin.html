@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VCRT | Sign In</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --neon-blue: #00f3ff;
             --dark-bg: #050505;
+            --nav-height: 80px;
             --neon-outline: 0 0 10px var(--neon-blue);
         }
 
@@ -17,36 +19,90 @@
             font-family: 'Inter', sans-serif;
             background-color: #000;
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            padding-top: var(--nav-height);
         }
 
-        .login-card {
+        .dashboard-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: var(--dark-bg);
+            border-bottom: 2px solid var(--neon-blue);
+            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-name {
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.6rem;
+            color: #ffffff;
+            text-shadow: var(--neon-outline);
+            text-decoration: none;
+        }
+
+        .dash-menu {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dash-link {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .dash-link:hover, .dash-link.active {
+            opacity: 1;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
+        }
+
+        .auth-container-right {
+            display: flex;
+            align-items: center;
+            min-width: 80px;
+            justify-content: flex-end;
+        }
+
+        .login-wrapper {
+            max-width: 400px;
+            margin: 80px auto;
             background: #0a0a0a;
             border: 1px solid #222;
             border-radius: 12px;
             padding: 40px;
-            width: 100%;
-            max-width: 360px;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
             text-align: center;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.8);
         }
 
-        .login-card h2 {
-            font-size: 2rem;
+        .login-wrapper h2 {
+            font-size: 1.8rem;
             font-weight: 900;
-            letter-spacing: 3px;
-            margin: 0 0 10px 0;
-        }
-
-        .login-card p {
-            color: #888;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            margin-top: 0;
             margin-bottom: 30px;
-            text-transform: uppercase;
         }
 
         .form-group {
@@ -56,10 +112,10 @@
 
         .form-group label {
             display: block;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
             color: #888;
+            text-transform: uppercase;
             margin-bottom: 8px;
         }
 
@@ -71,81 +127,95 @@
             border-radius: 6px;
             color: #fff;
             box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
         }
 
         .form-group input:focus {
+            outline: none;
             border-color: var(--neon-blue);
-            box-shadow: var(--neon-outline);
+            box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
         }
 
-        .submit-btn {
+        .btn-submit {
             width: 100%;
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
             padding: 12px;
-            background: transparent;
-            border: 1px solid var(--neon-blue);
-            color: var(--neon-blue);
-            font-weight: 700;
+            border-radius: 6px;
+            font-weight: 900;
             letter-spacing: 2px;
             text-transform: uppercase;
-            border-radius: 6px;
             cursor: pointer;
             transition: 0.3s;
             margin-top: 10px;
         }
 
-        .submit-btn:hover {
-            background: var(--neon-blue);
-            color: #000;
+        .btn-submit:hover {
             box-shadow: var(--neon-outline);
+            background: #fff;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            color: #666;
-            text-decoration: none;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .back-link:hover {
-            color: #fff;
+        .error-msg {
+            color: #ff3b30;
+            font-size: 0.8rem;
+            margin-top: 15px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
-        <h2>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">AUTH</span></h2>
-        <p>// Authenticate Member Session</p>
+    <header class="dashboard-header">
+        <div class="brand-container">
+            <a href="index.html" class="brand-name">VCRT</a>
+        </div>
 
-        <form id="signinForm">
+        <nav class="dash-menu">
+            <a href="index.html" class="dash-link">Home</a>
+            <a href="transaction.html" class="dash-link">Transactions</a>
+            <a href="aboutus.html" class="dash-link">About Us</a>
+        </nav>
+
+        <div class="auth-container-right">
+            <a href="signin.html" class="dash-link active" id="authLink">Sign In</a>
+        </div>
+    </header>
+
+    <main class="login-wrapper">
+        <h2>CORE <span style="color: var(--neon-blue);">ACCESS</span></h2>
+        <form id="loginForm">
             <div class="form-group">
-                <label>User ID</label>
-                <input type="text" id="username" required placeholder="operator">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
             </div>
             <div class="form-group">
-                <label>Access Key</label>
-                <input type="password" id="password" required placeholder="••••••••">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
             </div>
-            <button type="submit" class="submit-btn">Authorize</button>
+            <button type="submit" class="btn-submit">Authenticate</button>
+            <div id="errorMsg" class="error-msg">Invalid credentials.</div>
         </form>
-
-        <a href="index.html" class="back-link">← Return to Dashboard</a>
-    </div>
+    </main>
 
 <script>
-    document.getElementById("signinForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const user = document.getElementById("username").value;
-        if(user) {
-            localStorage.setItem("vcrt_is_logged_in", "true");
-            localStorage.setItem("vcrt_user", user);
-            window.location.href = "index.html";
-        }
+    document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("loginForm");
+        const errorMsg = document.getElementById("errorMsg");
+
+        loginForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+
+            if (user === "admin" && pass === "vcrt2026") {
+                localStorage.setItem("vcrt_is_logged_in", "true");
+                localStorage.setItem("vcrt_user", user);
+                window.location.href = "index.html";
+            } else {
+                errorMsg.style.display = "block";
+            }
+        });
     });
 </script>
 
