@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | Global Transactions</title>
+    <title>VCRT | Transactions</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -36,6 +40,11 @@
             padding: 0 40px;
             z-index: 1000;
             box-sizing: border-box;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
         }
 
         .brand-name {
@@ -81,37 +90,89 @@
         }
 
         .main-container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 40px auto;
             padding: 0 20px;
         }
 
         .page-title {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .page-title h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 900;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             margin: 0;
         }
 
-        .page-title p {
-            color: #888;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 5px;
-        }
-
-        .tx-table-container {
+        /* Form Styling */
+        .tx-form-container {
             background: #0a0a0a;
             border: 1px solid #222;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            padding: 25px;
+            margin-bottom: 40px;
+        }
+
+        .tx-form-container h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .form-grid input, .form-grid select {
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-grid input:focus, .form-grid select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+        }
+
+        .btn-add {
+            grid-column: 1 / -1;
+            background: var(--neon-blue);
+            color: #000;
+            border: none;
+            padding: 14px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            box-shadow: var(--neon-outline);
+            background: #fff;
+        }
+
+        /* Table Styling */
+        .history-section {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 30px;
         }
 
         table {
@@ -120,43 +181,51 @@
             text-align: left;
         }
 
-        th {
-            padding: 15px;
-            color: var(--neon-blue);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            border-bottom: 1px solid #222;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #151515;
-            color: #ccc;
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #1a1a1a;
             font-size: 0.9rem;
         }
 
-        tr:hover td {
-            background: #111;
-            color: #fff;
+        th {
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
 
-        .tag-class {
-            display: inline-block;
+        .type-expense {
+            color: #ff3b30;
+            font-weight: 700;
+        }
+
+        .type-income {
+            color: #30d158;
+            font-weight: 700;
+        }
+
+        .btn-delete {
+            background: transparent;
+            border: 1px solid #ff3b30;
+            color: #ff3b30;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: var(--neon-blue);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .btn-delete:hover {
+            background: #ff3b30;
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
     <header class="dashboard-header">
-        <a href="index.html" class="brand-name">VCRT</a>
+        <div class="brand-container">
+            <a href="index.html" class="brand-name">VCRT</a>
+        </div>
 
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Home</a>
@@ -171,69 +240,155 @@
 
     <main class="main-container">
         <div class="page-title">
-            <h1>MASTER <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">LEDGER</span></h1>
-            <p>// Real-time global financial stream</p>
+            <h1>TRANSACTION <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">LOG</span></h1>
         </div>
 
-        <div class="tx-table-container">
+        <!-- Add Transaction Form -->
+        <div class="tx-form-container" id="formWrapper" style="display: none;">
+            <h3>Entry Console</h3>
+            <form id="addTxForm">
+                <div class="form-grid">
+                    <select id="txType" required>
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+
+                    <select id="vClass" required>
+                        <option value="135CC">135CC</option>
+                        <option value="150CC">150CC</option>
+                        <option value="600CC">600CC</option>
+                        <option value="EV">EV</option>
+                    </select>
+
+                    <select id="variant" required>
+                        <option value="Brake System">Brake System</option>
+                        <option value="Engine & Drivetrain">Engine & Drivetrain</option>
+                        <option value="Suspension & Shocks">Suspension & Shocks</option>
+                        <option value="Frame & Body">Frame & Body</option>
+                        <option value="Instruments & Wiring">Instruments & Wiring</option>
+                        <option value="Wheels & Tires">Wheels & Tires</option>
+                        <option value="Steering System">Steering System</option>
+                        <option value="Miscellaneous, Fit & Finish">Misc / Fit & Finish</option>
+                    </select>
+
+                    <input type="text" id="txDesc" placeholder="Description" required>
+                    <input type="number" id="txAmount" step="0.01" placeholder="Amount (RM)" required>
+                    
+                    <button type="submit" class="btn-add">Commit Transaction</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Master Transaction History Table -->
+        <div class="history-section">
             <table>
                 <thead>
                     <tr>
-                        <th>Date</th>
                         <th>Class</th>
+                        <th>Type</th>
+                        <th>Variant</th>
                         <th>Description</th>
                         <th>Amount</th>
+                        <th id="actionHeader" style="display:none;">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>2026-03-10</td>
-                        <td><span class="tag-class">135 CC</span></td>
-                        <td>High-flow Injector Upgrade</td>
-                        <td style="color: #00ff66;">+$120.00</td>
-                    </tr>
-                    <tr>
-                        <td>2026-03-08</td>
-                        <td><span class="tag-class">600 CC</span></td>
-                        <td>Titanium Exhaust Headers</td>
-                        <td style="color: #ff3366;">-$850.00</td>
-                    </tr>
-                    <tr>
-                        <td>2026-03-05</td>
-                        <td><span class="tag-class">EV</span></td>
-                        <td>LiFePO4 Cell Balancing Module</td>
-                        <td style="color: #ff3366;">-$410.00</td>
-                    </tr>
+                <tbody id="masterTableBody">
+                    <tr><td colspan="6" style="text-align:center; color:#666;">Loading transactions...</td></tr>
                 </tbody>
             </table>
         </div>
     </main>
 
 <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnZQPxnxw2gGcAFRTGfx62kzHG5aM_G7g",
+        authDomain: "vcrt-dashboard.firebaseapp.com",
+        projectId: "vcrt-dashboard",
+        storageBucket: "vcrt-dashboard.firebasestorage.app",
+        messagingSenderId: "1017093341978",
+        appId: "1:1017093341978:web:ef666bd6309f21c869e2a3",
+        measurementId: "G-VV6873XWF3"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
+        const formWrapper = document.getElementById("formWrapper");
+        const actionHeader = document.getElementById("actionHeader");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
-        if (authLink) {
-            if (isLoggedIn) {
-                authLink.innerText = "Sign Out";
-                authLink.style.color = "#ff3b30";
-                authLink.style.opacity = "1";
-                authLink.href = "#";
-                authLink.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    localStorage.removeItem("vcrt_is_logged_in");
-                    localStorage.removeItem("vcrt_user");
-                    window.location.reload();
-                });
-            } else {
-                authLink.innerText = "Sign In";
-                authLink.style.color = "var(--neon-blue)";
-                authLink.style.opacity = "1";
-                authLink.href = "signin.html";
-            }
+        if (isLoggedIn) {
+            formWrapper.style.display = "block";
+            actionHeader.style.display = "table-cell";
+            authLink.innerText = "Sign Out";
+            authLink.style.color = "#ff3b30";
+            authLink.href = "#";
+            authLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                localStorage.removeItem("vcrt_is_logged_in");
+                localStorage.removeItem("vcrt_user");
+                window.location.reload();
+            });
+        } else {
+            authLink.innerText = "Sign In";
+            authLink.style.color = "var(--neon-blue)";
+            authLink.href = "signin.html";
         }
+
+        // Handle Adding Transactions
+        document.getElementById("addTxForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const newTx = {
+                type: document.getElementById("txType").value,
+                vClass: document.getElementById("vClass").value,
+                variant: document.getElementById("variant").value,
+                description: document.getElementById("txDesc").value,
+                amount: parseFloat(document.getElementById("txAmount").value),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection("transactions").add(newTx).then(() => {
+                document.getElementById("addTxForm").reset();
+            }).catch((err) => {
+                alert("Error adding document: " + err);
+            });
+        });
+
+        // Realtime Transaction Fetching
+        db.collection("transactions").onSnapshot((snapshot) => {
+            const masterBody = document.getElementById("masterTableBody");
+            masterBody.innerHTML = "";
+
+            if (snapshot.empty) {
+                masterBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#666;">No transactions found.</td></tr>`;
+            }
+
+            snapshot.forEach((doc) => {
+                const tx = doc.data();
+                const docId = doc.id;
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td><strong>${tx.vClass || 'N/A'}</strong></td>
+                    <td class="${tx.type === 'expense' ? 'type-expense' : 'type-income'}">${tx.type ? tx.type.toUpperCase() : 'EXPENSE'}</td>
+                    <td>${tx.variant || 'N/A'}</td>
+                    <td>${tx.description || '-'}</td>
+                    <td>RM ${parseFloat(tx.amount || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    ${isLoggedIn ? `<td><button class="btn-delete" onclick="deleteTx('${docId}')">Delete</button></td>` : ''}
+                `;
+                masterBody.appendChild(row);
+            });
+        });
     });
+
+    function deleteTx(id) {
+        if (confirm("Are you sure you want to delete this transaction?")) {
+            db.collection("transactions").doc(id).delete();
+        }
+    }
 </script>
 
 </body>
