@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VCRT | Dashboard Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Chart.js for Telemetry Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         :root {
             --neon-blue: #00f3ff;
@@ -82,17 +85,17 @@
 
         .main-container {
             max-width: 1100px;
-            margin: 60px auto;
+            margin: 40px auto;
             padding: 0 20px;
         }
 
         .hero-title {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
         .hero-title h1 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 900;
             letter-spacing: 4px;
             margin: 0;
@@ -106,6 +109,38 @@
             margin-top: 10px;
         }
 
+        /* TELEMETRY GRAPH CONTAINER */
+        .chart-section {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        /* DIVISION NAVIGATION CARDS */
         .class-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -163,10 +198,21 @@
 
     <main class="main-container">
         <div class="hero-title">
-            <h1>VEHICLE <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">DIVISIONS</span></h1>
-            <p>// Select a division to inspect telemetry & financial records</p>
+            <h1>TELEMETRY <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">METRICS</span></h1>
+            <p>// Real-time performance analysis across active divisions</p>
         </div>
 
+        <!-- GRAPH CONTAINER -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <span class="chart-title">Division Expenditure & Budgeting ($)</span>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- DIVISION CARDS -->
         <div class="class-grid">
             <a href="135cc.html" class="class-card">
                 <h2>135 CC</h2>
@@ -189,6 +235,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // AUTHENTICATION LOGIC
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
@@ -211,6 +258,64 @@
                 authLink.href = "signin.html";
             }
         }
+
+        // TELEMETRY GRAPH INITIALIZATION
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [
+                    {
+                        label: '135 CC Spending',
+                        data: [1200, 1900, 800, 1500, 2000, 2400],
+                        borderColor: '#00f3ff',
+                        backgroundColor: 'rgba(0, 243, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: '600 CC Spending',
+                        data: [2500, 3100, 4000, 2800, 4200, 5100],
+                        borderColor: '#ff3366',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'EV Division Spending',
+                        data: [1800, 2200, 3500, 3100, 2900, 4500],
+                        borderColor: '#00ff66',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ccc',
+                            font: { family: 'Inter', size: 12 }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#1a1a1a' },
+                        ticks: { color: '#888' }
+                    },
+                    y: {
+                        grid: { color: '#1a1a1a' },
+                        ticks: { color: '#888' }
+                    }
+                }
+            }
+        });
     });
 </script>
 
