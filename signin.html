@@ -9,7 +9,6 @@
         :root {
             --neon-blue: #00f3ff;
             --dark-bg: #050505;
-            --nav-height: 80px;
             --neon-outline: 0 0 10px var(--neon-blue);
         }
 
@@ -18,97 +17,36 @@
             font-family: 'Inter', sans-serif;
             background-color: #000;
             color: white;
-            padding-top: var(--nav-height);
-        }
-
-        .dashboard-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: var(--nav-height);
-            background: var(--dark-bg);
-            border-bottom: 2px solid var(--neon-blue);
-            box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            z-index: 1000;
-            box-sizing: border-box;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        .brand-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .brand-name {
-            font-weight: 900;
-            letter-spacing: 4px;
-            font-size: 1.6rem;
-            color: #ffffff;
-            text-shadow: var(--neon-outline);
-            text-decoration: none;
-        }
-
-        .dash-menu {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .dash-link {
-            text-decoration: none;
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.6;
-            transition: 0.3s;
-        }
-
-        .dash-link:hover, .dash-link.active {
-            opacity: 1;
-            color: var(--neon-blue);
-            text-shadow: var(--neon-outline);
-        }
-
-        .auth-container-right {
-            display: flex;
-            align-items: center;
-            min-width: 80px;
-            justify-content: flex-end;
-        }
-
-        .main-container {
-            max-width: 420px;
-            margin: 80px auto;
+        .login-card {
             background: #0a0a0a;
             border: 1px solid #222;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
             text-align: center;
         }
 
-        .form-title h2 {
+        .login-card h2 {
             font-size: 2rem;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             margin: 0 0 10px 0;
         }
 
-        .form-subtext {
-            color: #666;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+        .login-card p {
+            color: #888;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
             margin-bottom: 30px;
+            text-transform: uppercase;
         }
 
         .form-group {
@@ -116,169 +54,98 @@
             text-align: left;
         }
 
-        label {
+        .form-group label {
             display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             color: #888;
             margin-bottom: 8px;
-            text-transform: uppercase;
         }
 
-        input {
+        .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
             background: #111;
             border: 1px solid #333;
             border-radius: 6px;
             color: #fff;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
             box-sizing: border-box;
+            outline: none;
             transition: 0.3s;
         }
 
-        input:focus {
-            outline: none;
+        .form-group input:focus {
             border-color: var(--neon-blue);
-            box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+            box-shadow: var(--neon-outline);
         }
 
-        .btn-submit {
+        .submit-btn {
             width: 100%;
-            background: var(--neon-blue);
-            color: #000;
-            border: none;
-            padding: 14px;
-            font-weight: 900;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
             transition: 0.3s;
+            margin-top: 10px;
         }
 
-        .btn-submit:hover {
+        .submit-btn:hover {
+            background: var(--neon-blue);
+            color: #000;
             box-shadow: var(--neon-outline);
-            transform: translateY(-2px);
         }
 
-        .status-message {
+        .back-link {
+            display: inline-block;
             margin-top: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: none;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        .status-success { color: #00ffaa; }
-        .status-error { color: #ff3b30; }
+        .back-link:hover {
+            color: #fff;
+        }
     </style>
 </head>
 <body>
 
-    <header class="dashboard-header">
-        <div class="brand-container">
-            <a href="index.html" class="brand-name">VCRT</a>
-        </div>
+    <div class="login-card">
+        <h2>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">AUTH</span></h2>
+        <p>// Authenticate Member Session</p>
 
-        <nav class="dash-menu">
-            <a href="index.html" class="dash-link">Home</a>
-            <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="150cc.html" class="dash-link">150CC</a>
-            <a href="600cc.html" class="dash-link">600CC</a>
-            <a href="ev.html" class="dash-link">EV</a>
-        </nav>
-
-        <div class="auth-container-right">
-            <a href="signin.html" class="dash-link" id="authLink" style="color: #ff3b30; opacity: 1;">Sign Out</a>
-        </div>
-    </header>
-
-    <main class="main-container" id="authContainer">
-        <div class="form-title">
-            <h2>MEMBER <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">LOGIN</span></h2>
-            <div class="form-subtext">// Access Team Telemetry & Finances</div>
-        </div>
-
-        <form id="loginForm">
+        <form id="signinForm">
             <div class="form-group">
-                <label for="username">Username / ID</label>
-                <input type="text" id="username" placeholder="Enter your ID" required>
+                <label>User ID</label>
+                <input type="text" id="username" required placeholder="operator">
             </div>
-
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <label>Access Key</label>
+                <input type="password" id="password" required placeholder="••••••••">
             </div>
-
-            <button type="submit" class="btn-submit">Sign In</button>
+            <button type="submit" class="submit-btn">Authorize</button>
         </form>
 
-        <div id="statusMessage" class="status-message"></div>
-    </main>
+        <a href="index.html" class="back-link">← Return to Dashboard</a>
+    </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const authLink = document.getElementById("authLink");
-        const loginForm = document.getElementById("loginForm");
-        const statusMsg = document.getElementById("statusMessage");
-        const authContainer = document.getElementById("authContainer");
-
-        const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
-        const currentUser = localStorage.getItem("vcrt_user") || "Team Member";
-
-        if (isLoggedIn) {
-            authLink.style.display = "inline-block";
-            authLink.innerText = "Sign Out";
-            
-            authContainer.innerHTML = `
-                <div class="form-title">
-                    <h2>ACTIVE <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">SESSION</span></h2>
-                    <div class="form-subtext">// Logged in as ${currentUser}</div>
-                </div>
-                <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 25px;">You have full administrative access to log transactions and monitor vehicle metrics.</p>
-                <button class="btn-submit" id="btnSignOut" style="background: #ff3b30; color: #fff;">Sign Out</button>
-            `;
-
-            document.getElementById("btnSignOut").addEventListener("click", performSignOut);
-        } else {
-            authLink.style.display = "inline-block";
-            authLink.innerText = "Sign In";
-            authLink.style.color = "var(--neon-blue)";
+    document.getElementById("signinForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const user = document.getElementById("username").value;
+        if(user) {
+            localStorage.setItem("vcrt_is_logged_in", "true");
+            localStorage.setItem("vcrt_user", user);
+            window.location.href = "index.html";
         }
-
-        loginForm?.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const username = document.getElementById("username").value.trim();
-
-            if (username !== "") {
-                localStorage.setItem("vcrt_is_logged_in", "true");
-                localStorage.setItem("vcrt_user", username);
-
-                statusMsg.innerText = "AUTHENTICATED. REDIRECTING...";
-                statusMsg.className = "status-message status-success";
-                statusMsg.style.display = "block";
-
-                setTimeout(() => {
-                    window.location.href = "index.html";
-                }, 1000);
-            }
-        });
-
-        function performSignOut() {
-            localStorage.removeItem("vcrt_is_logged_in");
-            localStorage.removeItem("vcrt_user");
-            window.location.reload();
-        }
-
-        authLink.addEventListener("click", function (e) {
-            if (isLoggedIn) {
-                e.preventDefault();
-                performSignOut();
-            }
-        });
     });
 </script>
 
