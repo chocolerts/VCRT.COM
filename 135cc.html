@@ -119,6 +119,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
+            margin-bottom: 50px;
         }
 
         .variant-card {
@@ -146,8 +147,55 @@
         .variant-card .amount {
             font-size: 1.8rem;
             font-weight: 900;
-            color: #ff3b30;
+            color: var(--neon-blue);
+            text-shadow: var(--neon-outline);
             margin: 0;
+        }
+
+        /* History Table Styling */
+        .history-section {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .history-section h2 {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 0.9rem;
+        }
+
+        th {
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .type-expense {
+            color: #ff3b30;
+            font-weight: 700;
+        }
+
+        .type-income {
+            color: #30d158;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -209,6 +257,23 @@
                 <p class="amount" id="v-misc">RM0.00</p>
             </div>
         </div>
+
+        <div class="history-section">
+            <h2>135CC Transaction History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Variant</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <tr><td colspan="4" style="text-align:center; color:#666;">Loading transactions...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </main>
 
 <script>
@@ -264,6 +329,12 @@
 
         db.collection("transactions").where("vClass", "==", "135CC").onSnapshot((snapshot) => {
             Object.keys(totals).forEach(k => totals[k] = 0);
+            const historyBody = document.getElementById("historyTableBody");
+            historyBody.innerHTML = "";
+
+            if (snapshot.empty) {
+                historyBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#666;">No transactions recorded for 135CC class.</td></tr>`;
+            }
 
             snapshot.forEach((doc) => {
                 const tx = doc.data();
@@ -274,6 +345,15 @@
                         totals[v] += tx.amount;
                     }
                 }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td class="${tx.type === 'expense' ? 'type-expense' : 'type-income'}">${tx.type ? tx.type.toUpperCase() : 'EXPENSE'}</td>
+                    <td>${tx.variant || 'N/A'}</td>
+                    <td>${tx.description || '-'}</td>
+                    <td>RM ${parseFloat(tx.amount || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                `;
+                historyBody.appendChild(row);
             });
 
             document.getElementById("v-brake").innerText = `RM${totals["Brake System"].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
