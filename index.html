@@ -27,7 +27,6 @@
             padding-top: var(--nav-height);
         }
 
-        /* NAVIGATION CSS */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -39,6 +38,7 @@
             box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 40px;
             z-index: 1000;
             box-sizing: border-box;
@@ -47,8 +47,6 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-right: auto;
         }
 
         .brand-name {
@@ -86,7 +84,13 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* MAIN CONTENT */
+        .auth-container-right {
+            display: flex;
+            align-items: center;
+            min-width: 80px;
+            justify-content: flex-end;
+        }
+
         .main-content {
             padding: 60px 10%;
             text-align: center;
@@ -103,7 +107,6 @@
             letter-spacing: -1px;
         }
 
-        /* FINANCIAL SUMMARY GRID */
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -140,7 +143,6 @@
             margin: 0;
         }
 
-        /* CHART & CLASS GRID */
         .chart-container {
             background: #111;
             border: 1px solid #222;
@@ -248,8 +250,11 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link active">Dashboard</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </nav>
+
+        <div class="auth-container-right">
+            <a href="#" class="dash-link" id="authLink" style="display: none; color: #ff3b30; opacity: 1;">Sign Out</a>
+        </div>
     </header>
 
     <main class="main-content">
@@ -258,7 +263,6 @@
             <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
         </div>
 
-        <!-- FINANCIAL SUMMARY GRID -->
         <div class="summary-grid">
             <div class="summary-card">
                 <h3>Total Income</h3>
@@ -274,7 +278,6 @@
             </div>
         </div>
 
-        <!-- LINE CHART CONTAINER -->
         <div id="metrics-dashboard" class="chart-container">
             <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
                 <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
@@ -284,7 +287,6 @@
             </div>
         </div>
 
-        <!-- CLASS GRID WITH LIVE TOTAL EXPENSES -->
         <div class="class-grid">
             <div class="class-card">
                 <p>FSM</p>
@@ -328,9 +330,7 @@
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
         if (isLoggedIn && authLink) {
-            authLink.innerText = "Sign Out";
-            authLink.href = "#";
-            authLink.style.color = "#ff3b30";
+            authLink.style.display = "inline-block";
             authLink.addEventListener("click", function (e) {
                 e.preventDefault();
                 localStorage.removeItem("vcrt_is_logged_in");
