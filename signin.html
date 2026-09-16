@@ -21,7 +21,6 @@
             padding-top: var(--nav-height);
         }
 
-        /* NAVIGATION BAR */
         .dashboard-header {
             position: fixed;
             top: 0;
@@ -33,6 +32,7 @@
             box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 40px;
             z-index: 1000;
             box-sizing: border-box;
@@ -41,8 +41,6 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-right: auto;
         }
 
         .brand-name {
@@ -80,7 +78,13 @@
             text-shadow: var(--neon-outline);
         }
 
-        /* SIGN IN CONTAINER */
+        .auth-container-right {
+            display: flex;
+            align-items: center;
+            min-width: 80px;
+            justify-content: flex-end;
+        }
+
         .main-container {
             max-width: 420px;
             margin: 80px auto;
@@ -182,8 +186,11 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Dashboard</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="signin.html" class="dash-link active" id="authLink">Sign In</a>
         </nav>
+
+        <div class="auth-container-right">
+            <a href="#" class="dash-link" id="authLink" style="display: none; color: #ff3b30; opacity: 1;">Sign Out</a>
+        </div>
     </header>
 
     <main class="main-container" id="authContainer">
@@ -216,16 +223,12 @@
         const statusMsg = document.getElementById("statusMessage");
         const authContainer = document.getElementById("authContainer");
 
-        // CHECK IF ALREADY LOGGED IN
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
         const currentUser = localStorage.getItem("vcrt_user") || "Team Member";
 
         if (isLoggedIn) {
-            // Update Navigation state
-            authLink.innerText = "Sign Out";
-            authLink.style.color = "#ff3b30";
+            authLink.style.display = "inline-block";
             
-            // Show Logged-in view instead of login form
             authContainer.innerHTML = `
                 <div class="form-title">
                     <h2>ACTIVE <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">SESSION</span></h2>
@@ -238,7 +241,6 @@
             document.getElementById("btnSignOut").addEventListener("click", performSignOut);
         }
 
-        // HANDLE LOGIN SUBMISSION
         loginForm?.addEventListener("submit", function (e) {
             e.preventDefault();
             const username = document.getElementById("username").value.trim();
@@ -257,19 +259,15 @@
             }
         });
 
-        // SIGN OUT FUNCTION
         function performSignOut() {
             localStorage.removeItem("vcrt_is_logged_in");
             localStorage.removeItem("vcrt_user");
             window.location.reload();
         }
 
-        // HEADER SIGN OUT EVENT HANDLER
         authLink.addEventListener("click", function (e) {
-            if (localStorage.getItem("vcrt_is_logged_in") === "true") {
-                e.preventDefault();
-                performSignOut();
-            }
+            e.preventDefault();
+            performSignOut();
         });
     });
 </script>
