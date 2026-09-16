@@ -3,34 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VCRT Dashboard - Overview</title>
-  <!-- Chart.js -->
+  <title>VCRT Financial Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <style>
     :root {
-      --bg-color: #0b0e14;
+      --bg: #0b0e14;
       --card-bg: #151922;
       --accent-blue: #00f3ff;
-      --text-main: #f0f4f8;
+      --text: #f0f4f8;
       --text-muted: #8a99ad;
-      --border-color: #232a3b;
+      --border: #232a3b;
     }
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
+      background: var(--bg);
+      color: var(--text);
     }
-    .header {
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border-color);
+      padding: 1.2rem 2rem;
+      background: #0e121a;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent-blue);
     }
     .dash-menu {
       display: flex;
@@ -40,6 +45,7 @@
       color: var(--text-muted);
       text-decoration: none;
       font-weight: 500;
+      font-size: 0.95rem;
       transition: color 0.2s;
     }
     .dash-menu a:hover, .dash-menu a.active {
@@ -49,48 +55,55 @@
       background: transparent;
       border: 1px solid var(--accent-blue);
       color: var(--accent-blue);
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 1rem;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-signout:hover {
+      background: var(--accent-blue);
+      color: #000;
     }
     .container {
       padding: 2rem;
       max-width: 1200px;
       margin: 0 auto;
     }
-    .cards-grid {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
     .card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border);
       padding: 1.5rem;
       border-radius: 10px;
     }
-    .card h3 {
-      margin: 0 0 0.5rem 0;
-      font-size: 0.9rem;
+    .card label {
+      font-size: 0.85rem;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .card .value {
+    .card .val {
       font-size: 1.8rem;
       font-weight: bold;
+      margin-top: 0.5rem;
       color: var(--accent-blue);
     }
-    .chart-card {
+    .chart-container {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border);
       padding: 1.5rem;
       border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <h2>VCRT Overview</h2>
+  <header>
+    <div class="logo">VCRT DASHBOARD</div>
     <nav class="dash-menu">
       <a href="index.html" class="active">Home</a>
       <a href="transactions.html">Transactions</a>
@@ -98,29 +111,30 @@
       <a href="150cc.html">150CC</a>
       <a href="600cc.html">600CC</a>
       <a href="ev.html">EV Class</a>
+      <a href="about.html">About Us</a>
     </nav>
     <button id="signOutBtn" class="btn-signout">Sign Out</button>
   </header>
 
   <main class="container">
-    <div class="cards-grid">
+    <div class="grid">
       <div class="card">
-        <h3>Total Income</h3>
-        <div class="value" id="totalIncome">$0.00</div>
+        <label>Total Income</label>
+        <div class="val" id="totalIncome">$0.00</div>
       </div>
       <div class="card">
-        <h3>Total Expenses</h3>
-        <div class="value" id="totalExpenses">$0.00</div>
+        <label>Total Expenses</label>
+        <div class="val" id="totalExpenses">$0.00</div>
       </div>
       <div class="card">
-        <h3>Net Balance</h3>
-        <div class="value" id="netBalance">$0.00</div>
+        <label>Net Balance</label>
+        <div class="val" id="netBalance">$0.00</div>
       </div>
     </div>
 
-    <div class="chart-card">
-      <h3>Class Expense Distribution</h3>
-      <canvas id="overviewChart"></canvas>
+    <div class="chart-container">
+      <h3>Class Expense Breakdown</h3>
+      <canvas id="overviewChart" height="100"></canvas>
     </div>
   </main>
 
@@ -138,58 +152,58 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Standardized Sign-Out Redirect
     document.getElementById('signOutBtn').addEventListener('click', () => {
       auth.signOut().then(() => {
         window.location.href = 'signin.html';
-      }).catch((error) => {
-        console.error("Sign-out error:", error);
-      });
+      }).catch((error) => console.error("Sign-out error:", error));
     });
 
-    // Real-Time Overview Aggregation
     let overviewChart;
+
     db.collection('transactions').onSnapshot((snapshot) => {
-      let income = 0;
-      let expenses = 0;
-      const classTotals = { '135CC': 0, '150CC': 0, '600CC': 0, 'EV': 0 };
+      let totalInc = 0;
+      let totalExp = 0;
+      const classExpenses = { '135CC': 0, '150CC': 0, '600CC': 0, 'EV': 0 };
 
       snapshot.forEach((doc) => {
-        const data = doc.data();
-        const amount = parseFloat(data.amount) || 0;
-        if (data.type === 'income') {
-          income += amount;
-        } else if (data.type === 'expense') {
-          expenses += amount;
-          if (classTotals.hasOwnProperty(data.class)) {
-            classTotals[data.class] += amount;
+        const item = doc.data();
+        const amt = parseFloat(item.amount) || 0;
+
+        if (item.type === 'income') {
+          totalInc += amt;
+        } else if (item.type === 'expense') {
+          totalExp += amt;
+          if (classExpenses.hasOwnProperty(item.class)) {
+            classExpenses[item.class] += amt;
           }
         }
       });
 
-      document.getElementById('totalIncome').innerText = `$${income.toFixed(2)}`;
-      document.getElementById('totalExpenses').innerText = `$${expenses.toFixed(2)}`;
-      document.getElementById('netBalance').innerText = `$${(income - expenses).toFixed(2)}`;
+      document.getElementById('totalIncome').innerText = `$${totalInc.toFixed(2)}`;
+      document.getElementById('totalExpenses').innerText = `$${totalExp.toFixed(2)}`;
+      document.getElementById('netBalance').innerText = `$${(totalInc - totalExp).toFixed(2)}`;
 
-      renderChart(classTotals);
+      renderChart(classExpenses);
     });
 
-    function renderChart(totals) {
+    function renderChart(expenses) {
       const ctx = document.getElementById('overviewChart').getContext('2d');
-      if (overviewChart) {
-        overviewChart.destroy();
-      }
+      if (overviewChart) overviewChart.destroy();
+      
       overviewChart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['135CC', '150CC', '600CC', 'EV'],
+          labels: ['135CC', '150CC', '600CC', 'EV Class'],
           datasets: [{
-            label: 'Expenses ($)',
-            data: [totals['135CC'], totals['150CC'], totals['600CC'], totals['EV']],
+            label: 'Total Expenses ($)',
+            data: [expenses['135CC'], expenses['150CC'], expenses['600CC'], expenses['EV']],
             backgroundColor: ['#bf5af2', '#00f3ff', '#ff9500', '#00ffaa']
           }]
         },
-        options: { responsive: true }
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } }
+        }
       });
     }
   </script>
