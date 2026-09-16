@@ -184,12 +184,15 @@
         </div>
 
         <nav class="dash-menu">
-            <a href="index.html" class="dash-link">Dashboard</a>
+            <a href="index.html" class="dash-link">Home</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
+            <a href="150cc.html" class="dash-link">150CC</a>
+            <a href="600cc.html" class="dash-link">600CC</a>
+            <a href="ev.html" class="dash-link">EV</a>
         </nav>
 
         <div class="auth-container-right">
-            <a href="#" class="dash-link" id="authLink" style="display: none; color: #ff3b30; opacity: 1;">Sign Out</a>
+            <a href="signin.html" class="dash-link" id="authLink" style="color: #ff3b30; opacity: 1;">Sign Out</a>
         </div>
     </header>
 
@@ -228,6 +231,7 @@
 
         if (isLoggedIn) {
             authLink.style.display = "inline-block";
+            authLink.innerText = "Sign Out";
             
             authContainer.innerHTML = `
                 <div class="form-title">
@@ -239,6 +243,10 @@
             `;
 
             document.getElementById("btnSignOut").addEventListener("click", performSignOut);
+        } else {
+            authLink.style.display = "inline-block";
+            authLink.innerText = "Sign In";
+            authLink.style.color = "var(--neon-blue)";
         }
 
         loginForm?.addEventListener("submit", function (e) {
@@ -266,8 +274,10 @@
         }
 
         authLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            performSignOut();
+            if (isLoggedIn) {
+                e.preventDefault();
+                performSignOut();
+            }
         });
     });
 </script>
