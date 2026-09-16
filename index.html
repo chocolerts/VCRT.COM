@@ -248,12 +248,15 @@
         </div>
 
         <nav class="dash-menu">
-            <a href="index.html" class="dash-link active">Dashboard</a>
+            <a href="index.html" class="dash-link active">Home</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
+            <a href="150cc.html" class="dash-link">150CC</a>
+            <a href="600cc.html" class="dash-link">600CC</a>
+            <a href="ev.html" class="dash-link">EV</a>
         </nav>
 
         <div class="auth-container-right">
-            <a href="#" class="dash-link" id="authLink" style="display: none; color: #ff3b30; opacity: 1;">Sign Out</a>
+            <a href="signin.html" class="dash-link" id="authLink" style="color: #ff3b30; opacity: 1;">Sign Out</a>
         </div>
     </header>
 
@@ -329,14 +332,23 @@
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
-        if (isLoggedIn && authLink) {
-            authLink.style.display = "inline-block";
-            authLink.addEventListener("click", function (e) {
-                e.preventDefault();
-                localStorage.removeItem("vcrt_is_logged_in");
-                localStorage.removeItem("vcrt_user");
-                window.location.reload();
-            });
+        if (authLink) {
+            if (isLoggedIn) {
+                authLink.style.display = "inline-block";
+                authLink.innerText = "Sign Out";
+                authLink.href = "#";
+                authLink.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem("vcrt_is_logged_in");
+                    localStorage.removeItem("vcrt_user");
+                    window.location.href = "signin.html";
+                });
+            } else {
+                authLink.style.display = "inline-block";
+                authLink.innerText = "Sign In";
+                authLink.style.color = "var(--neon-blue)";
+                authLink.href = "signin.html";
+            }
         }
 
         let chartInstance = null;
