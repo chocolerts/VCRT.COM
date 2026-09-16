@@ -285,13 +285,10 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Home</a>
             <a href="transaction.html" class="dash-link active">Transactions</a>
-            <a href="150cc.html" class="dash-link">150CC</a>
-            <a href="600cc.html" class="dash-link">600CC</a>
-            <a href="ev.html" class="dash-link">EV</a>
         </nav>
 
         <div class="auth-container-right">
-            <a href="signin.html" class="dash-link" id="authLink" style="color: #ff3b30; opacity: 1;">Sign Out</a>
+            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </div>
     </header>
 
@@ -412,17 +409,20 @@
             if (isLoggedIn) {
                 authLink.style.display = "inline-block";
                 authLink.innerText = "Sign Out";
+                authLink.style.color = "#ff3b30";
+                authLink.style.opacity = "1";
                 authLink.href = "#";
                 authLink.addEventListener("click", function (e) {
                     e.preventDefault();
                     localStorage.removeItem("vcrt_is_logged_in");
                     localStorage.removeItem("vcrt_user");
-                    window.location.href = "signin.html";
+                    window.location.reload();
                 });
             } else {
                 authLink.style.display = "inline-block";
                 authLink.innerText = "Sign In";
                 authLink.style.color = "var(--neon-blue)";
+                authLink.style.opacity = "1";
                 authLink.href = "signin.html";
                 lockBanner.style.display = "block";
                 formFieldset.disabled = true;
