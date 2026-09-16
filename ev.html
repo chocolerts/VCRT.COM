@@ -13,6 +13,7 @@
     <style>
         :root {
             --neon-blue: #00f3ff;
+            --neon-green: #00ffaa;
             --dark-bg: #050505;
             --nav-height: 80px;
             --neon-outline: 0 0 10px var(--neon-blue);
@@ -37,6 +38,7 @@
             box-shadow: 0 2px 25px rgba(0, 243, 255, 0.2);
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 40px;
             z-index: 1000;
             box-sizing: border-box;
@@ -45,8 +47,6 @@
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-right: auto;
         }
 
         .brand-name {
@@ -82,6 +82,13 @@
             opacity: 1;
             color: var(--neon-blue);
             text-shadow: var(--neon-outline);
+        }
+
+        .auth-container-right {
+            display: flex;
+            align-items: center;
+            min-width: 80px;
+            justify-content: flex-end;
         }
 
         .main-container {
@@ -126,7 +133,7 @@
         }
 
         .variant-card:hover {
-            border-color: #00ffaa;
+            border-color: var(--neon-green);
             box-shadow: 0 0 10px rgba(0, 255, 170, 0.2);
         }
 
@@ -140,7 +147,7 @@
         .variant-card .total {
             font-size: 1.8rem;
             font-weight: 900;
-            color: #00ffaa;
+            color: var(--neon-green);
             margin: 0;
         }
 
@@ -180,7 +187,7 @@
             font-size: 0.75rem;
         }
 
-        .income-text { color: #00ffaa; font-weight: bold; }
+        .income-text { color: var(--neon-green); font-weight: bold; }
         .expense-text { color: #ff3b30; font-weight: bold; }
     </style>
 </head>
@@ -194,18 +201,20 @@
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Dashboard</a>
             <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </nav>
+
+        <div class="auth-container-right">
+            <a href="#" class="dash-link" id="authLink" style="display: none; color: #ff3b30; opacity: 1;">Sign Out</a>
+        </div>
     </header>
 
     <main class="main-container">
         <div class="header-title">
-            <h1>EV <span style="color: #00ffaa; text-shadow: 0 0 10px #00ffaa;">CLASS</span></h1>
+            <h1>EV <span style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green);">CLASS</span></h1>
             <p>// Component Financial Breakdown</p>
         </div>
 
-        <div class="variant-grid" id="variantCardsContainer">
-        </div>
+        <div class="variant-grid" id="variantCardsContainer"></div>
 
         <div class="logs-container">
             <div class="logs-title">// EV Class Recorded Transactions</div>
@@ -219,8 +228,7 @@
                         <th>Amount</th>
                     </tr>
                 </thead>
-                <tbody id="classLogBody">
-                </tbody>
+                <tbody id="classLogBody"></tbody>
             </table>
         </div>
     </main>
@@ -244,9 +252,7 @@
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
         if (isLoggedIn && authLink) {
-            authLink.innerText = "Sign Out";
-            authLink.href = "#";
-            authLink.style.color = "#ff3b30";
+            authLink.style.display = "inline-block";
             authLink.addEventListener("click", function (e) {
                 e.preventDefault();
                 localStorage.removeItem("vcrt_is_logged_in");
