@@ -161,15 +161,15 @@
 
         .class-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
             margin-top: 40px;
         }
 
         .class-card {
             background: #111;
             border: 1px solid #222;
-            padding: 40px 20px;
+            padding: 35px 20px;
             border-radius: 15px;
             transition: 0.4s;
             position: relative;
@@ -183,7 +183,7 @@
         }
 
         .class-card h2 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 900;
             margin: 5px 0;
             color: #fff;
@@ -198,7 +198,7 @@
         }
 
         .class-expense-badge {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: #ff3b30;
             letter-spacing: 1px;
@@ -209,7 +209,7 @@
             background: transparent;
             border: 1px solid var(--neon-blue);
             color: var(--neon-blue);
-            padding: 10px 30px;
+            padding: 10px 25px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
@@ -289,6 +289,13 @@
 
         <div class="class-grid">
             <div class="class-card">
+                <p>FSM Lightweight</p>
+                <h2>135CC</h2>
+                <div class="class-expense-badge" id="expense-135CC">Total Expenses: RM0.00</div>
+                <button class="btn-select" onclick="window.location.href='135cc.html'">Enter Class</button>
+            </div>
+
+            <div class="class-card">
                 <p>FSM</p>
                 <h2>150CC</h2>
                 <div class="class-expense-badge" id="expense-150CC">Total Expenses: RM0.00</div>
@@ -356,7 +363,7 @@
         db.collection("transactions").onSnapshot((snapshot) => {
             let incomeSum = 0;
             let expenseSum = 0;
-            const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
+            const classExpenses = { '135CC': 0, '150CC': 0, '600CC': 0, 'EV': 0 };
 
             const variants = [
                 "Brake System", 
@@ -370,6 +377,7 @@
             ];
 
             const classVariantTotals = {
+                '135CC': new Array(8).fill(0),
                 '150CC': new Array(8).fill(0),
                 '600CC': new Array(8).fill(0),
                 'EV': new Array(8).fill(0)
@@ -411,6 +419,7 @@
                 balanceEl.style.color = 'var(--neon-blue)';
             }
 
+            document.getElementById('expense-135CC').innerText = `Total Expenses: RM${classExpenses['135CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('expense-150CC').innerText = `Total Expenses: RM${classExpenses['150CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('expense-600CC').innerText = `Total Expenses: RM${classExpenses['600CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('expense-EV').innerText = `Total Expenses: RM${classExpenses['EV'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
@@ -426,6 +435,17 @@
                 data: {
                     labels: variants,
                     datasets: [
+                        {
+                            label: '135CC Class',
+                            data: classVariantTotals['135CC'],
+                            borderColor: '#bf5af2',
+                            backgroundColor: '#bf5af2',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
                         {
                             label: '150CC Class',
                             data: classVariantTotals['150CC'],
