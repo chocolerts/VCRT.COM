@@ -433,53 +433,41 @@
             }
 
             chartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: variants,
                     datasets: [
                         {
                             label: '135CC Class',
                             data: classVariantTotals['135CC'],
-                            borderColor: '#bf5af2',
                             backgroundColor: '#bf5af2',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
+                            borderColor: '#bf5af2',
+                            borderWidth: 1,
+                            borderRadius: 4
                         },
                         {
                             label: '150CC Class',
                             data: classVariantTotals['150CC'],
-                            borderColor: '#00f3ff',
                             backgroundColor: '#00f3ff',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
+                            borderColor: '#00f3ff',
+                            borderWidth: 1,
+                            borderRadius: 4
                         },
                         {
                             label: '600CC Class',
                             data: classVariantTotals['600CC'],
-                            borderColor: '#ff9500',
                             backgroundColor: '#ff9500',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
+                            borderColor: '#ff9500',
+                            borderWidth: 1,
+                            borderRadius: 4
                         },
                         {
                             label: 'EV Class',
                             data: classVariantTotals['EV'],
-                            borderColor: '#00ffaa',
                             backgroundColor: '#00ffaa',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: false,
-                            pointRadius: 5,
-                            pointHoverRadius: 7
+                            borderColor: '#00ffaa',
+                            borderWidth: 1,
+                            borderRadius: 4
                         }
                     ]
                 },
