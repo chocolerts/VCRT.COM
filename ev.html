@@ -206,7 +206,7 @@
         </nav>
 
         <div class="auth-container-right">
-            <a href="signin.html" class="dash-link" id="authLink" style="color: #ff3b30; opacity: 1;">Sign Out</a>
+            <a href="#" class="dash-link" id="authLink" style="display: none;">Sign Out</a>
         </div>
     </header>
 
@@ -258,18 +258,17 @@
             if (isLoggedIn) {
                 authLink.style.display = "inline-block";
                 authLink.innerText = "Sign Out";
+                authLink.style.color = "#ff3b30";
+                authLink.style.opacity = "1";
                 authLink.href = "#";
                 authLink.addEventListener("click", function (e) {
                     e.preventDefault();
                     localStorage.removeItem("vcrt_is_logged_in");
                     localStorage.removeItem("vcrt_user");
-                    window.location.href = "signin.html";
+                    window.location.reload();
                 });
             } else {
-                authLink.style.display = "inline-block";
-                authLink.innerText = "Sign In";
-                authLink.style.color = "var(--neon-blue)";
-                authLink.href = "signin.html";
+                authLink.style.display = "none";
             }
         }
 
