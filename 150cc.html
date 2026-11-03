@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VCRT | 150CC Class Breakdown</title>
+    <title>FinTrack 2.0 | 150CC Class Breakdown</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <!-- FIREBASE CLOUD SDKs -->
@@ -50,8 +50,8 @@
 
         .brand-name {
             font-weight: 900;
-            letter-spacing: 4px;
-            font-size: 1.6rem;
+            letter-spacing: 2px;
+            font-size: 1.4rem;
             color: #ffffff;
             text-shadow: var(--neon-outline);
             text-decoration: none;
@@ -194,7 +194,7 @@
 
     <header class="dashboard-header">
         <div class="brand-container">
-            <a href="index.html" class="brand-name">VCRT</a>
+            <a href="index.html" class="brand-name">FinTrack 2.0</a>
         </div>
 
         <nav class="dash-menu">
@@ -264,85 +264,4 @@
                 authLink.href = "#";
                 authLink.addEventListener("click", function (e) {
                     e.preventDefault();
-                    localStorage.removeItem("vcrt_is_logged_in");
-                    localStorage.removeItem("vcrt_user");
-                    window.location.reload();
-                });
-            } else {
-                authLink.style.display = "none";
-            }
-        }
-
-        const classLogBody = document.getElementById("classLogBody");
-        const variantCardsContainer = document.getElementById("variantCardsContainer");
-
-        const variants = [
-            "Brake System", 
-            "Engine & Drivetrain", 
-            "Suspension & Shocks", 
-            "Frame & Body", 
-            "Instruments & Wiring", 
-            "Wheels & Tires", 
-            "Steering System", 
-            "Miscellaneous, Fit & Finish"
-        ];
-
-        db.collection("transactions")
-          .where("vClass", "==", "150CC")
-          .onSnapshot((snapshot) => {
-            classLogBody.innerHTML = "";
-            
-            const variantTotals = {};
-            variants.forEach(v => variantTotals[v] = 0);
-
-            if (snapshot.empty) {
-                classLogBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#555;">No transactions recorded for 150CC class yet.</td></tr>`;
-            } else {
-                snapshot.forEach((doc) => {
-                    const tx = doc.data();
-                    const row = document.createElement("tr");
-
-                    let displayVariant = tx.variant;
-                    if (displayVariant === "Fit & Finish" || displayVariant === "Miscellaneous") {
-                        displayVariant = "Miscellaneous, Fit & Finish";
-                    }
-
-                    if (tx.type === 'expense' && variantTotals.hasOwnProperty(displayVariant)) {
-                        variantTotals[displayVariant] += tx.amount;
-                    }
-
-                    const amountFormatted = tx.type === 'income' 
-                        ? `<span class="income-text">+RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
-                        : `<span class="expense-text">-RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
-
-                    const refDisplay = tx.refNum ? tx.refNum : "N/A";
-
-                    row.innerHTML = `
-                        <td style="color:#888;">${tx.date}</td>
-                        <td style="color:var(--neon-blue); font-weight:bold;">${refDisplay}</td>
-                        <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
-                        <td>${displayVariant}</td>
-                        <td>${tx.description}</td>
-                        <td>${amountFormatted}</td>
-                    `;
-
-                    classLogBody.appendChild(row);
-                });
-            }
-
-            variantCardsContainer.innerHTML = "";
-            variants.forEach(variant => {
-                const card = document.createElement("div");
-                card.className = "variant-card";
-                card.innerHTML = `
-                    <h3>${variant}</h3>
-                    <p class="total">RM${variantTotals[variant].toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                `;
-                variantCardsContainer.appendChild(card);
-            });
-        });
-    });
-</script>
-
-</body>
-</html>
+                    localStorage.removeItem("vcrt_is_logged_
