@@ -136,6 +136,12 @@
             box-shadow: 0 0 10px rgba(0, 243, 255, 0.15);
         }
 
+        .variant-card.total-card {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+        }
+
         .variant-card h3 {
             margin: 0 0 10px 0;
             font-size: 0.95rem;
@@ -294,6 +300,7 @@
             
             const variantTotals = {};
             variants.forEach(v => variantTotals[v] = 0);
+            let totalClassExpenses = 0;
 
             if (snapshot.empty) {
                 classLogBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#555;">No transactions recorded for 150CC class yet.</td></tr>`;
@@ -307,8 +314,11 @@
                         displayVariant = "Miscellaneous, Fit & Finish";
                     }
 
-                    if (tx.type === 'expense' && variantTotals.hasOwnProperty(displayVariant)) {
-                        variantTotals[displayVariant] += tx.amount;
+                    if (tx.type === 'expense') {
+                        totalClassExpenses += tx.amount;
+                        if (variantTotals.hasOwnProperty(displayVariant)) {
+                            variantTotals[displayVariant] += tx.amount;
+                        }
                     }
 
                     const amountFormatted = tx.type === 'income' 
@@ -340,6 +350,14 @@
                 `;
                 variantCardsContainer.appendChild(card);
             });
+
+            const totalCard = document.createElement("div");
+            totalCard.className = "variant-card total-card";
+            totalCard.innerHTML = `
+                <h3>TOTAL (ALL COMPONENT VARIANTS)</h3>
+                <p class="total">RM${totalClassExpenses.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+            `;
+            variantCardsContainer.appendChild(totalCard);
         });
     });
 </script>
