@@ -285,6 +285,27 @@
             transform: translateY(-2px);
         }
 
+        .btn-cancel-edit {
+            width: 100%;
+            background: transparent;
+            color: #888;
+            border: 1px solid #444;
+            padding: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+            transition: 0.3s;
+        }
+
+        .btn-cancel-edit:hover {
+            border-color: #888;
+            color: #fff;
+        }
+
         .logs-container {
             max-width: 1000px;
             margin: 40px auto 60px auto;
@@ -324,6 +345,33 @@
 
         .income-text { color: #00ffaa; font-weight: bold; }
         .expense-text { color: #ff3b30; font-weight: bold; }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-edit {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.3s;
+        }
+
+        .btn-edit:hover:not(:disabled) {
+            background: var(--neon-blue);
+            color: #000;
+        }
+
+        .btn-edit:disabled {
+            border-color: #333;
+            color: #444;
+            cursor: not-allowed;
+        }
 
         .btn-delete {
             background: transparent;
@@ -373,11 +421,13 @@
         </div>
 
         <div class="form-title">
-            <h2>LOG <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span></h2>
+            <h2 id="formHeaderTitle">LOG <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span></h2>
         </div>
 
         <fieldset id="formFieldset" style="border: none; padding: 0; margin: 0;">
             <form id="transactionForm">
+                <input type="hidden" id="editingDocId" value="">
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="txDate">Transaction Date</label>
@@ -414,14 +464,6 @@
                     <div class="form-group">
                         <label for="variant">Component Variant</label>
                         <select id="variant" required>
-                            <option value="Brake System">Brake System</option>
-                            <option value="Engine & Drivetrain">Engine & Drivetrain</option>
-                            <option value="Suspension & Shocks">Suspension & Shocks</option>
-                            <option value="Frame & Body">Frame & Body</option>
-                            <option value="Instruments & Wiring">Instruments & Wiring</option>
-                            <option value="Wheels & Tires">Wheels & Tires</option>
-                            <option value="Steering System">Steering System</option>
-                            <option value="Miscellaneous, Fit & Finish">Miscellaneous, Fit & Finish</option>
                         </select>
                     </div>
                 </div>
@@ -444,6 +486,7 @@
                 </div>
 
                 <button type="submit" class="btn-submit" id="submitBtn">Submit Transaction</button>
+                <button type="button" class="btn-cancel-edit" id="cancelEditBtn">Cancel Edit</button>
             </form>
         </fieldset>
     </main>
@@ -482,11 +525,38 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    const expenseVariants = [
+        "Brake System",
+        "Engine & Drivetrain",
+        "Suspension & Shocks",
+        "Frame & Body",
+        "Instruments & Wiring",
+        "Wheels & Tires",
+        "Steering System",
+        "Miscellaneous, Fit & Finish"
+    ];
+
+    const incomeVariants = [
+        "PIBG",
+        "Other Contribution"
+    ];
+
+    const loadedTransactionsMap = {};
+
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
         const lockBanner = document.getElementById("lockBanner");
         const formFieldset = document.getElementById("formFieldset");
+        const variantSelect = document.getElementById("variant");
+        const transTypeRadios = document.querySelectorAll('input[name="transType"]');
+        const submitBtn = document.getElementById("submitBtn");
+        const cancelEditBtn = document.getElementById("cancelEditBtn");
+        const editingDocIdInput = document.getElementById("editingDocId");
+        const formHeaderTitle = document.getElementById("formHeaderTitle");
+        const form = document.getElementById("transactionForm");
+        const logBody = document.getElementById("transactionLogBody");
+        const dateInput = document.getElementById("txDate");
 
         if (authLink) {
             if (isLoggedIn) {
@@ -510,11 +580,44 @@
             }
         }
 
-        const form = document.getElementById("transactionForm");
-        const logBody = document.getElementById("transactionLogBody");
-        const dateInput = document.getElementById("txDate");
-
         dateInput.valueAsDate = new Date();
+
+        function updateVariantOptions(selectedType, targetValue = null) {
+            variantSelect.innerHTML = "";
+            const list = selectedType === "income" ? incomeVariants : expenseVariants;
+
+            list.forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item;
+                opt.textContent = item;
+                variantSelect.appendChild(opt);
+            });
+
+            if (targetValue && list.includes(targetValue)) {
+                variantSelect.value = targetValue;
+            }
+        }
+
+        updateVariantOptions("expense");
+
+        transTypeRadios.forEach(radio => {
+            radio.addEventListener("change", function () {
+                updateVariantOptions(this.value);
+            });
+        });
+
+        function resetFormState() {
+            form.reset();
+            editingDocIdInput.value = "";
+            dateInput.valueAsDate = new Date();
+            document.querySelector('input[name="transType"][value="expense"]').checked = true;
+            updateVariantOptions("expense");
+            submitBtn.innerText = "Submit Transaction";
+            cancelEditBtn.style.display = "none";
+            formHeaderTitle.innerHTML = `LOG <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span>`;
+        }
+
+        cancelEditBtn.addEventListener("click", resetFormState);
 
         function listenToCloudTransactions() {
             db.collection("transactions").orderBy("createdAt", "desc")
@@ -529,6 +632,8 @@
                 snapshot.forEach((doc) => {
                     const tx = doc.data();
                     const docId = doc.id;
+                    loadedTransactionsMap[docId] = tx;
+
                     const row = document.createElement("tr");
 
                     let displayVariant = tx.variant;
@@ -540,7 +645,7 @@
                         ? `<span class="income-text">+RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>` 
                         : `<span class="expense-text">-RM${tx.amount.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>`;
 
-                    const deleteBtnState = isLoggedIn ? "" : "disabled";
+                    const btnState = isLoggedIn ? "" : "disabled";
                     const refDisplay = tx.refNum ? tx.refNum : "N/A";
 
                     row.innerHTML = `
@@ -551,7 +656,12 @@
                         <td>${displayVariant}</td>
                         <td>${tx.description}</td>
                         <td>${amountFormatted}</td>
-                        <td><button class="btn-delete" ${deleteBtnState} onclick="deleteCloudTransaction('${docId}')">Remove</button></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-edit" ${btnState} onclick="startEditTransaction('${docId}')">Edit</button>
+                                <button class="btn-delete" ${btnState} onclick="deleteCloudTransaction('${docId}')">Remove</button>
+                            </div>
+                        </td>
                     `;
 
                     logBody.appendChild(row);
@@ -572,27 +682,75 @@
             }
 
             const selectedType = document.querySelector('input[name="transType"]:checked').value;
+            const editingId = editingDocIdInput.value;
 
-            const newTx = {
+            const txData = {
                 type: selectedType,
                 vClass: document.getElementById("vClass").value,
                 variant: document.getElementById("variant").value,
                 refNum: document.getElementById("refNum").value,
                 amount: parseFloat(document.getElementById("amount").value),
                 description: document.getElementById("description").value,
-                date: formattedDate,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                date: formattedDate
             };
 
-            db.collection("transactions").add(newTx).then(() => {
-                form.reset();
-                dateInput.valueAsDate = new Date();
-            }).catch((err) => alert("Cloud Error: " + err.message));
+            if (editingId) {
+                db.collection("transactions").doc(editingId).update(txData).then(() => {
+                    resetFormState();
+                }).catch((err) => alert("Cloud Error: " + err.message));
+            } else {
+                txData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                db.collection("transactions").add(txData).then(() => {
+                    resetFormState();
+                }).catch((err) => alert("Cloud Error: " + err.message));
+            }
         });
+
+        window.startEditTransaction = function (docId) {
+            if (!isLoggedIn) return;
+            const tx = loadedTransactionsMap[docId];
+            if (!tx) return;
+
+            editingDocIdInput.value = docId;
+
+            const typeRadio = document.querySelector(`input[name="transType"][value="${tx.type}"]`);
+            if (typeRadio) typeRadio.checked = true;
+
+            updateVariantOptions(tx.type, tx.variant);
+
+            document.getElementById("vClass").value = tx.vClass || "150CC";
+            document.getElementById("refNum").value = tx.refNum || "";
+            document.getElementById("amount").value = tx.amount || "";
+            document.getElementById("description").value = tx.description || "";
+
+            if (tx.date) {
+                const parsedDate = new Date(tx.date);
+                if (!isNaN(parsedDate.getTime())) {
+                    dateInput.value = parsedDate.toISOString().split('T')[0];
+                }
+            }
+
+            submitBtn.innerText = "Update Transaction";
+            cancelEditBtn.style.display = "block";
+            formHeaderTitle.innerHTML = `EDIT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">TRANSACTION</span>`;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
 
         window.deleteCloudTransaction = function (docId) {
             if (!isLoggedIn) return;
-            db.collection("transactions").doc(docId).delete();
+
+            const firstConfirm = confirm("Are you sure you want to delete this transaction?");
+            if (firstConfirm) {
+                const secondConfirm = confirm("DOUBLE VERIFICATION: This action cannot be undone. Confirm deletion?");
+                if (secondConfirm) {
+                    db.collection("transactions").doc(docId).delete().then(() => {
+                        if (editingDocIdInput.value === docId) {
+                            resetFormState();
+                        }
+                    }).catch(err => alert("Error deleting transaction: " + err.message));
+                }
+            }
         };
 
         listenToCloudTransactions();
