@@ -256,6 +256,27 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
+    function sortTransactionsLIFO(docs) {
+        return docs.slice().sort((a, b) => {
+            const txA = a.data();
+            const txB = b.data();
+
+            const timeA = txA.date ? new Date(txA.date).getTime() : 0;
+            const timeB = txB.date ? new Date(txB.date).getTime() : 0;
+
+            const validTimeA = isNaN(timeA) ? 0 : timeA;
+            const validTimeB = isNaN(timeB) ? 0 : timeB;
+
+            if (validTimeB !== validTimeA) {
+                return validTimeB - validTimeA;
+            }
+
+            const createdA = txA.createdAt && typeof txA.createdAt.toMillis === "function" ? txA.createdAt.toMillis() : 0;
+            const createdB = txB.createdAt && typeof txB.createdAt.toMillis === "function" ? txB.createdAt.toMillis() : 0;
+            return createdB - createdA;
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
@@ -304,7 +325,9 @@
             if (snapshot.empty) {
                 classLogBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#555;">No transactions recorded for EV class yet.</td></tr>`;
             } else {
-                snapshot.forEach((doc) => {
+                const sortedDocs = sortTransactionsLIFO(snapshot.docs);
+
+                sortedDocs.forEach((doc) => {
                     const tx = doc.data();
                     const row = document.createElement("tr");
 
