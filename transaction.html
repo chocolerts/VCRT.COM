@@ -451,8 +451,8 @@
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
+                <div class="form-row" id="classVariantRow">
+                    <div class="form-group" id="vClassGroup">
                         <label for="vClass">Vehicle Class</label>
                         <select id="vClass" required>
                             <option value="150CC">150CC Class</option>
@@ -462,7 +462,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="variant">Component Variant</label>
+                        <label for="variant" id="variantLabel">Component Variant</label>
                         <select id="variant" required>
                         </select>
                     </div>
@@ -538,6 +538,7 @@
 
     const incomeVariants = [
         "PIBG",
+        "Program",
         "Other Contribution"
     ];
 
@@ -549,6 +550,10 @@
         const lockBanner = document.getElementById("lockBanner");
         const formFieldset = document.getElementById("formFieldset");
         const variantSelect = document.getElementById("variant");
+        const variantLabel = document.getElementById("variantLabel");
+        const vClassGroup = document.getElementById("vClassGroup");
+        const vClassSelect = document.getElementById("vClass");
+        const classVariantRow = document.getElementById("classVariantRow");
         const transTypeRadios = document.querySelectorAll('input[name="transType"]');
         const submitBtn = document.getElementById("submitBtn");
         const cancelEditBtn = document.getElementById("cancelEditBtn");
@@ -584,7 +589,21 @@
 
         function updateVariantOptions(selectedType, targetValue = null) {
             variantSelect.innerHTML = "";
-            const list = selectedType === "income" ? incomeVariants : expenseVariants;
+            const isIncome = selectedType === "income";
+            const list = isIncome ? incomeVariants : expenseVariants;
+
+            // Hide Vehicle Class when Income is selected; show it for Expense
+            if (isIncome) {
+                vClassGroup.style.display = "none";
+                vClassSelect.required = false;
+                classVariantRow.style.gridTemplateColumns = "1fr";
+                variantLabel.textContent = "Income Variant";
+            } else {
+                vClassGroup.style.display = "block";
+                vClassSelect.required = true;
+                classVariantRow.style.gridTemplateColumns = "1fr 1fr";
+                variantLabel.textContent = "Component Variant";
+            }
 
             list.forEach(item => {
                 const opt = document.createElement("option");
@@ -647,11 +666,14 @@
 
                     const btnState = isLoggedIn ? "" : "disabled";
                     const refDisplay = tx.refNum ? tx.refNum : "N/A";
+                    const classDisplay = (tx.type === 'income' && (!tx.vClass || tx.vClass === 'General' || tx.vClass === 'N/A'))
+                        ? '—'
+                        : (tx.vClass || '—');
 
                     row.innerHTML = `
                         <td style="color:#888;">${tx.date}</td>
                         <td style="color:var(--neon-blue); font-weight:bold;">${refDisplay}</td>
-                        <td><strong>${tx.vClass}</strong></td>
+                        <td><strong>${classDisplay}</strong></td>
                         <td style="text-transform:uppercase; font-size:0.75rem;">${tx.type}</td>
                         <td>${displayVariant}</td>
                         <td>${tx.description}</td>
@@ -686,7 +708,7 @@
 
             const txData = {
                 type: selectedType,
-                vClass: document.getElementById("vClass").value,
+                vClass: selectedType === "income" ? "General" : vClassSelect.value,
                 variant: document.getElementById("variant").value,
                 refNum: document.getElementById("refNum").value,
                 amount: parseFloat(document.getElementById("amount").value),
@@ -718,7 +740,9 @@
 
             updateVariantOptions(tx.type, tx.variant);
 
-            document.getElementById("vClass").value = tx.vClass || "150CC";
+            if (tx.type !== "income") {
+                vClassSelect.value = tx.vClass || "150CC";
+            }
             document.getElementById("refNum").value = tx.refNum || "";
             document.getElementById("amount").value = tx.amount || "";
             document.getElementById("description").value = tx.description || "";
