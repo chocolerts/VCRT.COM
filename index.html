@@ -159,6 +159,77 @@
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
         }
 
+        .income-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .income-total-pill {
+            background: rgba(0, 255, 170, 0.08);
+            border: 1px solid rgba(0, 255, 170, 0.35);
+            color: #00ffaa;
+            font-size: 0.8rem;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .income-breakdown-footer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+        }
+
+        .income-stat-box {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 10px;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        .income-stat-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .dot-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .income-stat-value {
+            font-size: 1.25rem;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .empty-chart-msg {
+            color: #555;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: none;
+        }
+
         .class-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -289,6 +360,37 @@
             </div>
         </div>
 
+        <div id="income-metrics-dashboard" class="chart-container">
+            <div class="income-chart-header">
+                <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin: 0; text-align: left;">
+                    <span style="color: #00ffaa">//</span> Total Income Breakdown by Source (RM)
+                </h3>
+                <span class="income-total-pill" id="incomePieTotalBadge">Total Income: RM0.00</span>
+            </div>
+
+            <div style="position: relative; height: 320px; width: 100%; display: flex; justify-content: center; align-items: center;">
+                <canvas id="vcrtIncomePieChart"></canvas>
+                <p class="empty-chart-msg" id="incomePieEmptyMsg">No income transactions recorded yet.</p>
+            </div>
+
+            <div class="income-breakdown-footer">
+                <div class="income-stat-box">
+                    <div class="income-stat-label">
+                        <span class="dot-indicator" style="background: #00ffaa; box-shadow: 0 0 8px #00ffaa;"></span>
+                        PIBG
+                    </div>
+                    <p class="income-stat-value" id="pibgIncomeStat" style="color: #00ffaa;">RM0.00 (0.0%)</p>
+                </div>
+                <div class="income-stat-box">
+                    <div class="income-stat-label">
+                        <span class="dot-indicator" style="background: #00f3ff; box-shadow: 0 0 8px #00f3ff;"></span>
+                        Other Contribution
+                    </div>
+                    <p class="income-stat-value" id="otherIncomeStat" style="color: #00f3ff;">RM0.00 (0.0%)</p>
+                </div>
+            </div>
+        </div>
+
         <div class="class-grid">
             <div class="class-card">
                 <p>FSM</p>
@@ -350,11 +452,17 @@
         }
 
         let chartInstance = null;
+        let incomePieChartInstance = null;
 
         db.collection("transactions").onSnapshot((snapshot) => {
             let incomeSum = 0;
             let expenseSum = 0;
             const classExpenses = { '150CC': 0, '600CC': 0, 'EV': 0 };
+
+            const incomeVariantTotals = {
+                'PIBG': 0,
+                'Other Contribution': 0
+            };
 
             const variants = [
                 "Brake System", 
@@ -375,13 +483,21 @@
 
             snapshot.forEach((doc) => {
                 const tx = doc.data();
+                const txAmount = Number(tx.amount) || 0;
+
                 if (tx.type === 'income') {
-                    incomeSum += tx.amount;
+                    incomeSum += txAmount;
+                    const normalizedVariant = (tx.variant || '').trim();
+                    if (normalizedVariant === 'PIBG') {
+                        incomeVariantTotals['PIBG'] += txAmount;
+                    } else {
+                        incomeVariantTotals['Other Contribution'] += txAmount;
+                    }
                 } else if (tx.type === 'expense') {
-                    expenseSum += tx.amount;
+                    expenseSum += txAmount;
                     
                     if (classExpenses.hasOwnProperty(tx.vClass)) {
-                        classExpenses[tx.vClass] += tx.amount;
+                        classExpenses[tx.vClass] += txAmount;
                     }
 
                     let targetVariant = tx.variant;
@@ -391,7 +507,7 @@
 
                     const variantIndex = variants.indexOf(targetVariant);
                     if (variantIndex !== -1 && classVariantTotals[tx.vClass]) {
-                        classVariantTotals[tx.vClass][variantIndex] += tx.amount;
+                        classVariantTotals[tx.vClass][variantIndex] += txAmount;
                     }
                 }
             });
@@ -413,6 +529,7 @@
             document.getElementById('expense-600CC').innerText = `Total Expenses: RM${classExpenses['600CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('expense-EV').innerText = `Total Expenses: RM${classExpenses['EV'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
+            // Update Expense Bar Chart
             const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
             
             if (chartInstance) {
@@ -481,6 +598,77 @@
                     }
                 }
             });
+
+            // Update Total Income Breakdown Pie Chart
+            const pibgVal = incomeVariantTotals['PIBG'];
+            const otherVal = incomeVariantTotals['Other Contribution'];
+            const pibgPct = incomeSum > 0 ? ((pibgVal / incomeSum) * 100).toFixed(1) : '0.0';
+            const otherPct = incomeSum > 0 ? ((otherVal / incomeSum) * 100).toFixed(1) : '0.0';
+
+            document.getElementById('incomePieTotalBadge').innerText = `Total Income: RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('pibgIncomeStat').innerText = `RM${pibgVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${pibgPct}%)`;
+            document.getElementById('otherIncomeStat').innerText = `RM${otherVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${otherPct}%)`;
+
+            const pieCanvas = document.getElementById('vcrtIncomePieChart');
+            const pieEmptyMsg = document.getElementById('incomePieEmptyMsg');
+
+            if (incomePieChartInstance) {
+                incomePieChartInstance.destroy();
+                incomePieChartInstance = null;
+            }
+
+            if (incomeSum <= 0) {
+                pieCanvas.style.display = 'none';
+                pieEmptyMsg.style.display = 'block';
+            } else {
+                pieCanvas.style.display = 'block';
+                pieEmptyMsg.style.display = 'none';
+
+                const pieCtx = pieCanvas.getContext('2d');
+                incomePieChartInstance = new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['PIBG', 'Other Contribution'],
+                        datasets: [{
+                            data: [pibgVal, otherVal],
+                            backgroundColor: ['#00ffaa', '#00f3ff'],
+                            borderColor: '#111',
+                            borderWidth: 3,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#ccc',
+                                    font: { family: 'Inter', size: 12, weight: 'bold' },
+                                    boxWidth: 14,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#0a0a0a',
+                                titleColor: '#fff',
+                                bodyColor: '#ccc',
+                                borderColor: '#333',
+                                borderWidth: 1,
+                                padding: 12,
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.parsed || 0;
+                                        const pct = incomeSum > 0 ? ((value / incomeSum) * 100).toFixed(1) : '0.0';
+                                        return ` ${context.label}: RM${value.toLocaleString(undefined, {minimumFractionDigits: 2})} (${pct}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         });
     });
 </script>
