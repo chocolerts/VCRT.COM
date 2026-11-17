@@ -92,7 +92,7 @@
         }
 
         .main-content {
-            padding: 60px 10%;
+            padding: 60px 6%;
             text-align: center;
         }
 
@@ -143,15 +143,33 @@
             margin: 0;
         }
 
+        /* Side-by-side charts: Bar chart larger (1.85fr) than Pie chart (1fr) */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1.85fr 1fr;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto 50px auto;
+            align-items: stretch;
+        }
+
+        @media (max-width: 980px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .chart-container {
             background: #111;
             border: 1px solid #222;
             border-radius: 15px;
-            padding: 30px;
-            margin: 0 auto 50px auto;
-            max-width: 1000px;
+            padding: 28px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
         }
         
         .chart-container:hover {
@@ -164,67 +182,70 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .income-total-pill {
             background: rgba(0, 255, 170, 0.08);
             border: 1px solid rgba(0, 255, 170, 0.35);
             color: #00ffaa;
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             font-weight: 900;
-            letter-spacing: 1.5px;
-            padding: 6px 14px;
+            letter-spacing: 1px;
+            padding: 5px 10px;
             border-radius: 6px;
             text-transform: uppercase;
         }
 
-        .income-breakdown-footer {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 25px;
-            padding-top: 20px;
+        .income-breakdown-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 18px;
+            padding-top: 15px;
             border-top: 1px solid #222;
         }
 
-        .income-stat-box {
+        .income-stat-row {
             background: #0a0a0a;
-            border: 1px solid #222;
-            border-radius: 10px;
-            padding: 14px 18px;
-            text-align: left;
+            border: 1px solid #1e1e1e;
+            border-radius: 8px;
+            padding: 9px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8rem;
         }
 
         .income-stat-label {
-            font-size: 0.72rem;
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            color: #888;
+            color: #aaa;
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 6px;
+            font-size: 0.72rem;
         }
 
         .dot-indicator {
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
             display: inline-block;
+            flex-shrink: 0;
         }
 
         .income-stat-value {
-            font-size: 1.25rem;
             font-weight: 900;
             margin: 0;
+            font-size: 0.85rem;
         }
 
         .empty-chart-msg {
             color: #555;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             display: none;
@@ -234,7 +255,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 25px;
-            margin-top: 40px;
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
         }
 
         .class-card {
@@ -351,42 +373,55 @@
             </div>
         </div>
 
-        <div id="metrics-dashboard" class="chart-container">
-            <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 20px; text-align: left;">
-                <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
-            </h3>
-            <div style="position: relative; height:380px; width:100%">
-                <canvas id="vcrtAnalyticsChart"></canvas>
-            </div>
-        </div>
-
-        <div id="income-metrics-dashboard" class="chart-container">
-            <div class="income-chart-header">
-                <h3 style="color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px; margin: 0; text-align: left;">
-                    <span style="color: #00ffaa">//</span> Total Income Breakdown by Source (RM)
+        <div class="charts-grid">
+            <!-- LARGER BAR CHART (LEFT) -->
+            <div id="metrics-dashboard" class="chart-container">
+                <h3 style="color: #fff; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 2.5px; margin: 0 0 20px 0; text-align: left;">
+                    <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
                 </h3>
-                <span class="income-total-pill" id="incomePieTotalBadge">Total Income: RM0.00</span>
-            </div>
-
-            <div style="position: relative; height: 320px; width: 100%; display: flex; justify-content: center; align-items: center;">
-                <canvas id="vcrtIncomePieChart"></canvas>
-                <p class="empty-chart-msg" id="incomePieEmptyMsg">No income transactions recorded yet.</p>
-            </div>
-
-            <div class="income-breakdown-footer">
-                <div class="income-stat-box">
-                    <div class="income-stat-label">
-                        <span class="dot-indicator" style="background: #00ffaa; box-shadow: 0 0 8px #00ffaa;"></span>
-                        PIBG
-                    </div>
-                    <p class="income-stat-value" id="pibgIncomeStat" style="color: #00ffaa;">RM0.00 (0.0%)</p>
+                <div style="position: relative; height: 360px; width: 100%;">
+                    <canvas id="vcrtAnalyticsChart"></canvas>
                 </div>
-                <div class="income-stat-box">
-                    <div class="income-stat-label">
-                        <span class="dot-indicator" style="background: #00f3ff; box-shadow: 0 0 8px #00f3ff;"></span>
-                        Other Contribution
+            </div>
+
+            <!-- SMALLER PIE CHART (RIGHT) -->
+            <div id="income-metrics-dashboard" class="chart-container">
+                <div>
+                    <div class="income-chart-header">
+                        <h3 style="color: #fff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; text-align: left;">
+                            <span style="color: #00ffaa">//</span> Income Sources
+                        </h3>
+                        <span class="income-total-pill" id="incomePieTotalBadge">RM0.00</span>
                     </div>
-                    <p class="income-stat-value" id="otherIncomeStat" style="color: #00f3ff;">RM0.00 (0.0%)</p>
+
+                    <div style="position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center;">
+                        <canvas id="vcrtIncomePieChart"></canvas>
+                        <p class="empty-chart-msg" id="incomePieEmptyMsg">No income recorded yet.</p>
+                    </div>
+                </div>
+
+                <div class="income-breakdown-list">
+                    <div class="income-stat-row">
+                        <span class="income-stat-label">
+                            <span class="dot-indicator" style="background: #00ffaa; box-shadow: 0 0 6px #00ffaa;"></span>
+                            PIBG
+                        </span>
+                        <span class="income-stat-value" id="pibgIncomeStat" style="color: #00ffaa;">RM0.00 (0.0%)</span>
+                    </div>
+                    <div class="income-stat-row">
+                        <span class="income-stat-label">
+                            <span class="dot-indicator" style="background: #ff9500; box-shadow: 0 0 6px #ff9500;"></span>
+                            Program
+                        </span>
+                        <span class="income-stat-value" id="programIncomeStat" style="color: #ff9500;">RM0.00 (0.0%)</span>
+                    </div>
+                    <div class="income-stat-row">
+                        <span class="income-stat-label">
+                            <span class="dot-indicator" style="background: #00f3ff; box-shadow: 0 0 6px #00f3ff;"></span>
+                            Other Contribution
+                        </span>
+                        <span class="income-stat-value" id="otherIncomeStat" style="color: #00f3ff;">RM0.00 (0.0%)</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -461,6 +496,7 @@
 
             const incomeVariantTotals = {
                 'PIBG': 0,
+                'Program': 0,
                 'Other Contribution': 0
             };
 
@@ -487,9 +523,11 @@
 
                 if (tx.type === 'income') {
                     incomeSum += txAmount;
-                    const normalizedVariant = (tx.variant || '').trim();
-                    if (normalizedVariant === 'PIBG') {
+                    const normalizedVariant = (tx.variant || '').trim().toLowerCase();
+                    if (normalizedVariant === 'pibg') {
                         incomeVariantTotals['PIBG'] += txAmount;
+                    } else if (normalizedVariant === 'program') {
+                        incomeVariantTotals['Program'] += txAmount;
                     } else {
                         incomeVariantTotals['Other Contribution'] += txAmount;
                     }
@@ -577,7 +615,7 @@
                                 color: '#ccc',
                                 font: { family: 'Inter', size: 11, weight: 'bold' },
                                 boxWidth: 14,
-                                padding: 20
+                                padding: 18
                             }
                         }
                     },
@@ -599,14 +637,18 @@
                 }
             });
 
-            // Update Total Income Breakdown Pie Chart
+            // Update Total Income Pie Chart (PIBG, Program, Other Contribution)
             const pibgVal = incomeVariantTotals['PIBG'];
+            const programVal = incomeVariantTotals['Program'];
             const otherVal = incomeVariantTotals['Other Contribution'];
+
             const pibgPct = incomeSum > 0 ? ((pibgVal / incomeSum) * 100).toFixed(1) : '0.0';
+            const programPct = incomeSum > 0 ? ((programVal / incomeSum) * 100).toFixed(1) : '0.0';
             const otherPct = incomeSum > 0 ? ((otherVal / incomeSum) * 100).toFixed(1) : '0.0';
 
-            document.getElementById('incomePieTotalBadge').innerText = `Total Income: RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            document.getElementById('incomePieTotalBadge').innerText = `RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('pibgIncomeStat').innerText = `RM${pibgVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${pibgPct}%)`;
+            document.getElementById('programIncomeStat').innerText = `RM${programVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${programPct}%)`;
             document.getElementById('otherIncomeStat').innerText = `RM${otherVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${otherPct}%)`;
 
             const pieCanvas = document.getElementById('vcrtIncomePieChart');
@@ -628,13 +670,13 @@
                 incomePieChartInstance = new Chart(pieCtx, {
                     type: 'pie',
                     data: {
-                        labels: ['PIBG', 'Other Contribution'],
+                        labels: ['PIBG', 'Program', 'Other Contribution'],
                         datasets: [{
-                            data: [pibgVal, otherVal],
-                            backgroundColor: ['#00ffaa', '#00f3ff'],
+                            data: [pibgVal, programVal, otherVal],
+                            backgroundColor: ['#00ffaa', '#ff9500', '#00f3ff'],
                             borderColor: '#111',
                             borderWidth: 3,
-                            hoverOffset: 10
+                            hoverOffset: 8
                         }]
                     },
                     options: {
@@ -642,13 +684,7 @@
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                position: 'top',
-                                labels: {
-                                    color: '#ccc',
-                                    font: { family: 'Inter', size: 12, weight: 'bold' },
-                                    boxWidth: 14,
-                                    padding: 20
-                                }
+                                display: false
                             },
                             tooltip: {
                                 backgroundColor: '#0a0a0a',
@@ -656,7 +692,7 @@
                                 bodyColor: '#ccc',
                                 borderColor: '#333',
                                 borderWidth: 1,
-                                padding: 12,
+                                padding: 10,
                                 callbacks: {
                                     label: function(context) {
                                         const value = context.parsed || 0;
