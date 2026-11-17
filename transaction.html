@@ -492,7 +492,7 @@
     </main>
 
     <div class="logs-container">
-        <div class="logs-title">// Recent Transactions</div>
+        <div class="logs-title">// Recent Transactions (LIFO — Latest Date First)</div>
         <table>
             <thead>
                 <tr>
@@ -544,6 +544,28 @@
 
     const loadedTransactionsMap = {};
 
+    // LIFO Sorting: Latest transaction date first, tie-broken by newest createdAt timestamp
+    function sortTransactionsLIFO(docs) {
+        return docs.slice().sort((a, b) => {
+            const txA = a.data();
+            const txB = b.data();
+
+            const timeA = txA.date ? new Date(txA.date).getTime() : 0;
+            const timeB = txB.date ? new Date(txB.date).getTime() : 0;
+
+            const validTimeA = isNaN(timeA) ? 0 : timeA;
+            const validTimeB = isNaN(timeB) ? 0 : timeB;
+
+            if (validTimeB !== validTimeA) {
+                return validTimeB - validTimeA;
+            }
+
+            const createdA = txA.createdAt && typeof txA.createdAt.toMillis === "function" ? txA.createdAt.toMillis() : 0;
+            const createdB = txB.createdAt && typeof txB.createdAt.toMillis === "function" ? txB.createdAt.toMillis() : 0;
+            return createdB - createdA;
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
@@ -592,7 +614,6 @@
             const isIncome = selectedType === "income";
             const list = isIncome ? incomeVariants : expenseVariants;
 
-            // Hide Vehicle Class when Income is selected; show it for Expense
             if (isIncome) {
                 vClassGroup.style.display = "none";
                 vClassSelect.required = false;
@@ -639,8 +660,7 @@
         cancelEditBtn.addEventListener("click", resetFormState);
 
         function listenToCloudTransactions() {
-            db.collection("transactions").orderBy("createdAt", "desc")
-              .onSnapshot((snapshot) => {
+            db.collection("transactions").onSnapshot((snapshot) => {
                 logBody.innerHTML = "";
 
                 if (snapshot.empty) {
@@ -648,7 +668,9 @@
                     return;
                 }
 
-                snapshot.forEach((doc) => {
+                const sortedDocs = sortTransactionsLIFO(snapshot.docs);
+
+                sortedDocs.forEach((doc) => {
                     const tx = doc.data();
                     const docId = doc.id;
                     loadedTransactionsMap[docId] = tx;
@@ -750,7 +772,10 @@
             if (tx.date) {
                 const parsedDate = new Date(tx.date);
                 if (!isNaN(parsedDate.getTime())) {
-                    dateInput.value = parsedDate.toISOString().split('T')[0];
+                    const yyyy = parsedDate.getFullYear();
+                    const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+                    const dd = String(parsedDate.getDate()).padStart(2, '0');
+                    dateInput.value = `${yyyy}-${mm}-${dd}`;
                 }
             }
 
