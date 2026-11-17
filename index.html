@@ -107,6 +107,32 @@
             letter-spacing: -1px;
         }
 
+        .admin-tx-bar {
+            display: none;
+            justify-content: center;
+            margin-top: 18px;
+        }
+
+        .btn-manage-tx {
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-manage-tx:hover {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: var(--neon-outline);
+        }
+
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -143,7 +169,6 @@
             margin: 0;
         }
 
-        /* Side-by-side charts: Bar chart larger (1.85fr) than Pie chart (1fr) */
         .charts-grid {
             display: grid;
             grid-template-columns: 1.85fr 1fr;
@@ -342,20 +367,22 @@
 
         <nav class="dash-menu">
             <a href="index.html" class="dash-link active">Home</a>
-            <a href="transaction.html" class="dash-link">Transactions</a>
-            <a href="aboutus.html" class="dash-link">About Us</a>
             <a href="achievement.html" class="dash-link">Achievements</a>
+            <a href="aboutus.html" class="dash-link">About Us</a>
         </nav>
 
         <div class="auth-container-right">
-            <a href="#" class="dash-link" id="authLink" style="display: none;">Sign Out</a>
+            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </div>
     </header>
 
     <main class="main-content">
         <div class="core-header">
-            <h1>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">PITSTOP</span></h1>
-            <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">RACING TEAM FINANCIAL TRACKING SYSTEM</p>
+            <h1>VCRT <span style="color: var(--neon-blue); text-shadow: var(--neon-outline);">CORE</span></h1>
+            <p style="color: #444; letter-spacing: 5px; font-size: 0.8rem;">VEHICLE CLASS SELECTION</p>
+            <div class="admin-tx-bar" id="adminTxBar">
+                <a href="transaction.html" class="btn-manage-tx">+ Log / Manage Transactions</a>
+            </div>
         </div>
 
         <div class="summary-grid">
@@ -374,7 +401,6 @@
         </div>
 
         <div class="charts-grid">
-            <!-- LARGER BAR CHART (LEFT) -->
             <div id="metrics-dashboard" class="chart-container">
                 <h3 style="color: #fff; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 2.5px; margin: 0 0 20px 0; text-align: left;">
                     <span style="color: var(--neon-blue)">//</span> Vehicle Class Expenses by Component Variant (RM)
@@ -384,7 +410,6 @@
                 </div>
             </div>
 
-            <!-- SMALLER PIE CHART (RIGHT) -->
             <div id="income-metrics-dashboard" class="chart-container">
                 <div>
                     <div class="income-chart-header">
@@ -466,6 +491,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         const authLink = document.getElementById("authLink");
+        const adminTxBar = document.getElementById("adminTxBar");
         const isLoggedIn = localStorage.getItem("vcrt_is_logged_in") === "true";
 
         if (authLink) {
@@ -475,6 +501,7 @@
                 authLink.style.color = "#ff3b30";
                 authLink.style.opacity = "1";
                 authLink.href = "#";
+                if (adminTxBar) adminTxBar.style.display = "flex";
                 authLink.addEventListener("click", function (e) {
                     e.preventDefault();
                     localStorage.removeItem("vcrt_is_logged_in");
@@ -482,7 +509,12 @@
                     window.location.reload();
                 });
             } else {
-                authLink.style.display = "none";
+                authLink.style.display = "inline-block";
+                authLink.innerText = "Sign In";
+                authLink.style.color = "var(--neon-blue)";
+                authLink.style.opacity = "1";
+                authLink.href = "signin.html";
+                if (adminTxBar) adminTxBar.style.display = "none";
             }
         }
 
@@ -567,7 +599,6 @@
             document.getElementById('expense-600CC').innerText = `Total Expenses: RM${classExpenses['600CC'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('expense-EV').innerText = `Total Expenses: RM${classExpenses['EV'].toLocaleString(undefined, {minimumFractionDigits: 2})}`;
 
-            // Update Expense Bar Chart
             const ctx = document.getElementById('vcrtAnalyticsChart').getContext('2d');
             
             if (chartInstance) {
@@ -637,7 +668,6 @@
                 }
             });
 
-            // Update Total Income Pie Chart (PIBG, Program, Other Contribution)
             const pibgVal = incomeVariantTotals['PIBG'];
             const programVal = incomeVariantTotals['Program'];
             const otherVal = incomeVariantTotals['Other Contribution'];
