@@ -405,13 +405,12 @@
 
         <nav class="dash-menu">
             <a href="index.html" class="dash-link">Home</a>
-            <a href="transaction.html" class="dash-link active">Transactions</a>
-            <a href="aboutus.html" class="dash-link">About Us</a>
             <a href="achievement.html" class="dash-link">Achievements</a>
+            <a href="aboutus.html" class="dash-link">About Us</a>
         </nav>
 
         <div class="auth-container-right">
-            <a href="#" class="dash-link" id="authLink" style="display: none;">Sign Out</a>
+            <a href="signin.html" class="dash-link" id="authLink">Sign In</a>
         </div>
     </header>
 
@@ -544,7 +543,6 @@
 
     const loadedTransactionsMap = {};
 
-    // LIFO Sorting: Latest transaction date first, tie-broken by newest createdAt timestamp
     function sortTransactionsLIFO(docs) {
         return docs.slice().sort((a, b) => {
             const txA = a.data();
@@ -601,7 +599,11 @@
                 lockBanner.style.display = "none";
                 formFieldset.disabled = false;
             } else {
-                authLink.style.display = "none";
+                authLink.style.display = "inline-block";
+                authLink.innerText = "Sign In";
+                authLink.style.color = "var(--neon-blue)";
+                authLink.style.opacity = "1";
+                authLink.href = "signin.html";
                 lockBanner.style.display = "block";
                 formFieldset.disabled = true;
             }
