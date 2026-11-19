@@ -117,6 +117,53 @@
             margin-top: 5px;
         }
 
+        .class-switcher {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .class-switch-btn {
+            text-decoration: none;
+            background: #0a0a0a;
+            border: 1px solid #222;
+            color: #888;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .class-switch-btn.btn-150:hover,
+        .class-switch-btn.btn-150.active {
+            border-color: #00f3ff;
+            color: #00f3ff;
+            background: rgba(0, 243, 255, 0.08);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.25);
+        }
+
+        .class-switch-btn.btn-600:hover,
+        .class-switch-btn.btn-600.active {
+            border-color: #ff9500;
+            color: #ff9500;
+            background: rgba(255, 149, 0, 0.08);
+            box-shadow: 0 0 10px rgba(255, 149, 0, 0.25);
+        }
+
+        .class-switch-btn.btn-ev:hover,
+        .class-switch-btn.btn-ev.active {
+            border-color: #00ffaa;
+            color: #00ffaa;
+            background: rgba(0, 255, 170, 0.08);
+            box-shadow: 0 0 10px rgba(0, 255, 170, 0.25);
+        }
+
         .variant-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -219,6 +266,11 @@
         <div class="header-title">
             <h1>EV <span style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green);">CLASS</span></h1>
             <p>// Component Financial Breakdown</p>
+            <div class="class-switcher">
+                <a href="150cc.html" class="class-switch-btn btn-150">150CC Class</a>
+                <a href="600cc.html" class="class-switch-btn btn-600">600CC Class</a>
+                <a href="ev.html" class="class-switch-btn btn-ev active">EV Class</a>
+            </div>
         </div>
 
         <div class="variant-grid" id="variantCardsContainer"></div>
