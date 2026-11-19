@@ -118,6 +118,7 @@
             border-radius: 15px;
             padding: 40px;
             box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            box-sizing: border-box;
         }
 
         .form-title {
@@ -192,6 +193,7 @@
             color: #aaa;
             transition: 0.3s;
             user-select: none;
+            box-sizing: border-box;
         }
 
         .radio-card-label input[type="radio"] {
@@ -207,6 +209,7 @@
             position: relative;
             box-sizing: border-box;
             transition: 0.3s;
+            flex-shrink: 0;
         }
 
         .radio-card-label:hover {
@@ -441,6 +444,54 @@
                 position: absolute;
                 right: 20px;
                 top: 20px;
+            }
+
+            .main-container {
+                margin: 20px 15px;
+                padding: 25px 20px;
+                border-radius: 12px;
+            }
+
+            .form-title {
+                margin-bottom: 22px;
+            }
+
+            .form-title h2 {
+                font-size: 1.55rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr !important;
+                gap: 0;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            input, select, textarea {
+                font-size: 16px;
+                padding: 13px 14px;
+            }
+
+            .radio-options-container {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .radio-card-label {
+                padding: 13px 14px;
+                font-size: 0.9rem;
+                justify-content: center;
+            }
+
+            .btn-submit {
+                padding: 16px;
+                font-size: 0.85rem;
+            }
+
+            .btn-cancel-edit {
+                padding: 13px;
             }
 
             .logs-container {
