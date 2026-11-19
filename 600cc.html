@@ -241,6 +241,52 @@
 
         .income-text { color: #00ffaa; font-weight: bold; }
         .expense-text { color: #ff3b30; font-weight: bold; }
+
+        @media (max-width: 900px) {
+            .dashboard-header {
+                padding: 0 20px;
+            }
+
+            .dash-menu {
+                gap: 15px;
+            }
+
+            .dash-link {
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .dashboard-header {
+                height: auto;
+                min-height: var(--nav-height);
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            body {
+                padding-top: 100px;
+            }
+
+            .dash-menu {
+                position: static;
+                transform: none;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .auth-container-right {
+                position: absolute;
+                right: 20px;
+                top: 20px;
+            }
+
+            .header-title h1 {
+                font-size: 2.2rem;
+            }
+        }
     </style>
 </head>
 <body>
