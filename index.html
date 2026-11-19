@@ -416,7 +416,6 @@
                         <h3 style="color: #fff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin: 0; text-align: left;">
                             <span style="color: #00ffaa">//</span> Income Sources
                         </h3>
-                        <span class="income-total-pill" id="incomePieTotalBadge">RM0.00</span>
                     </div>
 
                     <div style="position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center;">
@@ -676,7 +675,6 @@
             const programPct = incomeSum > 0 ? ((programVal / incomeSum) * 100).toFixed(1) : '0.0';
             const otherPct = incomeSum > 0 ? ((otherVal / incomeSum) * 100).toFixed(1) : '0.0';
 
-            document.getElementById('incomePieTotalBadge').innerText = `RM${incomeSum.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('pibgIncomeStat').innerText = `RM${pibgVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${pibgPct}%)`;
             document.getElementById('programIncomeStat').innerText = `RM${programVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${programPct}%)`;
             document.getElementById('otherIncomeStat').innerText = `RM${otherVal.toLocaleString(undefined, {minimumFractionDigits: 2})} (${otherPct}%)`;
